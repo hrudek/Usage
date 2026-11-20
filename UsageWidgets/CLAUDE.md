@@ -30,7 +30,10 @@ Every home screen widget is one button (`refreshesOnTap`, plain style,
 labelled "Refresh"): a tap anywhere refreshes it instead of opening the
 app, so there is no refresh button and no `widgetURL`. The provider mark
 sits in the header's top-right corner (`WidgetMetrics.markSize`), and a
-reset countdown has no icon before it.
+reset countdown has no icon before it. The widget configurations turn
+the system content margins off (`contentMarginsDisabled`) so the button
+reaches the edges; `widgetMargins()` puts them back as padding inside it
+(and on the accessory and StandBy views), so the layout is unchanged.
 
 Every home screen widget's container background is `WidgetBackdrop`:
 the app's backdrop gradient (fixed sRGB colors, #2B2D42 to #0D0E14 in

@@ -133,7 +133,7 @@ private struct SingleUsageHeader: View {
     }
 }
 
-/// The ring style: the header naming the window, then the window as a ring
+/// The ring style: the header, the window's name, then the window as a ring
 /// in its level's color with only its figure and its reset in the centre
 /// (the bare live countdown under a day, `ResetLineText(bare:)`), clear
 /// of the stroke by more than its width, and 8 pt of air under the
