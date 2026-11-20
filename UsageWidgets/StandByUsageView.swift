@@ -24,22 +24,7 @@ struct StandByUsageView: View {
                 .foregroundStyle(Theme.inkSecondary)
                 .lineLimit(1)
             Spacer(minLength: 0)
-            HStack(alignment: .firstTextBaseline, spacing: 1) {
-                if let window {
-                    Text(verbatim: "\(Int(window.displayedPct(prefs.displayMode)))")
-                        .font(Theme.figure(size: 66))
-                        .foregroundStyle(Theme.ink)
-                    Text(verbatim: "%")
-                        .font(Theme.figure(size: 26))
-                        .foregroundStyle(Theme.inkSecondary)
-                } else {
-                    Text(verbatim: "--")
-                        .font(Theme.figure(size: 66))
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-            }
-            .lineLimit(1)
-            .minimumScaleFactor(0.6)
+            WidgetFigure(window: window, mode: prefs.displayMode, size: 60)
             HStack(spacing: 4) {
                 Text(windowName)
                     .foregroundStyle(Theme.ink)

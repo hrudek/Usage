@@ -28,21 +28,32 @@ the display preferences. `UsageWidgetsBundle` lists, in gallery order:
 
 Every home screen widget is one button (`refreshesOnTap`, plain style,
 labelled "Refresh"): a tap anywhere refreshes it instead of opening the
-app, so there is no refresh button and no `widgetURL`. The provider mark
-(`WidgetMetrics.markSize`, 48 pt) sits in the top-right corner of a
-`WidgetMarkBand`: a band as tall as the mark whose left side stacks the
-account's name (a staleness hint under it) over the first window's name,
-so the mark adds no height (small, single limit, each account of the
-standard all-accounts layout; the condensed layout puts the next session
-reset under its title there). The medium family gives the mark a column
-of its own right of the header and the window columns: a band over the
-columns would cost height they need. The ring style's figure is 24 pt,
-since the band leaves the ring less height. A reset
-countdown has no icon before it. A used percentage stands alone, with no
-"used" after it; in remaining mode "left" follows it
-(`DisplayMode.widgetSuffix`). The widget configurations turn
-the system content margins off (`contentMarginsDisabled`) so the button
-reaches the edges; `widgetMargins()` puts them back as padding inside it
+app, so there is no refresh button and no `widgetURL`.
+
+Every home screen card opens with `WidgetCardHeader`
+(`UsageWidgets/WidgetCard.swift`): the account's name, its plan as a
+small pill while both fit on the line, the provider mark
+(`WidgetMetrics.markSize`, 32 pt, accent glyph on the accent wash) in
+the top-right corner, and a hairline under it. The `UsageLimits` small
+and medium families add the "updated X ago" hint under the name; the
+ring style puts the window's name there, the condensed
+layout the next session reset. Under the hairline: the small family
+and each account of the standard all-accounts layout show the leading
+window's name, its figure large with the reset beside it, a thick bar,
+then the other windows as compact lines (name, bar, figure); the medium
+family shows one column per window (name, figure, bar, reset line),
+split by hairlines. A reset countdown has no icon before it.
+
+A figure is the bare percentage ("42%", or "--" without a window):
+never "used", "left" or "remaining" beside it, in any widget kind,
+since the user picked the mode in the app. A figure never truncates:
+`WidgetFigure` is one line that shrinks (`minimumScaleFactor`) before
+it would cut and takes its width first (`layoutPriority`); a compact
+row's, the condensed layout's and the rectangular accessory's figure is
+`fixedSize` and the bar or name beside it gives way.
+
+The widget configurations turn the system content margins off
+(`contentMarginsDisabled`) so the button reaches the edges; `widgetMargins()` puts them back as padding inside it
 (and on the accessory and StandBy views), so the layout is unchanged.
 
 A Claude account can hide its per-model window (Fable) from widgets on

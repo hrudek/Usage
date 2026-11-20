@@ -2,7 +2,7 @@ import SwiftUI
 import UsageKit
 
 /// Icon + name + optional plan pill — the repeated first part of every
-/// provider header across the dashboard, landscape view, and widgets. Each caller wraps it in its own `HStack` with whatever
+/// provider header in the app. Each caller wraps it in its own `HStack` with whatever
 /// trailing content and spacing that surface needs (chevron, "Updated X
 /// ago", a staleness hint, or nothing), since those genuinely differ per
 /// surface; the icon/name/pill trio doesn't.
@@ -18,14 +18,9 @@ struct ProviderIdentityView: View {
     var icon: AccountIcon? = nil
     /// A smaller pill for a header with little height.
     var compactPill = false
-    /// False where the mark is drawn elsewhere (the widgets put it in the
-    /// header's top-right corner).
-    var showsMark = true
 
     var body: some View {
-        if showsMark {
-            ProviderMark(size: iconSize, cornerRadius: iconCornerRadius, icon: icon)
-        }
+        ProviderMark(size: iconSize, cornerRadius: iconCornerRadius, icon: icon)
         Text(name)
             .font(font)
             .foregroundStyle(nameColor)
@@ -47,10 +42,12 @@ struct ProviderIdentityView: View {
 struct PlanPill: View {
     let name: String
     var compact = false
+    /// A fixed size for the widgets, which do not follow Dynamic Type.
+    var font: Font? = nil
 
     var body: some View {
         Text(name.capitalized)
-            .font(compact ? .caption2.weight(.semibold) : .caption.weight(.semibold))
+            .font(font ?? (compact ? .caption2.weight(.semibold) : .caption.weight(.semibold)))
             .foregroundStyle(Theme.inkSecondary)
             // Whole on one line: at the largest text sizes "Demo" split
             // into "De" over "mo"; the name beside it is what gives way.

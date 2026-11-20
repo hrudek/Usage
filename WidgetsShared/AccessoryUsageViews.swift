@@ -14,7 +14,9 @@ struct CircularUsageView: View {
         Gauge(value: min(window?.displayedPct(prefs.displayMode) ?? 0, 100), in: 0...100) {
             Text(caption)
         } currentValueLabel: {
-            Text(window.map { "\(Int($0.displayedPct(prefs.displayMode)))%" } ?? "--")
+            Text(verbatim: window.map { "\(Int($0.displayedPct(prefs.displayMode)))%" } ?? "--")
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
         }
         .gaugeStyle(.accessoryCircularCapacity)
     }
@@ -55,9 +57,12 @@ struct RectangularUsageView: View {
                     Text(slot.window?.shortTitle ?? slot.kind.shortName)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(slot.window.map { "\(Int($0.displayedPct(prefs.displayMode)))%" } ?? "--")
+                        .lineLimit(1)
+                    Spacer(minLength: 4)
+                    Text(verbatim: slot.window.map { "\(Int($0.displayedPct(prefs.displayMode)))%" } ?? "--")
                         .font(.system(.caption, design: .rounded).weight(.semibold).monospacedDigit())
+                        .lineLimit(1)
+                        .fixedSize()
                 }
             }
         }

@@ -68,39 +68,25 @@ private struct AccountRow: View {
     var body: some View {
         let snapshot = row.shownSnapshot
         let layout = snapshot.map { AccountCardLayout(snapshot: $0, modelSlotFallback: prefs.modelSlotFallback) }
-        VStack(alignment: .leading, spacing: 4) {
-            WidgetMarkBand(icon: row.account.icon) {
-                HStack(spacing: 5) {
-                    ProviderIdentityView(
-                        name: row.account.displayName,
-                        iconSize: 15,
-                        iconCornerRadius: 3.5,
-                        font: .system(size: 12, weight: .semibold),
-                        nameColor: Theme.ink,
-                        planName: row.snapshot?.planName,
-                        icon: row.account.icon,
-                        showsMark: false
-                    )
-                }
-                Spacer(minLength: 0)
-                if let hero = layout?.hero {
-                    WidgetWindowTitle(name: hero.window?.shortTitle ?? hero.kind.shortName)
-                } else {
-                    Text("No usage data yet")
-                        .font(.system(size: 10))
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-            }
+        VStack(alignment: .leading, spacing: 0) {
+            WidgetCardHeader(title: Text(row.account.displayName), planName: row.snapshot?.planName, icon: row.account.icon)
             if let snapshot, let layout {
+                WidgetWindowTitle(name: layout.hero.window?.shortTitle ?? layout.hero.kind.shortName)
+                    .padding(.top, WidgetMetrics.dividerGap)
                 WidgetHero(
                     window: layout.hero.window,
                     prefs: prefs,
                     now: now,
                     moneySubtitle: prefs.creditsAmountSubtitle(for: layout.hero.kind, snapshot: snapshot),
-                    figureSize: 34
+                    figureSize: 30
                 )
-                .padding(.bottom, 10)
+                .padding(.bottom, 8)
                 WidgetCompactRows(slots: layout.others, prefs: prefs)
+            } else {
+                Text("No usage data yet")
+                    .font(.system(size: 10))
+                    .foregroundStyle(Theme.inkSecondary)
+                    .padding(.top, WidgetMetrics.dividerGap)
             }
         }
     }

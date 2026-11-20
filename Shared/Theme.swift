@@ -48,7 +48,7 @@ enum Theme {
     /// protagonist, every widget.
     /// Rounded, with tabular digits so a changing figure doesn't jitter.
     /// The app passes its own `@ScaledMetric` so it follows Dynamic Type;
-    /// widgets pass fixed sizes (see `WidgetHeader`).
+    /// widgets pass fixed sizes (see `WidgetMetrics`).
     static func figure(size: CGFloat, weight: Font.Weight = .semibold) -> Font {
         .system(size: size, weight: weight, design: .rounded).monospacedDigit()
     }

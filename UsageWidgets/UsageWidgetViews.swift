@@ -61,86 +61,12 @@ struct UsageWidgetView: View {
 
 // MARK: - System families
 
-/// Widget fonts are fixed sizes: text styles scale with the device's
-/// Dynamic Type and overflow the fixed widget height on real hardware.
-struct WidgetHeader: View {
-    let snapshot: UsageSnapshot
-    /// The rendered timeline entry's own date — not `Date()` — so the
-    /// peak badge matches whichever entry WidgetKit is currently
-    /// displaying, including a future entry dated at the next peak
-    /// transition (see `UsageTimelineProvider.peakTransitionEntry`).
-    let date: Date
-    let accountName: String
-    /// The plan pill; the small family leaves it out for room.
-    var planName: String? = nil
-    var accountIcon: AccountIcon? = nil
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(spacing: 5) {
-                ProviderIdentityView(
-                    name: accountName,
-                    iconSize: 15,
-                    iconCornerRadius: 3.5,
-                    font: .system(size: 12, weight: .semibold),
-                    nameColor: Theme.ink,
-                    planName: planName,
-                    icon: accountIcon,
-                    showsMark: false
-                )
-            }
-            if snapshot.isStale {
-                HStack(spacing: 2) {
-                    Image(systemName: "clock.arrow.circlepath")
-                    Text(snapshot.fetchedAt, format: .relative(presentation: .numeric, unitsStyle: .narrow))
-                }
-                .font(.system(size: 8))
-                .foregroundStyle(Theme.inkSecondary.opacity(0.8))
-                .lineLimit(1)
-            }
-        }
-    }
-}
-
-struct WidgetMarkBand<Leading: View>: View {
-    let icon: AccountIcon?
-    let leading: Leading
-
-    init(icon: AccountIcon? = nil, @ViewBuilder leading: () -> Leading) {
-        self.icon = icon
-        self.leading = leading()
-    }
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 6) {
-            VStack(alignment: .leading, spacing: 0) {
-                leading
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: icon)
-        }
-        .frame(height: WidgetMetrics.markSize)
-    }
-}
-
-struct WidgetWindowTitle: View {
-    let name: String
-
-    var body: some View {
-        Text(name)
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundStyle(Theme.inkSecondary)
-            .lineLimit(1)
-    }
-}
-
-/// Small: the app's account card in a small square (4.0) — the header,
-/// the session as the protagonist (its name, the figure large,
-/// a thicker bar, and the reset beside the figure as a bare live
-/// countdown), then up to two other windows as compact lines (name, a thin
-/// bar, the figure). The same `AccountCardLayout` decides which leads, so
-/// the widget and the Dashboard always agree. The medium family is
-/// `MediumUsageView`, in columns.
+/// Small: the app's account card in a small square: the header, the
+/// session as the protagonist (its name, the figure large with the reset
+/// beside it as a bare live countdown, a thick bar), then up to two other
+/// windows as compact lines (name, bar, figure). The same
+/// `AccountCardLayout` decides which leads, so the widget and the
+/// Dashboard always agree. The medium family is `MediumUsageView`.
 struct SystemUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences
@@ -151,20 +77,17 @@ struct SystemUsageView: View {
     var body: some View {
         let layout = AccountCardLayout(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback)
         VStack(alignment: .leading, spacing: 0) {
-            WidgetMarkBand(icon: accountIcon) {
-                WidgetHeader(snapshot: snapshot, date: date, accountName: accountName)
-                Spacer(minLength: 0)
-                WidgetWindowTitle(name: layout.hero.window?.shortTitle ?? layout.hero.kind.shortName)
-            }
+            WidgetCardHeader(title: Text(accountName), planName: snapshot.planName, icon: accountIcon, snapshot: snapshot)
+            WidgetWindowTitle(name: layout.hero.window?.shortTitle ?? layout.hero.kind.shortName)
+                .padding(.top, WidgetMetrics.dividerGap)
             WidgetHero(
                 window: layout.hero.window,
                 prefs: prefs,
                 now: date,
                 moneySubtitle: prefs.creditsAmountSubtitle(for: layout.hero.kind, snapshot: snapshot),
-                figureSize: 28
+                figureSize: 26
             )
-            .padding(.top, 4)
-            Spacer(minLength: 5)
+            Spacer(minLength: 4)
             WidgetCompactRows(slots: Array(layout.others.prefix(2)), prefs: prefs)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -176,26 +99,12 @@ struct WidgetHero: View {
     let prefs: Preferences
     let now: Date
     let moneySubtitle: String?
-    /// 28 pt in the small family, larger where a family has the height
-    /// (the all-accounts widget).
-    var figureSize: CGFloat = 28
+    var figureSize: CGFloat = 26
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .firstTextBaseline, spacing: 0) {
-                if let window {
-                    Text(verbatim: "\(Int(window.displayedPct(prefs.displayMode)))")
-                        .font(Theme.figure(size: figureSize))
-                        .foregroundStyle(Theme.ink)
-                    Text(verbatim: "%")
-                        .font(Theme.figure(size: figureSize * 0.46))
-                        .foregroundStyle(Theme.inkSecondary)
-                } else {
-                    Text(verbatim: "--")
-                        .font(Theme.figure(size: figureSize))
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-                Spacer(minLength: 4)
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                WidgetFigure(window: window, mode: prefs.displayMode, size: figureSize)
                 Group {
                     if let resetsAt = window?.resetsAt {
                         ResetLineText(resetsAt: resetsAt, style: prefs.resetStyle, now: now, bare: true)
@@ -203,15 +112,16 @@ struct WidgetHero: View {
                         Text(moneySubtitle)
                     }
                 }
-                .font(.system(size: 10, weight: .medium))
+                .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(Theme.inkSecondary)
                 .lineLimit(1)
-                .minimumScaleFactor(0.8)
+                .minimumScaleFactor(0.7)
+                Spacer(minLength: 0)
             }
             UsageBarView(
                 value: window?.displayedPct(prefs.displayMode),
                 tint: window?.tint(usageColors: prefs.usageColors) ?? Theme.accent,
-                height: 7,
+                height: 8,
                 lit: true
             )
         }
@@ -219,15 +129,15 @@ struct WidgetHero: View {
     }
 }
 
-/// A widget card's other windows, one line each: name, a thin bar, the
-/// figure, in shared columns so the bars start and end together (the
-/// app card's `CompactWindowRows`, at widget sizes).
+/// A widget card's other windows, one line each: name, bar, figure, in
+/// shared columns so the bars start and end together. The figure keeps
+/// its full width; the bar gives way.
 struct WidgetCompactRows: View {
     let slots: [AccountCardLayout.Slot]
     let prefs: Preferences
 
     var body: some View {
-        Grid(alignment: .leading, horizontalSpacing: 6, verticalSpacing: 6) {
+        Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 5) {
             ForEach(slots, id: \.kind) { slot in
                 let window = slot.window
                 GridRow {
@@ -235,20 +145,22 @@ struct WidgetCompactRows: View {
                         .font(.system(size: 11))
                         .foregroundStyle(Theme.ink)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                         .layoutPriority(1)
                     UsageBarView(
                         value: window?.displayedPct(prefs.displayMode),
                         tint: window?.tint(usageColors: prefs.usageColors) ?? Theme.accent,
-                        height: 4
+                        height: 6
                     )
-                    .frame(minWidth: 24)
-                    .accessibilityHidden(true)
-                    Text(verbatim: window.map { "\(Int($0.displayedPct(prefs.displayMode)))%" } ?? "--")
+                    .frame(minWidth: 16)
+                    Text(verbatim: WidgetFigure.text(window, prefs.displayMode))
                         .font(Theme.figure(size: 11))
                         .foregroundStyle(window == nil ? Theme.inkSecondary : Theme.ink)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .layoutPriority(2)
                         .gridColumnAlignment(.trailing)
                 }
-                // One VoiceOver stop a row, name and figure together.
                 .accessibilityElement(children: .combine)
             }
         }

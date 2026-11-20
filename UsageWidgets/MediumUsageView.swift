@@ -9,29 +9,37 @@ struct MediumUsageView: View {
     let accountName: String
     var accountIcon: AccountIcon? = nil
 
+    private static let columnGap: CGFloat = 20
+
     var body: some View {
         let slots = WindowSlots(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback).slots
         let wide = slots.count <= 2
-        HStack(alignment: .top, spacing: 10) {
-            VStack(alignment: .leading, spacing: 0) {
-                WidgetHeader(snapshot: snapshot, date: date, accountName: accountName, planName: snapshot.planName, accountIcon: accountIcon)
-                Spacer(minLength: 6)
-                HStack(alignment: .top, spacing: wide ? 16 : 10) {
-                    ForEach(slots, id: \.kind) { slot in
-                        WindowColumn(
-                            kind: slot.kind,
-                            window: slot.window,
-                            prefs: prefs,
-                            now: date,
-                            valueSize: wide ? 28 : 22,
-                            moneySubtitle: prefs.creditsAmountSubtitle(for: slot.kind, snapshot: snapshot)
-                        )
-                        .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: 0) {
+            WidgetCardHeader(title: Text(accountName), planName: snapshot.planName, icon: accountIcon, snapshot: snapshot)
+            Spacer(minLength: WidgetMetrics.dividerGap)
+            HStack(alignment: .top, spacing: Self.columnGap) {
+                ForEach(Array(slots.enumerated()), id: \.element.kind) { index, slot in
+                    WindowColumn(
+                        kind: slot.kind,
+                        window: slot.window,
+                        prefs: prefs,
+                        now: date,
+                        valueSize: wide ? 28 : 24,
+                        moneySubtitle: prefs.creditsAmountSubtitle(for: slot.kind, snapshot: snapshot)
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .overlay(alignment: .leading) {
+                        if index > 0 {
+                            Rectangle()
+                                .fill(Theme.track)
+                                .frame(width: 1)
+                                .offset(x: -Self.columnGap / 2)
+                                .accessibilityHidden(true)
+                        }
                     }
                 }
-                Spacer(minLength: 0)
             }
-            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: accountIcon)
+            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
@@ -48,41 +56,25 @@ private struct WindowColumn: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(window?.shortTitle ?? kind.shortName)
-                .font(.system(size: 11))
+                .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(Theme.inkSecondary)
                 .lineLimit(1)
-            HStack(alignment: .firstTextBaseline, spacing: 3) {
-                if let window {
-                    Text("\(Int(window.displayedPct(prefs.displayMode)))%")
-                        .font(Theme.figure(size: valueSize))
-                        .foregroundStyle(Theme.ink)
-                    if let suffix = prefs.displayMode.widgetSuffix {
-                        Text(suffix)
-                            .font(.system(size: 11))
-                            .foregroundStyle(Theme.inkSecondary)
-                    }
-                } else {
-                    Text("--")
-                        .font(Theme.figure(size: valueSize))
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-            }
-            .lineLimit(1)
-            .minimumScaleFactor(0.8)
-            // Fixed height, so the bars line up across columns whatever
-            // the glyphs above them (a dash measures shorter than digits).
-            .frame(height: ceil(valueSize * 1.2), alignment: .leading)
-            .padding(.top, 2)
+            WidgetFigure(window: window, mode: prefs.displayMode, size: valueSize)
+                // Fixed height, so the bars line up across columns whatever
+                // the glyphs above them (a dash measures shorter than digits).
+                .frame(height: ceil(valueSize * 1.2), alignment: .leading)
             UsageBarView(
                 value: window?.displayedPct(prefs.displayMode),
-                tint: window?.tint(usageColors: prefs.usageColors) ?? Theme.accent
+                tint: window?.tint(usageColors: prefs.usageColors) ?? Theme.accent,
+                height: 8,
+                lit: true
             )
-            .padding(.top, 7)
+            .padding(.top, 6)
             subtitle
-                .font(.system(size: 9))
-                .foregroundStyle(Theme.inkSecondary.opacity(0.9))
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Theme.inkSecondary)
                 .lineLimit(1)
-                .minimumScaleFactor(0.8)
+                .minimumScaleFactor(0.7)
                 .padding(.top, 5)
         }
         .accessibilityElement(children: .combine)

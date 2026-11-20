@@ -1,18 +1,6 @@
 import SwiftUI
 import AppIntents
 
-enum WidgetMetrics {
-    static let markSize: CGFloat = 48
-    static let markRadius: CGFloat = 11
-}
-
-extension DisplayMode {
-    /// "left" in remaining mode, nil in used mode.
-    var widgetSuffix: String? {
-        self == .remaining ? suffix : nil
-    }
-}
-
 /// Puts back the system's content margins that every widget configuration
 /// turns off (`contentMarginsDisabled`), so a button can reach the edges.
 private struct WidgetMargins: ViewModifier {

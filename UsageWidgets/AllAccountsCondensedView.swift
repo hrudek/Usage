@@ -40,11 +40,7 @@ struct CondensedAccountsView: View {
     }
 
     private var header: some View {
-        WidgetMarkBand {
-            Text("All Accounts")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(Theme.ink)
-            Spacer(minLength: 0)
+        WidgetCardHeader(title: Text("All Accounts")) {
             nextReset
         }
     }
@@ -54,7 +50,7 @@ struct CondensedAccountsView: View {
         let layout = AccountCardLayout(snapshot: row.shownSnapshot, modelSlotFallback: prefs.modelSlotFallback)
         let hero = layout.hero.window
         let figures = ([layout.hero] + layout.others)
-            .map { "\($0.window?.shortTitle ?? $0.kind.shortName) \(Self.percent($0.window, prefs))" }
+            .map { "\($0.window?.shortTitle ?? $0.kind.shortName) \(WidgetFigure.text($0.window, prefs.displayMode))" }
             .joined(separator: "  ·  ")
         return VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 10) {
@@ -67,30 +63,25 @@ struct CondensedAccountsView: View {
                 UsageBarView(
                     value: hero?.displayedPct(prefs.displayMode),
                     tint: hero?.tint(usageColors: prefs.usageColors) ?? Theme.accent,
-                    height: 7,
+                    height: 8,
                     lit: true
                 )
-                Text(verbatim: Self.percent(hero, prefs))
-                    .font(Theme.figure(size: 15))
-                    .foregroundStyle(hero == nil ? Theme.inkSecondary : Theme.ink)
-                    .frame(width: Self.figureWidth, alignment: .trailing)
+                WidgetFigure(window: hero, mode: prefs.displayMode, size: 15)
+                    .fixedSize()
+                    .frame(minWidth: Self.figureWidth, alignment: .trailing)
             }
             if row.snapshot != nil {
                 Text(verbatim: figures)
                     .font(.system(size: 9))
                     .foregroundStyle(Theme.inkSecondary)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.85)
+                    .minimumScaleFactor(0.6)
                     .padding(.leading, Self.nameWidth + 10)
             }
         }
         // One VoiceOver element per account: its name and every window's
         // figure; the bar is decorative.
         .accessibilityElement(children: .combine)
-    }
-
-    private static func percent(_ window: UsageWindow?, _ prefs: Preferences) -> String {
-        window.map { "\(Int($0.displayedPct(prefs.displayMode)))%" } ?? "--"
     }
 
     @ViewBuilder
@@ -107,6 +98,7 @@ struct CondensedAccountsView: View {
             .font(.system(size: 9))
             .foregroundStyle(Theme.inkSecondary.opacity(0.9))
             .lineLimit(1)
+            .minimumScaleFactor(0.8)
         }
     }
 }
