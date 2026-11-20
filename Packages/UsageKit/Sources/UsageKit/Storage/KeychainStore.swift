@@ -4,6 +4,10 @@ import Security
 /// Thin Keychain wrapper for the app's own secrets. Pass the shared
 /// keychain access group when the value must be visible to both the app
 /// and the widget extension.
+///
+/// Every item is `AfterFirstUnlockThisDeviceOnly` and never synchronizable:
+/// a login stays on the device it was made on and leaves no copy in a
+/// backup, where a restored refresh token would rotate against this one.
 public struct KeychainStore: Sendable {
     public let service: String
     public let accessGroup: String?
@@ -32,12 +36,17 @@ public struct KeychainStore: Sendable {
 
     public func set(_ data: Data, for key: String) throws {
         var query = baseQuery(for: key)
-        let update: [String: Any] = [kSecValueData as String: data]
+        // Setting the class on update too moves an item written with an
+        // older class to this one.
+        let update: [String: Any] = [
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: Self.accessibility,
+        ]
 
         var status = SecItemUpdate(query as CFDictionary, update as CFDictionary)
         if status == errSecItemNotFound {
             query[kSecValueData as String] = data
-            query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+            query[kSecAttrAccessible as String] = Self.accessibility
             status = SecItemAdd(query as CFDictionary, nil)
         }
         guard status == errSecSuccess else {
@@ -70,6 +79,8 @@ public struct KeychainStore: Sendable {
         }
         try set(data, for: key)
     }
+
+    static var accessibility: CFString { kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly }
 
     private func baseQuery(for key: String) -> [String: Any] {
         var query: [String: Any] = [
