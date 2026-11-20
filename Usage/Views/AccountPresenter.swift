@@ -5,7 +5,8 @@ import UsageKit
 final class AccountPresenter {
     var reconnecting: ConnectedAccount?
     var iconPickerAccountID: String?
-    var renamingAccountID: String?
+    var renamingAccountID = ""
+    var showingRename = false
     var renameDraft = ""
     var disconnectingAccountID: String?
     @ObservationIgnored private var onDisconnect: (() -> Void)?
@@ -13,6 +14,7 @@ final class AccountPresenter {
     func rename(_ account: ConnectedAccount) {
         renameDraft = account.displayName
         renamingAccountID = account.accountID
+        showingRename = true
     }
 
     func confirmDisconnect(_ accountID: String, onDone: (() -> Void)?) {
@@ -46,8 +48,8 @@ struct AccountPresentations: ViewModifier {
                 }
             }
             .renameAccountAlert(
-                for: presenter.renamingAccountID ?? "",
-                isPresented: isSet($presenter.renamingAccountID),
+                for: presenter.renamingAccountID,
+                isPresented: $presenter.showingRename,
                 name: $presenter.renameDraft
             )
             .disconnectConfirmation(
