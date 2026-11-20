@@ -11,8 +11,6 @@ struct UsageEntry: TimelineEntry {
     /// The account's chosen glyph, read from the registry with the name.
     var accountIcon: AccountIcon? = nil
 
-    /// What the views draw: the account's per-model window left out when
-    /// it is hidden on widgets (`WidgetModelWindowPreference`).
     var shownSnapshot: UsageSnapshot? { snapshot?.forWidgets(of: accountID) }
 }
 

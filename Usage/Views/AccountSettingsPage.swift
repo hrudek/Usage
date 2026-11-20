@@ -151,8 +151,6 @@ struct AccountSettingsCards: View {
     }
 }
 
-/// The switch for `WidgetModelWindowPreference`; a change redraws the
-/// widgets.
 private struct WidgetModelWindowCard: View {
     let accountID: String
     @State private var isShown: Bool

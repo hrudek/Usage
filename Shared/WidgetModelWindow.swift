@@ -9,13 +9,11 @@ struct WidgetModelWindowPreference {
     let accountID: String
     private let defaults: UserDefaults
 
-    /// `defaults` is the App Group suite; tests hand in a throwaway one.
     init(accountID: String, defaults: UserDefaults = UserDefaults(suiteName: AppConfig.appGroupID) ?? .standard) {
         self.accountID = accountID
         self.defaults = defaults
     }
 
-    /// Stored only while off, so an account that never touched it has no key.
     var isShown: Bool {
         get { defaults.object(forKey: key) as? Bool ?? true }
         nonmutating set {
@@ -27,7 +25,6 @@ struct WidgetModelWindowPreference {
         }
     }
 
-    /// Run on disconnect with the account's other keys.
     func clear() {
         defaults.removeObject(forKey: key)
     }

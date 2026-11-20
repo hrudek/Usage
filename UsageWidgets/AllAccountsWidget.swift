@@ -7,8 +7,6 @@ struct AllAccountsEntry: TimelineEntry {
         let account: ConnectedAccount
         let snapshot: UsageSnapshot?
         var id: String { account.accountID }
-        /// What the views draw and the urgency order reads
-        /// (`UsageSnapshot.forWidgets(of:)`).
         var shownSnapshot: UsageSnapshot? { snapshot?.forWidgets(of: account.accountID) }
     }
     let date: Date
