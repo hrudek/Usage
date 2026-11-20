@@ -5,9 +5,6 @@ import UsageKit
 /// what the connection can access. Every claim here must stay true to the
 /// code — update this screen when the data flow changes.
 struct PrivacyView: View {
-    /// The Mac's tab puts the data decisions (iCloud, export) over the
-    /// explanation; on iOS they are in "Refresh & data", which links here.
-    var showsDataControls = false
 
     @Environment(UsageModel.self) private var model
 
@@ -22,14 +19,6 @@ struct PrivacyView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                if showsDataControls {
-                    CloudSyncSettings()
-                    if ExportSettings.isOffered(model) {
-                        SettingsGap()
-                        ExportSettings()
-                    }
-                    SettingsGap()
-                }
                 SectionHeader(title: String(localized: "Private by default"))
                 Card {
                     VStack(alignment: .leading, spacing: Theme.rowSpacing) {
@@ -55,18 +44,6 @@ struct PrivacyView: View {
                             systemName: "eye.slash.fill",
                             title: String(localized: "No tracking, no analytics"),
                             text: String(localized: "No analytics SDKs, no ad networks, no crash reporting. The app collects no data at all.")
-                        )
-                        Divider().overlay(Theme.track)
-                        PrivacyRow(
-                            systemName: "icloud",
-                            title: String(localized: "iCloud sync is opt-in"),
-                            text: String(localized: "If you turn it on in Settings, your display preferences and each account's usage history (the percentages and their dates, nothing else) go through your iCloud, under your Apple Account, to your other devices with AIMeter. Logins never do. There is no server of AIMeter's in between, and turning it off removes what it kept there.")
-                        )
-                        Divider().overlay(Theme.track)
-                        PrivacyRow(
-                            systemName: "applewatch",
-                            title: String(localized: "The Watch shows what your iPhone fetched"),
-                            text: String(localized: "The Watch app and its complications hold no credentials and never fetch on their own. Your iPhone sends them your accounts' figures, and Refresh on the Watch asks the iPhone.")
                         )
                     }
                 }

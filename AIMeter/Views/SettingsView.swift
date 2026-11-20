@@ -54,12 +54,6 @@ struct SettingsView: View {
                             SettingsGap()
                             ServiceStatusSettings()
                             SettingsGap()
-                            CloudSyncSettings()
-                            if ExportSettings.isOffered(model) {
-                                SettingsGap()
-                                ExportSettings()
-                            }
-                            SettingsGap()
                             PrivacyLinkSettings()
                         }
                         Divider().overlay(Theme.track)

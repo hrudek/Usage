@@ -106,9 +106,6 @@ extension UsageModel {
         guard let service = services[accountID] else { return false }
         do {
             try service.disconnect()
-            if let identity = service.account.syncIdentity ?? registry?.account(for: accountID)?.syncIdentity {
-                cloud?.removeHistory(identity: identity)
-            }
             registry?.remove(accountID)
             removeAccount(accountID: accountID)
             if accounts.count == 1 {

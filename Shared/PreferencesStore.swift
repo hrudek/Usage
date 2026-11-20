@@ -117,12 +117,6 @@ struct Preferences: Sendable {
     /// Privacy & data — which means it must load through the presence
     /// check.
     var checksServiceStatus: Bool = true
-    /// Whether the display preferences and every account's history go
-    /// through the user's iCloud to their other devices (`CloudSync`).
-    /// Off by default and opt-in: it is the one thing that leaves the
-    /// device beyond the provider's own endpoints, disclosed in Privacy
-    /// & data.
-    var cloudSync: Bool = false
     /// The account closest to a limit first, everywhere accounts are
     /// listed (`AccountOrder`); off, the registry's order, the user's own.
     var ordersByUrgency: Bool = false
@@ -139,7 +133,6 @@ struct Preferences: Sendable {
         static let showCreditsAmount = "pref.showCreditsAmount"
         static let usageColors = "pref.usageColors"
         static let checksServiceStatus = "pref.checksServiceStatus"
-        static let cloudSync = "pref.cloudSync"
         static let ordersByUrgency = "pref.ordersByUrgency"
         static let lastScheduledAt = "pref.lastScheduledAt"
     }
@@ -171,7 +164,6 @@ struct Preferences: Sendable {
         prefs.showCreditsAmount = defaults.bool(forKey: Keys.showCreditsAmount)
         prefs.usageColors = bool(defaults, Keys.usageColors, default: true)
         prefs.checksServiceStatus = bool(defaults, Keys.checksServiceStatus, default: true)
-        prefs.cloudSync = defaults.bool(forKey: Keys.cloudSync)
         prefs.ordersByUrgency = defaults.bool(forKey: Keys.ordersByUrgency)
         if let timestamp = defaults.object(forKey: Keys.lastScheduledAt) as? Date {
             prefs.lastScheduledAt = timestamp

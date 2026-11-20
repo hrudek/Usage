@@ -93,9 +93,6 @@ final class UsageModel {
     /// `UsageModel+History.swift`. nil store in unit tests.
     var timelines: [String: [String: [TimelineSample]]] = [:]
     let timelineStore: UsageTimelineStore?
-    /// iCloud sync while `Preferences.cloudSync` is on (`CloudSync`, see
-    /// `UsageModel+CloudSync.swift`); nil otherwise and in unit tests.
-    @ObservationIgnored var cloud: CloudSync?
     /// `peakEnabled` and the incident alerts are the fields on
     /// `NotificationPreferences` that ignore `accountID` (peak hours is a
     /// Claude-wide policy, an incident a service's, neither tied to any one
@@ -149,11 +146,6 @@ final class UsageModel {
         loadStoredServiceStatus()
         guard platformServices else { return }
         AppEnvironment.shared = self
-        // The other devices draw with the display preferences too.
-        PreferencesModel.onWidgetVisibleChange = { [weak self] in
-            self?.cloud?.pushPreferences(Preferences.load())
-        }
-        if Preferences.load().cloudSync { startCloudSync() }
         // Peak-hours alerts come from a fixed weekday schedule, not a
         // fetched snapshot, so they only need scheduling once here (and
         // whenever the toggle changes) — not on every refresh.
@@ -268,9 +260,6 @@ final class UsageModel {
             accounts[i].needsReauthentication = false
             accounts[i].isOffline = false
             reloadTimeline(for: accountID)
-            // Before the registry write below, so a first registration
-            // already carries the login's id.
-            syncToCloud(accountID: accountID, identity: snapshot.accountIdentity)
             if registry?.account(for: accountID) == nil {
                 // The in-memory account rather than `service.account`: a
                 // rename during this fetch has already landed there.

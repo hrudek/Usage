@@ -20,9 +20,6 @@ final class PreferencesModel {
     private var stored: Preferences
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var widgetReload: Task<Void, Never>?
-    /// Called with the widgets' reload, once per burst: the app's model
-    /// hands it to iCloud sync; the widgets never set it.
-    static var onWidgetVisibleChange: (() -> Void)?
 
     init(defaults: UserDefaults = Preferences.groupDefaults) {
         self.defaults = defaults
@@ -65,10 +62,6 @@ final class PreferencesModel {
         get { stored.checksServiceStatus }
         set { guard stored.checksServiceStatus != newValue else { return }; stored.checksServiceStatus = newValue; persist(newValue, Preferences.Keys.checksServiceStatus, reloadsWidgets: false) }
     }
-    var cloudSync: Bool {
-        get { stored.cloudSync }
-        set { guard stored.cloudSync != newValue else { return }; stored.cloudSync = newValue; persist(newValue, Preferences.Keys.cloudSync, reloadsWidgets: false) }
-    }
     var ordersByUrgency: Bool {
         get { stored.ordersByUrgency }
         set { guard stored.ordersByUrgency != newValue else { return }; stored.ordersByUrgency = newValue; persist(newValue, Preferences.Keys.ordersByUrgency, reloadsWidgets: true) }
@@ -107,7 +100,6 @@ final class PreferencesModel {
             try? await Task.sleep(for: .milliseconds(500))
             guard !Task.isCancelled else { return }
             WidgetReload.all()
-            Self.onWidgetVisibleChange?()
         }
     }
 }
