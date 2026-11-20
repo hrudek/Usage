@@ -239,12 +239,7 @@ struct ConnectClaudeSheet: View {
         }
     }
 
-    /// The field accepts the OAuth code from the sign-in page. On macOS only
-    /// it also accepts a full credentials JSON copied from another machine
-    /// (`~/.claude/.credentials.json`) — a fallback if the sign-in flow ever
-    /// breaks. The iOS build deliberately has no such path (see the hint
-    /// above): an App Store build must never take in another app's
-    /// credential file, so on iOS a pasted JSON is just an invalid code.
+    /// The field accepts the OAuth code from the sign-in page, nothing else.
     private func obtainCredentials() async throws -> ClaudeCredentials {
         let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
         return try await ClaudeOAuth().exchange(pastedCode: trimmed, session: session)

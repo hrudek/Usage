@@ -14,8 +14,8 @@ struct WindowRowView: View {
     /// fills the same line instead (`Preferences.showCreditsAmount`).
     var moneySubtitle: String? = nil
     /// Whether to render the pace status caption in this row. Off by
-    /// default and enabled only on the Claude detail screen (the dashboard,
-    /// menu bar, and landscape intentionally omit it); the caller folds the
+    /// default and enabled only on the Claude detail screen (the dashboard
+    /// and landscape intentionally omit it); the caller folds the
     /// warm-up gate into this flag too, so it's already both "this surface
     /// wants pace" and "pace has warmed up".
     var showsPace = false

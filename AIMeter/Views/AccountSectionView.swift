@@ -6,8 +6,7 @@ import UsageKit
 /// then its most urgent window as the protagonist and the rest as compact
 /// rows (`AccountCardLayout`), and the status tail only when there is
 /// something to say. Shared by the Dashboard (one card per account) and
-/// iPhone landscape; the macOS menu bar popover has its own denser block
-/// (`PopoverAccountBlock`).
+/// iPhone landscape.
 struct AccountSectionView: View {
     let usage: UsageModel.AccountUsage
     /// The Dashboard pushes Provider Detail from the header (needs an

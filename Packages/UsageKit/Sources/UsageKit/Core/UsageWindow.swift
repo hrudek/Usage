@@ -18,8 +18,7 @@ public struct UsageWindow: Codable, Hashable, Sendable {
         case weekly
         case modelSpecific(String)
         /// A named allowance the provider meters on its own calendar and
-        /// nothing else fits: GitHub Copilot's monthly premium requests,
-        /// chat and completions. The string is the provider's stable
+        /// nothing else fits. The string is the provider's stable
         /// identifier for it (`premium_interactions`), never a display
         /// name, so persistence keys stay the same in every language; the
         /// presentation layer names it. Its length rides in `duration`.

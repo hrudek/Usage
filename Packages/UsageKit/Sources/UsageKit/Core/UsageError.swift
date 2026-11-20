@@ -25,8 +25,8 @@ extension UsageError {
     /// (`notAuthenticated`, i.e. a refresh token Anthropic no longer
     /// honours — typically because the same login was refreshed elsewhere
     /// and the token rotated), they expired with no way to refresh them
-    /// here (`tokenExpired`, e.g. macOS mirroring Claude Code's own login,
-    /// which only the CLI may rotate), or they're gone entirely
+    /// here (`tokenExpired`, the widget, which leaves renewing to the
+    /// app), or they're gone entirely
     /// (`credentialsNotFound`). None of them heal by retrying, so a UI that
     /// only shows the message leaves the user stuck — surfaces offer a
     /// re-connect affordance instead. Deliberately broader than what

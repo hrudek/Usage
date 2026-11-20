@@ -9,7 +9,7 @@ extension DashboardView {
     /// in the way of the single-account case). Holding a card lifts it,
     /// dragging moves it, and releasing over another section makes it take
     /// that section's place — which rewrites the shared account registry,
-    /// so the macOS menu bar popover, the all-accounts widget, and every
+    /// so the all-accounts widget and every
     /// account picker pick up the same order.
     ///
     /// Built on a plain gesture rather than SwiftUI's drag and drop
@@ -73,7 +73,7 @@ extension DashboardView {
     /// `UILongPressGestureRecognizer` (`ReorderPressRecognizer`), because on
     /// those systems any SwiftUI gesture with a drag in it stops the
     /// enclosing ScrollView from panning for touches that begin on the card
-    /// — the whole story is on that type. iOS 17 and macOS keep the SwiftUI
+    /// — the whole story is on that type. iOS 17 keeps the SwiftUI
     /// gesture, which has no such problem there. Both report through
     /// `handleReorderPhase`/`lift`/`drag`/`endReorder`, so the reorder itself
     /// behaves identically.
@@ -147,7 +147,7 @@ extension DashboardView {
     /// press window is treated as the scroll it is: it never lifts, and the
     /// drag values that follow are ignored (`draggingID` stays nil).
     ///
-    /// iOS 17 and macOS only — iOS 18+ uses `ReorderPressRecognizer`
+    /// iOS 17 only — iOS 18+ uses `ReorderPressRecognizer`
     /// instead (see `withReorderGesture(_:for:)` for why).
     private func reorderGesture(for accountID: String) -> some Gesture {
         LongPressGesture(minimumDuration: 0.5)

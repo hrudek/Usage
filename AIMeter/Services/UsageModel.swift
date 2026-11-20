@@ -10,8 +10,7 @@ import UsageKit
 /// alongside, per account). Split by feature across
 /// `UsageModel+Connections.swift` (connect/reconnect/disconnect, demo),
 /// `UsageModel+Naming.swift` (ordering and nicknames),
-/// `UsageModel+Notifications.swift` (per-account toggles) and
-/// `UsageModel+macOS.swift` (the refresh schedule and observers); this
+/// and `UsageModel+Notifications.swift` (per-account toggles); this
 /// file holds the state, loading, and the refresh path.
 ///
 /// `isRefreshing` and `needsConnection` below are true aggregates over every
@@ -38,8 +37,8 @@ final class UsageModel {
         /// Signing in again is the *only* honest recovery here: the
         /// alternative a user would otherwise reach for — disconnect and
         /// add the account back — mints a fresh `accountID`, which orphans
-        /// this account's history, notification preferences, Live Activity
-        /// toggle, and every already-placed widget configured for it.
+        /// this account's history, notification preferences, and every
+        /// already-placed widget configured for it.
         var needsReauthentication = false
         /// The last failure was the network, not the provider: the card
         /// shows a quiet "offline, showing the last update" line instead of
@@ -52,8 +51,7 @@ final class UsageModel {
     /// `private(set)` in spirit — only this type's own files mutate it.
     var accounts: [AccountUsage] = []
     /// An account the "Open Account" intent asked for; the Dashboard's
-    /// navigation stack opens its detail and clears it (`ContentView`). The
-    /// Mac goes through `AppChrome.openAccount` instead.
+    /// navigation stack opens its detail and clears it (`ContentView`).
     var accountToOpen: String?
     /// Transient error from the Connect sheet's own attempt to store fresh
     /// credentials — distinct from an already-connected account's ongoing
@@ -85,9 +83,8 @@ final class UsageModel {
     /// read UserDefaults through the notification getters re-evaluate.
     var notificationsRevision = 0
 
-    /// The app's model: the App Group registry, the one-time migration,
-    /// and the platform services (macOS refresh schedule and observers,
-    /// the peak notification sweep).
+    /// The app's model: the App Group registry and the platform services
+    /// (the notification sweep).
     convenience init() {
         guard !Self.isTestHost else {
             self.init(registry: nil, platformServices: false)
@@ -215,8 +212,7 @@ final class UsageModel {
             if accounts[i].account.displayName != service.account.displayName {
                 // A rename landed while this fetch was in flight. The
                 // `service` captured above still carried the old nickname,
-                // so it just synced the Live Activity and re-issued the
-                // reset/run-out notifications under it — redo those nudges
+                // so it just re-issued the reset/run-out notifications under it — redo those nudges
                 // from the current name rather than leave the old one on
                 // screen until the next refresh.
                 propagateName(accountID: accountID)

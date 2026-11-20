@@ -81,7 +81,7 @@ public enum AccountIcon: Codable, Hashable, Sendable {
 }
 
 /// The list of currently connected accounts, in display order — the App
-/// Group-shared source of truth the Dashboard, menu bar, and widget
+/// Group-shared source of truth the Dashboard and the widget
 /// `AppIntent` option queries all enumerate from. Only the app calls the
 /// mutating methods; the widget extension only ever reads via
 /// `accounts()`/`account(for:)`, mirroring `SnapshotStore`'s "only the app
@@ -151,8 +151,8 @@ public struct AccountRegistryStore: @unchecked Sendable {
 
     /// Rewrites the whole list, order included — the app's dashboard uses
     /// this to persist a drag-reorder, since this list's order *is* the
-    /// display order every surface enumerates (dashboard, menu bar popover,
-    /// all-accounts widget, and the widget account pickers).
+    /// display order every surface enumerates (dashboard, all-accounts
+    /// widget, and the widget account pickers).
     /// A second entry with an id already in the list is dropped.
     public func replaceAll(_ accounts: [ConnectedAccount]) {
         save(Self.uniqued(accounts))

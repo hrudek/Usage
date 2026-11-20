@@ -23,8 +23,6 @@ nonisolated enum AppConfig {
     /// Large-only widget showing every connected account at once — no
     /// per-instance configuration, since there's nothing to pick.
     static let allAccountsWidgetKind = "AIMeterAllAccounts"
-    /// The Watch's complications, one kind for every accessory family.
-    static let watchWidgetKind = "AIMeterWatchUsage"
     /// iOS 18's control (Control Center, the Lock Screen, the Action
     /// button): one account's glance figure, a tap refreshing it.
     static let controlKind = "AIMeterControl"

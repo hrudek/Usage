@@ -2,10 +2,7 @@ import AppIntents
 import UsageKit
 
 /// Shortcuts / Siri: fetch every connected account now and say what came
-/// back. On the Mac this is also the sanctioned way to a system-wide key
-/// — assign one to the shortcut in the Shortcuts app — without the
-/// Accessibility permission a global hotkey of the app's own would need
-/// (see "macOS hiding & re-entry" in AIMeter/CLAUDE.md).
+/// back.
 struct RefreshUsageIntent: AppIntent {
     static var title: LocalizedStringResource = "Refresh Usage"
     static var description = IntentDescription("Fetches the latest usage for every connected account and updates the widgets.")

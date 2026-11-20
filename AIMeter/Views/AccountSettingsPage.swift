@@ -8,12 +8,10 @@ import UsageKit
 /// lives in Settings' other sections, so nothing is in two places
 /// (Mike's rule, 2026-10-19). Shown on the account's page
 /// (`AccountSettingsPage`, pushed from Settings' account list and from
-/// the end of Provider Detail) and in the Mac Settings window's Accounts
-/// tab's detail pane (`MacAccountsSettingsPage`).
+/// the end of Provider Detail).
 struct AccountSettingsCards: View {
     let accountID: String
-    /// Called once the account is disconnected, so a pushed page can pop
-    /// and the Mac's tab can pick another account.
+    /// Called once the account is disconnected, so a pushed page can pop.
     var onDisconnect: (() -> Void)? = nil
 
     @Environment(UsageModel.self) private var model
@@ -214,8 +212,7 @@ struct AccountSettingsCards: View {
 /// Asks before disconnecting an account, saying what goes with it, and
 /// calls `onDone` only once it is gone (a failed cascade leaves it, its
 /// error on its card). Anchored to the control that asks, so iPad's
-/// popover points at it. The account page's button and the Mac's "−"
-/// both use it.
+/// popover points at it.
 struct DisconnectConfirmation: ViewModifier {
     let accountID: String
     @Binding var isPresented: Bool

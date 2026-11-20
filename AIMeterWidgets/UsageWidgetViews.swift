@@ -94,8 +94,7 @@ struct WidgetHeader: View {
             }
             // Always present, not just while stale — a predictable, always-
             // available manual refresh, same philosophy as the app's own
-            // Dashboard refresh button. macOS omits it: a sandboxed widget
-            // there has no credentials to fetch with (see `WidgetRefresher`).
+            // Dashboard refresh button.
             Button(intent: RefreshAccountIntent(accountID: accountID)) {
                 Image(systemName: "arrow.clockwise")
                     .font(.system(size: 9, weight: .semibold))
@@ -112,7 +111,7 @@ struct WidgetHeader: View {
 /// countdown), then up to two other windows as compact lines (name, a thin
 /// bar, the figure). The same `AccountCardLayout` decides which leads, so
 /// the widget and the Dashboard always agree. The medium family is
-/// `MediumUsageView`, columns, like the Mac's popover.
+/// `MediumUsageView`, in columns.
 struct SystemUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences

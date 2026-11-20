@@ -5,8 +5,7 @@ import UsageKit
 /// Three families today (`ProviderCatalog.providerIDs`), each with the
 /// flow its own tools use: Claude's sign-in page and the code it shows
 /// (`ConnectClaudeSheet`), and a one-time device code for Codex (entered
-/// on ChatGPT's device page) and GitHub Copilot (entered on GitHub's),
-/// both drawn by `DeviceCodeConnectView`. Signing in again
+/// on ChatGPT's device page, `DeviceCodeConnectView`). Signing in again
 /// (`reconnecting`) skips the picker: the account's family is known.
 struct ConnectAccountSheet: View {
     /// nil for a brand-new connection; the account being repaired otherwise.

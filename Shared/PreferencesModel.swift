@@ -83,8 +83,8 @@ final class PreferencesModel {
 
     /// Writes one key through to the App Group. `reloadsWidgets` is true
     /// for the prefs widgets read when they render: nothing re-renders
-    /// them until their next timeline reload — up to the refresh floor
-    /// away, or on macOS until the app's next scheduled fetch — so one
+    /// them until their next timeline reload, up to the refresh floor
+    /// away, so one
     /// coalesced reload per burst of changes (a segmented pill tapped three
     /// times in a row is one reload, not three against WidgetKit's per-kind
     /// budget) closes that gap.

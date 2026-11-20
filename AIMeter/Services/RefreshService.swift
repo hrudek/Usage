@@ -234,9 +234,8 @@ struct RefreshService {
     }
 
     func disconnect() throws {
-        // Whatever backs this account — the CLI mirror's fallback copy, or
-        // the app's own Keychain item — `CredentialStore.clear` removes it
-        // without this type knowing which.
+        // `CredentialStore.clear` removes the account's Keychain item
+        // without this type knowing its family.
         try credentialSource.clear()
         store?.removeSnapshot(for: account.accountID)
         UsageRecorder.clear(accountID: account.accountID)

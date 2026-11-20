@@ -8,10 +8,8 @@ import UsageKit
 /// under them), then one row per group, each opening its own screen:
 /// Appearance, Widgets, Refresh & data, About. No Notifications group:
 /// every alert is an account's, so it would only have listed the accounts
-/// above again (Mike, 2026-10-22). While nothing is connected, or while the demo is on, the
-/// demo's card leads. The Mac's Settings window has the same groups as
-/// tabs and sections (`MacSettingsView`); both are built from the section
-/// views in `SettingsSections.swift`.
+/// above again (Mike, 2026-10-22). Built from the section views in
+/// `SettingsSections.swift`.
 struct SettingsView: View {
     @Environment(UsageModel.self) private var model
 

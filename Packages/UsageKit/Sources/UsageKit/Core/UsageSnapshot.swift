@@ -89,7 +89,7 @@ extension UsageWindow {
     /// The window's rollover period, for advancing a reset the provider
     /// left out: the periodic kinds (weekly, per-model, a named quota)
     /// repeat every `effectiveDuration` (7 days for Claude, a month for
-    /// Codex Free or Copilot). Sessions start on first use, so they have
+    /// Codex Free). Sessions start on first use, so they have
     /// no fixed anchor, and credits are not a time window.
     var nominalPeriod: TimeInterval? {
         switch kind {

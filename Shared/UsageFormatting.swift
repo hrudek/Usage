@@ -6,9 +6,8 @@ import UsageKit
 /// session and weekly, so the composition is there from the start. With
 /// a snapshot, what the account reports: its session and its overall
 /// period (the week, or Codex Free's month) in that order, then the third
-/// slot; or, for a provider that meters named quotas and no rate window
-/// (GitHub Copilot's monthly premium requests, chat and completions), up
-/// to three of those in the provider's order.
+/// slot; or, for a provider that meters named quotas and no rate window,
+/// up to three of those in the provider's order.
 ///
 /// The third slot only ever shows a real per-model window when the plan
 /// actually reports one (e.g. Max/Team Premium's Fable 5 allowance). When it
@@ -83,9 +82,8 @@ extension UsageSnapshot {
     }
 
     /// Resolves the one window a `glanceMetric` preference points at, for
-    /// the macOS menu bar label and iOS's Lock Screen circular gauge —
-    /// both single-number surfaces with no room for a fixed three-slot
-    /// layout. Missing data (e.g. Credits picked but spend disabled, or a
+    /// the Lock Screen circular gauge, a single-number surface with no
+    /// room for a fixed three-slot layout. Missing data (e.g. Credits picked but spend disabled, or a
     /// per-model window from a plan the account no longer has) renders as
     /// the surface's own placeholder, same as any other slot.
     func window(for kind: UsageWindow.Kind) -> UsageWindow? {
@@ -137,7 +135,7 @@ extension UsageSnapshot {
 extension Preferences {
     /// The Credits row's optional "$14.27 of $25.00" subtitle, shared by
     /// every surface that renders `WindowSlots`'s credits slot (dashboard,
-    /// provider detail, menu bar, widgets) — nil unless the slot actually
+    /// provider detail, widgets) — nil unless the slot actually
     /// is Credits, the toggle is on, and the account has spend data.
     func creditsAmountSubtitle(for kind: UsageWindow.Kind, snapshot: UsageSnapshot?) -> String? {
         guard kind == .credits, showCreditsAmount else { return nil }
@@ -208,7 +206,7 @@ enum UsageFormatting {
     }
 
     /// The bare value of `resetLabel`, for a line that has no room for the
-    /// sentence (the notch island's segments, the ring widget's centre):
+    /// sentence (the compact rows, the ring widget's centre):
     /// the countdown for the relative style; the clock time, with the
     /// weekday when not today and the date from a week on, for the
     /// absolute one.

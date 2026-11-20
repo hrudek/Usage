@@ -12,7 +12,7 @@ extension UsageWindow.Kind {
         title(duration: nil)
     }
 
-    /// Compact label for widgets and the menu bar; `UsageWindow.shortTitle`
+    /// Compact label for widgets; `UsageWindow.shortTitle`
     /// with the window's length.
     var shortName: String {
         shortTitle(duration: nil)
@@ -77,8 +77,8 @@ extension UsageWindow.Kind {
     }
 
     /// A named quota's title, from the provider's own stable id (what the
-    /// kind carries, so keys stay the same in every language): Copilot's
-    /// three, and any other id as readable words.
+    /// kind carries, so keys stay the same in every language), as
+    /// readable words.
     static func quotaName(_ id: String) -> String {
         switch id {
         case "premium_interactions": return String(localized: "Premium requests")
@@ -181,9 +181,7 @@ extension UsageWindow {
     func tint(usageColors: Bool) -> Color { level(usageColors: usageColors).color }
 
     /// Same decision as `tint(usageColors:)`, callable without a full
-    /// `UsageWindow` — the Live Activity only carries `usedPct`/`severity`
-    /// in its `ContentState` (not a whole window), so it needs this
-    /// reusable instead of duplicating the thresholds.
+    /// `UsageWindow`, for a caller that only has `usedPct`/`severity`.
     static func tint(usedPct: Double, severity: Severity?, usageColors: Bool) -> Color {
         (usageColors ? UsageLevel(usedPct: usedPct, severity: severity) : .normal).color
     }

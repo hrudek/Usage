@@ -6,8 +6,8 @@ struct ContentView: View {
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
     @Environment(\.scenePhase) private var scenePhase
-    /// The Dashboard's navigation, held here so the Mac's popover can open
-    /// an account's detail in it (`AppChrome.openAccount`).
+    /// The Dashboard's navigation, held here so the "Open Account" intent
+    /// can open an account's detail in it.
     @State private var path = NavigationPath()
     var body: some View {
         dashboard
@@ -37,18 +37,13 @@ struct ContentView: View {
 
     private var dashboard: some View {
         NavigationStack(path: $path) {
-            // The Dashboard draws its own header on iOS, and hides the
-            // navigation bar itself but on iPhone Duo's side bar
-            // (`DashboardSideBar`); the Mac's window toolbar carries its
-            // buttons instead.
+            // The Dashboard draws its own header, and hides the navigation
+            // bar itself but on iPhone Duo's side bar (`DashboardSideBar`).
             DashboardView()
         }
-        // An account disconnected (from its own settings page, Settings,
-        // or the Mac's Settings window): back to the Dashboard, since the
-        // detail and the settings page in the stack have nothing left to
-        // show. Before 4.0.1 the settings page popped onto an empty
-        // Provider Detail titled with a provider's name, which read as
-        // another account, and the stack could stick (Mike, 2026-10-21).
+        // An account disconnected (from its own settings page or
+        // Settings): back to the Dashboard, since the detail and the
+        // settings page in the stack have nothing left to show.
         .onChange(of: model.accounts.map(\.account.accountID)) { old, new in
             if !Set(old).isSubset(of: Set(new)), !path.isEmpty {
                 path = NavigationPath()
@@ -61,18 +56,6 @@ struct ContentView: View {
             path = NavigationPath()
             path.append(accountID)
         }
-        #if DEBUG
-        // `-AIMeterOpenAccount <accountID>` opens that account's detail at
-        // launch, and with `-AIMeterOpenAccountSettings YES` its settings
-        // page, to check or capture them without a tap.
-        .onAppear {
-            guard path.isEmpty, let id = UserDefaults.standard.string(forKey: "AIMeterOpenAccount") else { return }
-            path.append(id)
-            if UserDefaults.standard.bool(forKey: "AIMeterOpenAccountSettings") {
-                path.append(AccountSettingsRoute(accountID: id))
-            }
-        }
-        #endif
     }
 }
 

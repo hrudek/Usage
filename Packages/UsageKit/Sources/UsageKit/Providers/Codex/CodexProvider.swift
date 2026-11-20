@@ -3,8 +3,7 @@ import Foundation
 /// Fetches a ChatGPT account's Codex limits from the endpoint the Codex
 /// CLI reads for `/status`. All endpoint specifics live here and in
 /// `CodexUsageResponse` so a server change touches one place; the login
-/// itself is `CodexCredentials`, from the CLI's file on a Mac or the
-/// in-app device-code sign-in.
+/// itself is `CodexCredentials`, from the in-app device-code sign-in.
 public struct CodexProvider: UsageProvider {
     static let usageEndpoint = URL(string: "https://chatgpt.com/backend-api/wham/usage")!
 

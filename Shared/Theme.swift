@@ -16,13 +16,12 @@ enum Theme {
     /// Warm yellow for usage above 70 % or provider-flagged warning —
     /// clearly yellow, with enough warmth to sit with the terracotta on
     /// ivory and charcoal cards (a cold, pure yellow glared on a light
-    /// widget). The notch island, on pure black, uses `islandWarning`.
+    /// widget).
     static let warning = Color(light: 0xDDA712, dark: 0xF0BF3A)
-    /// The warning yellow on the notch island's black.
+    /// The warning yellow on pure black.
     static let islandWarning = Color(hex: 0xF5C443)
     /// Pure red for usage above 85 %, errors, and major incidents — no
-    /// orange in it, so it never reads as a darker terracotta, on a card
-    /// or on the notch island's black.
+    /// orange in it, so it never reads as a darker terracotta.
     static let danger = Color(light: 0xD70015, dark: 0xFF3B30)
 
     /// Screen background: warm ivory / warm charcoal, Claude's own two
@@ -55,7 +54,7 @@ enum Theme {
     /// Reset line, "Updated X ago", footnotes.
     static let caption = Font.footnote
     /// Every usage figure, everywhere (4.0): the account card's
-    /// protagonist, the popover's columns, every widget, the Live Activity.
+    /// protagonist, every widget.
     /// Rounded, with tabular digits so a changing figure doesn't jitter.
     /// The app passes its own `@ScaledMetric` so it follows Dynamic Type;
     /// widgets pass fixed sizes (see `WidgetHeader`).

@@ -2,10 +2,7 @@ import SwiftUI
 import WidgetKit
 import UsageKit
 
-// The accessory families, system-tinted: iOS's Lock Screen and the
-// Watch's complications draw the same three (the Watch adds the corner).
-// Compiled into both widget extensions (`WidgetsShared/`), never into the
-// Mac's families.
+// The accessory families, system-tinted: the Lock Screen's three.
 
 struct CircularUsageView: View {
     let snapshot: UsageSnapshot

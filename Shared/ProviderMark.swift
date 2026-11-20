@@ -2,9 +2,8 @@ import SwiftUI
 import UsageKit
 
 /// The glyph that stands in for an account wherever a header reads
-/// "icon + name": `ProviderIdentityView` (dashboard, landscape, menu bar,
-/// every widget), the Connect sheet header, Privacy & data, and the Live
-/// Activity's compact/minimal islands.
+/// "icon + name": `ProviderIdentityView` (dashboard, landscape, every
+/// widget), the Connect sheet header, and Privacy & data.
 ///
 /// With no `icon` it is an SF Symbol on the app's own accent wash — the
 /// default every account starts with, and what shipped alone through

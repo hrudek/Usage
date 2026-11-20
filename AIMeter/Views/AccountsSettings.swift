@@ -4,10 +4,9 @@ import UsageKit
 /// Settings' accounts card: one row per account (its mark, name and plan,
 /// the service under it, or "Sign in again" when its login stopped
 /// working), each opening its own settings (`AccountSettingsCards`), then
-/// "Add account" and, with two or more, "Order by urgency". On iOS a row
-/// pushes the account's page and "Add account" opens the Connect sheet
-/// over Settings; the Mac's Accounts tab is a list and a detail pane
-/// instead (`MacAccountsSettingsPage`), which draws the same rows.
+/// "Add account" and, with two or more, "Order by urgency". A row pushes
+/// the account's page and "Add account" opens the Connect sheet over
+/// Settings.
 struct AccountListSettings: View {
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
@@ -64,8 +63,8 @@ struct AccountListSettings: View {
 
 /// One account in Settings: its mark, its name with the plan beside it,
 /// and under them the service it belongs to, or "Sign in again" in red
-/// while its login doesn't work. The row's control (a link, a button, the
-/// Mac list's selection) reads as one element to VoiceOver.
+/// while its login doesn't work. The row's control (a link, a button)
+/// reads as one element to VoiceOver.
 struct AccountListRow: View {
     let usage: UsageModel.AccountUsage
     var chevron = false

@@ -2,8 +2,7 @@ import SwiftUI
 import UsageKit
 
 /// Icon + name + optional plan pill — the repeated first part of every
-/// provider header across the dashboard, landscape view, menu bar, and
-/// widgets. Each caller wraps it in its own `HStack` with whatever
+/// provider header across the dashboard, landscape view, and widgets. Each caller wraps it in its own `HStack` with whatever
 /// trailing content and spacing that surface needs (chevron, "Updated X
 /// ago", a staleness hint, or nothing), since those genuinely differ per
 /// surface; the icon/name/pill trio doesn't.
@@ -17,8 +16,7 @@ struct ProviderIdentityView: View {
     /// The account's chosen glyph (`ConnectedAccount.icon`); nil is the
     /// default mark.
     var icon: AccountIcon? = nil
-    /// A smaller pill for a header with little height (the Watch's list
-    /// sections): the phone's reads as tall as its row there.
+    /// A smaller pill for a header with little height.
     var compactPill = false
 
     var body: some View {

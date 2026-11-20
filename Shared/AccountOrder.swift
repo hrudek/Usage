@@ -3,8 +3,7 @@ import UsageKit
 
 /// The order accounts show in with "Order by urgency" on
 /// (`Preferences.ordersByUrgency`): the one closest to a limit first, on
-/// the Dashboard, in the menu bar popover, the notch island and on the
-/// Watch (all drawn from `UsageModel.accounts`) and in the all-accounts
+/// the Dashboard (drawn from `UsageModel.accounts`) and in the all-accounts
 /// widget (sorted as it reads the registry). The registry keeps the
 /// user's own order underneath, untouched, for when the switch goes off.
 enum AccountOrder {

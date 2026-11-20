@@ -2,10 +2,8 @@ import SwiftUI
 import UsageKit
 
 
-// The sections of Settings both platforms show, one view each (header,
-// card, footnote), so the iOS sheet stacks them in one list
-// (`SettingsView`) and the Mac spreads them over its Settings window's
-// tabs (`MacSettingsView`) without either copying the other. A section
+// The sections of Settings, one view each (header, card, footnote),
+// stacked in one list by `SettingsView`. A section
 // never adds the gap around itself; the list that places it does.
 
 /// The space between two sections of a Settings list.
@@ -114,7 +112,7 @@ struct BackgroundRefreshSettings: View {
     }
 }
 
-/// The row that pushes Privacy & data (iOS — the Mac gives it a tab).
+/// The row that pushes Privacy & data.
 struct PrivacyLinkSettings: View {
     var body: some View {
         Card {

@@ -4,9 +4,8 @@ import UsageKit
 
 /// Interactive widget button action: force a fetch for one account right
 /// now, then reload the widget's timeline so the tap shows fresh data
-/// within a couple seconds. iOS only — a sandboxed macOS widget can't read
-/// Claude Code's credential file, so the menu bar app feeds it instead (see
-/// `WidgetRefresher`); there's nothing for a macOS tap to fetch with.
+/// within a couple seconds. Like every widget fetch it only reads the
+/// stored login (`WidgetRefresher`).
 ///
 /// Internal to the widget's own button, not a standalone Shortcuts/Siri
 /// action.

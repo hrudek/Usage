@@ -1,8 +1,7 @@
 import SwiftUI
 
-/// "Order by urgency" (`AccountOrder`), one row in Settings' account card
-/// (under the list on iOS, under the list on the Mac's Accounts tab),
-/// mirrored into the model as it changes, like "Check service status".
+/// "Order by urgency" (`AccountOrder`), one row in Settings' account card,
+/// under the list, mirrored into the model as it changes.
 /// Only with accounts to order. Until 4.1 it was a section of its own
 /// whose header repeated its one switch.
 struct AccountOrderToggle: View {

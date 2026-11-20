@@ -26,7 +26,6 @@ struct AIMeterApp: App {
 
     }
 
-    /// Identifies the dashboard scene so the macOS AppDelegate can reopen it
-    /// by id after both icons have been hidden.
+    /// Identifies the dashboard scene.
     static let dashboardWindowID = "dashboard"
 }

@@ -3,7 +3,7 @@ import SwiftUI
 extension View {
     /// A page of rows on an iPad reads at a column's width, centred, rather
     /// than stretched across the screen: account detail, an account's
-    /// settings, Settings. Nothing changes on an iPhone or a Mac.
+    /// settings, Settings. Nothing changes on an iPhone.
     func readableWidth() -> some View {
         modifier(ReadableWidth())
     }

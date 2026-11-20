@@ -33,8 +33,8 @@ extension View {
         background { AppBackground() }
     }
 
-    /// A card's surface: Liquid Glass tinted with the card color on iOS and
-    /// macOS 26 and later; before that (and on the Watch) the solid card
+    /// A card's surface: Liquid Glass tinted with the card color on iOS 26
+    /// and later; before that the solid card
     /// with a light along its top edge and a two-layer shadow, which is the
     /// same pane without the glass.
     func cardSurface(radius: CGFloat = Theme.cardRadius) -> some View {
@@ -42,7 +42,7 @@ extension View {
     }
 
     /// A floating control's surface (the Dashboard's round buttons, "Add
-    /// account", the popover's footer button): interactive Liquid Glass on
+    /// account"): interactive Liquid Glass on
     /// 26 and later, a thin material with an edge light before.
     func glassControl<S: InsettableShape>(in shape: S) -> some View {
         modifier(GlassControl(shape: shape))
@@ -55,7 +55,7 @@ private struct CardSurface: ViewModifier {
 
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
-        if #available(iOS 26, macOS 26, *) {
+        if #available(iOS 26, *) {
             content
                 .glassEffect(.regular.tint(Theme.card.opacity(scheme == .dark ? 0.62 : 0.78)), in: shape)
                 .shadow(color: .black.opacity(scheme == .dark ? 0.22 : 0.05), radius: 18, x: 0, y: 10)
@@ -87,7 +87,7 @@ private struct GlassControl<S: InsettableShape>: ViewModifier {
     @Environment(\.colorScheme) private var scheme
 
     func body(content: Content) -> some View {
-        if #available(iOS 26, macOS 26, *) {
+        if #available(iOS 26, *) {
             content.glassEffect(.regular.interactive(), in: shape)
         } else {
             material(content)

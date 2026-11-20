@@ -13,7 +13,7 @@ struct DeviceCodePrompt {
     let poll: () async throws -> ProviderLogin?
 }
 
-/// The device-code sign-in, the shape Codex's and GitHub Copilot's share:
+/// The device-code sign-in (Codex's):
 /// AIMeter asks the service for a one-time code and shows it with the
 /// page to type it on; the user signs in there, in their browser, never
 /// in an embedded web view; the view polls until the service hands back
@@ -33,9 +33,6 @@ struct DeviceCodeConnectView: View {
     /// nil for a brand-new connection; the account being repaired otherwise.
     var reconnecting: ConnectedAccount?
     let start: () async throws -> DeviceCodePrompt
-    /// An extra way in above the code, if the service has one (the Mac's
-    /// "Use Codex's login on this Mac").
-    var alternative: AnyView?
 
     @Environment(UsageModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -73,10 +70,6 @@ struct DeviceCodeConnectView: View {
                     .font(.callout)
                     .foregroundStyle(Theme.inkSecondary)
                     .multilineTextAlignment(.center)
-
-                if let alternative, reconnecting == nil {
-                    alternative
-                }
 
                 codeBlock
 
@@ -303,13 +296,9 @@ struct DeviceCodeConnectView: View {
 
 /// Codex: ChatGPT's device-code sign-in, the one the Codex CLI offers for
 /// a terminal with no browser (`codex login --device-auth`), so it works
-/// from a phone too. On the Mac the login Codex itself keeps can be
-/// mirrored instead, with no sign-in at all.
+/// from a phone too.
 struct CodexConnectView: View {
     var reconnecting: ConnectedAccount?
-    @Environment(UsageModel.self) private var model
-    @Environment(\.dismiss) private var dismiss
-    @State private var connectingCLI = false
 
     var body: some View {
         DeviceCodeConnectView(
@@ -331,14 +320,7 @@ struct CodexConnectView: View {
                 ) {
                     try await auth.poll(code).map(ProviderLogin.codex)
                 }
-            },
-            alternative: cliLogin
+            }
         )
-    }
-
-    /// macOS: the login the Codex CLI keeps in ~/.codex, mirrored
-    /// read-only, the way the first Claude account mirrors Claude Code's.
-    private var cliLogin: AnyView? {
-        return nil
     }
 }

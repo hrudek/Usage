@@ -9,11 +9,8 @@ extension UsageModel {
 
     /// Moves an account so it takes `targetID`'s place — what a dashboard
     /// drag-and-drop performs, once, on drop. Registry order *is* display
-    /// order for every surface (dashboard, macOS menu bar popover, the
-    /// all-accounts widget, and each widget's account picker), so this one
-    /// write reorders them all. It also decides which account the macOS
-    /// status item falls back to when no `primaryAccountID` is set:
-    /// whichever ends up first.
+    /// order for every surface (dashboard, the all-accounts widget, and
+    /// each widget's account picker), so this one write reorders them all.
     @discardableResult
     func moveAccount(_ accountID: String, onto targetID: String) -> Bool {
         guard accountID != targetID,
@@ -49,7 +46,7 @@ extension UsageModel {
 
     /// Puts `accounts` in the order the switch says: by urgency while it
     /// is on, else the registry's, the user's own. Called after every
-    /// load and every sweep, before the Watch is told, so each surface
+    /// load and every sweep, so each surface
     /// drawn from `accounts` shows the same order.
     func applyAccountOrder() {
         if ordersByUrgency {
@@ -130,8 +127,8 @@ extension UsageModel {
     /// Sets or clears the account's glyph (`AccountIcon`) — the other thing
     /// about an account the user can change after connecting, with the
     /// same in-place rule as `rename`: nothing keyed by `accountID` moves.
-    /// Reaches the same cached surfaces a rename does (widgets, a running
-    /// Live Activity); notifications carry no icon, so the reschedule in
+    /// Reaches the same cached surfaces a rename does (widgets);
+    /// notifications carry no icon, so the reschedule in
     /// `propagateName` is a harmless no-op for them.
     func setIcon(_ icon: AccountIcon?, for accountID: String) {
         guard let i = index(for: accountID) else { return }
@@ -145,8 +142,7 @@ extension UsageModel {
     /// Pushes an account's *current* nickname to the surfaces that cache
     /// it outside `accounts`: every placed widget (headers and the
     /// all-accounts widget read the name from the registry; one discrete
-    /// reload, same as a reorder), a Live Activity already running under
-    /// the old name, and the reset/run-out notifications already queued
+    /// reload, same as a reorder) and the reset/run-out notifications already queued
     /// with the old nickname in their title. Called by `rename` itself and
     /// again by `refresh(accountID:)` when it finds a rename landed while
     /// its fetch was in flight — that fetch re-synced the activity and

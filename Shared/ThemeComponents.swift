@@ -57,8 +57,7 @@ struct SegmentedPill<Option: Hashable>: View {
                         .font(.subheadline.weight(selection == option.value ? .semibold : .regular))
                         .foregroundStyle(selection == option.value ? Theme.ink : Theme.inkSecondary)
                         .frame(maxWidth: .infinity)
-                        // 44 pt a segment on iOS, the size a finger needs
-                        // (36 until 4.3.1); the Mac's pointer keeps 8.
+                        // 44 pt a segment, the size a finger needs.
                         .padding(.vertical, Self.segmentPadding)
                         .background {
                             if selection == option.value {
@@ -128,8 +127,8 @@ struct SectionFootnote: View {
 }
 
 /// Error label (if the last fetch failed) and "Updated X ago" caption — the
-/// shared tail of an account's rows on the dashboard card, provider detail,
-/// and the menu bar popover. No hairlines: spacing alone sets it apart, as
+/// shared tail of an account's rows on the dashboard card and provider
+/// detail. No hairlines: spacing alone sets it apart, as
 /// it does every row since 4.0.
 struct UsageStatusFooter: View {
     let snapshot: UsageSnapshot?
@@ -148,7 +147,7 @@ struct UsageStatusFooter: View {
     /// is nothing for the user to fix.
     var offline = false
     /// "Updated X ago": `.always` on Provider Detail; `.whenStale` on the
-    /// Dashboard's cards and in the popover, whose own header says when the
+    /// Dashboard's cards, whose header says when the
     /// accounts last refreshed, so a card only speaks up once its figures
     /// fall behind (`UsageSnapshot.isStale`).
     var updated: UpdatedLine = .always
@@ -186,8 +185,7 @@ struct UsageStatusFooter: View {
 /// "Sign in to see your usage" text + Connect button, shown when a
 /// provider has no stored credentials yet. Holds only the content that's
 /// identical everywhere — callers still wrap it in their own container
-/// for whatever alignment/spacing their surface needs (a centered card on
-/// the dashboard, a left-aligned list in the menu bar popover), same as
+/// for whatever alignment/spacing their surface needs, same as
 /// `ProviderIdentityView`.
 struct DisconnectedPrompt: View {
     let buttonLabel: LocalizedStringKey

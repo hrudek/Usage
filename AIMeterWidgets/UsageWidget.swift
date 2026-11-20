@@ -15,10 +15,10 @@ struct UsageEntry: TimelineEntry {
 /// Serves the last snapshot from the App Group, for whichever account the
 /// user picked in Edit Widget (`UsageAccountConfigurationIntent`) — every
 /// placed instance, Home Screen or Lock Screen, has its own independent
-/// account selection. On iOS, when that snapshot is older than the refresh
-/// cadence, the widget fetches fresh usage itself (shared keychain
-/// credentials) so it keeps updating without the app; on macOS the menu bar
-/// app feeds it. Timeline policy re-runs this at the user-selected cadence,
+/// account selection. When that snapshot is older than the refresh
+/// cadence, the widget fetches fresh usage itself with the stored login
+/// (never renewing it), so it keeps updating without the app while the
+/// token is valid. Timeline policy re-runs this at the user-selected cadence,
 /// subject to WidgetKit's refresh budget.
 struct UsageTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> UsageEntry {
@@ -51,10 +51,8 @@ struct UsageTimelineProvider: AppIntentTimelineProvider {
         return Timeline(entries: [current], policy: .after(next))
     }
 
-    /// The resets the next reload may come forward for: on iOS, where
-    /// that reload fetches the refilled window (`WidgetSchedule.isStale`).
-    /// A Mac widget only ever shows what the app last wrote, so there a
-    /// reload at the reset would redraw the same figure.
+    /// The resets the next reload may come forward for, since that reload
+    /// fetches the refilled window (`WidgetSchedule.isStale`).
     static func resets(of snapshot: UsageSnapshot?) -> [Date] {
         snapshot?.windows.compactMap(\.resetsAt) ?? []
     }

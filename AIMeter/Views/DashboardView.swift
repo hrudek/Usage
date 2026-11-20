@@ -6,8 +6,7 @@ struct DashboardView: View {
     @Environment(PreferencesModel.self) private var prefs
     @State private var showingSettings = false
     @State private var showingConnect = false
-    /// Reconnect requested from a surface that can't present the sheet
-    /// itself (the menu bar popover) — see `AppChrome.connect(_:)`.
+    /// The account a "Sign in again" asked to repair.
     @State private var reconnecting: ConnectedAccount?
     /// Bumped per user-initiated refresh; drives the haptic only.
     @State private var refreshRequests = 0
@@ -86,7 +85,7 @@ struct DashboardView: View {
         // While a card is lifted, the list must not scroll under it. On
         // iOS 18+ UIKit already guarantees that (a recognised press prevents
         // the pan for that touch — see `ReorderPressRecognizer`); this makes
-        // the same promise explicitly for the iOS 17/macOS SwiftUI path and
+        // the same promise explicitly for the iOS 17 SwiftUI path and
         // costs nothing on the other. The finger has been still for the whole
         // press when this flips, so there is never a pan in progress to cut.
         .scrollDisabled(draggingID != nil)
