@@ -35,8 +35,6 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: Theme.rowSpacing) {
                         SettingsGroupLink(title: String(localized: "Appearance"), symbol: "paintbrush") {
                             AppearanceSettings()
-                            SettingsGap()
-                            AppIconSettings()
                             if UsageRowsSettings.isOffered(model) {
                                 SettingsGap()
                                 UsageRowsSettings()
@@ -58,11 +56,7 @@ struct SettingsView: View {
                         }
                         Divider().overlay(Theme.track)
                         SettingsGroupLink(title: String(localized: "About"), symbol: "info.circle") {
-                            FeedbackSettings()
-                            SettingsGap()
-                            OpenSourceSettings()
                             if !DemoModeSettings.leads(model) {
-                                SettingsGap()
                                 DemoModeSettings()
                             }
                         }

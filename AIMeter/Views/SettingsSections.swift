@@ -1,8 +1,6 @@
 import SwiftUI
 import UsageKit
 
-/// Public repo — shown in the "Open Source" settings row.
-private let githubRepoURL = URL(string: "https://github.com/MikeAlvarado/AIMeter")!
 
 // The sections of Settings both platforms show, one view each (header,
 // card, footnote), so the iOS sheet stacks them in one list
@@ -278,34 +276,3 @@ struct PrivacyLinkSettings: View {
     }
 }
 
-/// "Open Source": the repository, in the browser.
-struct OpenSourceSettings: View {
-    @Environment(\.openURL) private var openURL
-
-    var body: some View {
-        Card {
-            Button {
-                openURL(githubRepoURL)
-            } label: {
-                HStack(spacing: 12) {
-                    Image("GitHubIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 16, height: 16)
-                        .frame(width: 28, height: 28)
-                        .background(Theme.accentWash, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    Text("Open Source")
-                        .font(.body.weight(.medium))
-                        .foregroundStyle(Theme.ink)
-                    Spacer()
-                    Image(systemName: "arrow.up.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-        }
-        SectionFootnote(text: String(localized: "AIMeter is free and open source. Visit the repository to read the code, file an issue, or contribute."))
-    }
-}
