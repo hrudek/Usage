@@ -38,7 +38,7 @@ struct AccountSettingsCards: View {
         VStack(alignment: .leading, spacing: 10) {
             // A login that stopped working comes first: Settings' row for
             // the account says "Sign in again", and this is where it leads.
-            if let usage, usage.needsReauthentication, !model.isDemoMode {
+            if let usage, usage.needsReauthentication {
                 Card {
                     VStack(alignment: .leading, spacing: 10) {
                         Label(String(localized: "Sign-in expired. Usage can't refresh."), systemImage: "exclamationmark.triangle")
@@ -58,151 +58,145 @@ struct AccountSettingsCards: View {
                 }
                 SettingsGap()
             }
-            if !model.isDemoMode {
-                // The discoverable route to the same rename and icon the
-                // Dashboard header's context menu offers — a context menu
-                // announces nothing about itself.
-                SectionHeader(title: String(localized: "Account"))
-                Card {
-                    Button {
-                        renameDraft = usage?.account.displayName ?? ""
-                        showingRename = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Text("Name")
-                                .font(Theme.rowTitle)
-                                .foregroundStyle(Theme.ink)
-                            Spacer()
-                            Text(accountName)
-                                .font(.body)
-                                .foregroundStyle(Theme.inkSecondary)
-                                .lineLimit(1)
-                            Image(systemName: "pencil")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(Theme.inkSecondary)
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(Text("Rename account"))
-                    .accessibilityValue(Text(accountName))
-                    Divider().overlay(Theme.track)
-                    Button {
-                        showingIconPicker = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Text("Icon")
-                                .font(Theme.rowTitle)
-                                .foregroundStyle(Theme.ink)
-                            Spacer()
-                            ProviderMark(size: 24, cornerRadius: 6, icon: usage?.account.icon)
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(Theme.inkSecondary)
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(Text("Change icon"))
-                }
-                SectionFootnote(text: String(localized: "Shown on the dashboard, in widgets, and in notification titles."))
-                SettingsGap()
-            }
-
-            SectionHeader(title: String(localized: "Reset alerts"))
-            NotificationTogglesCard(accountID: accountID)
-            SectionFootnote(text: String(localized: "A notification when each limit refills."))
-
-            SettingsGap()
-            SectionHeader(title: String(localized: "Smart notifications"))
-            SmartNotificationTogglesCard(accountID: accountID)
-
-            SettingsGap()
-            SectionHeader(title: String(localized: "Renewal"))
-            RenewalReminderCard(accountID: accountID)
-            SectionFootnote(text: String(localized: "AIMeter can't see your billing, so the day is the one you set. The reminder comes that many days before, every month."))
-
-
-            if !model.isDemoMode {
-                // The discoverable route to the same rename and icon the
-                // Dashboard header's context menu offers — a context menu
-                // announces nothing about itself.
-                SectionHeader(title: String(localized: "Account"))
-                Card {
-                    Button {
-                        renameDraft = usage?.account.displayName ?? ""
-                        showingRename = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Text("Name")
-                                .font(Theme.rowTitle)
-                                .foregroundStyle(Theme.ink)
-                            Spacer()
-                            Text(accountName)
-                                .font(.body)
-                                .foregroundStyle(Theme.inkSecondary)
-                                .lineLimit(1)
-                            Image(systemName: "pencil")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(Theme.inkSecondary)
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(Text("Rename account"))
-                    .accessibilityValue(Text(accountName))
-                    Divider().overlay(Theme.track)
-                    Button {
-                        showingIconPicker = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Text("Icon")
-                                .font(Theme.rowTitle)
-                                .foregroundStyle(Theme.ink)
-                            Spacer()
-                            ProviderMark(size: 24, cornerRadius: 6, icon: usage?.account.icon)
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(Theme.inkSecondary)
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(Text("Change icon"))
-                }
-                SectionFootnote(text: String(localized: "Shown on the dashboard, in widgets, and in notification titles."))
-                SettingsGap()
-            }
-
-            SectionHeader(title: String(localized: "Reset alerts"))
-            NotificationTogglesCard(accountID: accountID)
-            SectionFootnote(text: String(localized: "A notification when each limit refills."))
-
-            SettingsGap()
-            SectionHeader(title: String(localized: "Smart notifications"))
-            SmartNotificationTogglesCard(accountID: accountID)
-
-            SettingsGap()
-            SectionHeader(title: String(localized: "Renewal"))
-            RenewalReminderCard(accountID: accountID)
-            SectionFootnote(text: String(localized: "AIMeter can't see your billing, so the day is the one you set. The reminder comes that many days before, every month."))
-
-            if !model.isDemoMode {
-                SettingsGap()
-                // Disconnecting deletes the account's history and alerts
-                // on this device, so it asks first.
-                Button(role: .destructive) {
-                    confirmingDisconnect = true
+            // The discoverable route to the same rename and icon the
+            // Dashboard header's context menu offers — a context menu
+            // announces nothing about itself.
+            SectionHeader(title: String(localized: "Account"))
+            Card {
+                Button {
+                    renameDraft = usage?.account.displayName ?? ""
+                    showingRename = true
                 } label: {
-                    Text("Disconnect \(accountName)")
-                        .font(.body.weight(.medium))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Theme.card, in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
+                    HStack(spacing: 12) {
+                        Text("Name")
+                            .font(Theme.rowTitle)
+                            .foregroundStyle(Theme.ink)
+                        Spacer()
+                        Text(accountName)
+                            .font(.body)
+                            .foregroundStyle(Theme.inkSecondary)
+                            .lineLimit(1)
+                        Image(systemName: "pencil")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                    .contentShape(Rectangle())
                 }
-                .disconnectConfirmation(accountID: accountID, isPresented: $confirmingDisconnect) {
-                    onDisconnect?()
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Rename account"))
+                .accessibilityValue(Text(accountName))
+                Divider().overlay(Theme.track)
+                Button {
+                    showingIconPicker = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Text("Icon")
+                            .font(Theme.rowTitle)
+                            .foregroundStyle(Theme.ink)
+                        Spacer()
+                        ProviderMark(size: 24, cornerRadius: 6, icon: usage?.account.icon)
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Change icon"))
+            }
+            SectionFootnote(text: String(localized: "Shown on the dashboard, in widgets, and in notification titles."))
+            SettingsGap()
+
+            SectionHeader(title: String(localized: "Reset alerts"))
+            NotificationTogglesCard(accountID: accountID)
+            SectionFootnote(text: String(localized: "A notification when each limit refills."))
+
+            SettingsGap()
+            SectionHeader(title: String(localized: "Smart notifications"))
+            SmartNotificationTogglesCard(accountID: accountID)
+
+            SettingsGap()
+            SectionHeader(title: String(localized: "Renewal"))
+            RenewalReminderCard(accountID: accountID)
+            SectionFootnote(text: String(localized: "AIMeter can't see your billing, so the day is the one you set. The reminder comes that many days before, every month."))
+
+
+            // The discoverable route to the same rename and icon the
+            // Dashboard header's context menu offers — a context menu
+            // announces nothing about itself.
+            SectionHeader(title: String(localized: "Account"))
+            Card {
+                Button {
+                    renameDraft = usage?.account.displayName ?? ""
+                    showingRename = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Text("Name")
+                            .font(Theme.rowTitle)
+                            .foregroundStyle(Theme.ink)
+                        Spacer()
+                        Text(accountName)
+                            .font(.body)
+                            .foregroundStyle(Theme.inkSecondary)
+                            .lineLimit(1)
+                        Image(systemName: "pencil")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Rename account"))
+                .accessibilityValue(Text(accountName))
+                Divider().overlay(Theme.track)
+                Button {
+                    showingIconPicker = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Text("Icon")
+                            .font(Theme.rowTitle)
+                            .foregroundStyle(Theme.ink)
+                        Spacer()
+                        ProviderMark(size: 24, cornerRadius: 6, icon: usage?.account.icon)
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Change icon"))
+            }
+            SectionFootnote(text: String(localized: "Shown on the dashboard, in widgets, and in notification titles."))
+            SettingsGap()
+
+            SectionHeader(title: String(localized: "Reset alerts"))
+            NotificationTogglesCard(accountID: accountID)
+            SectionFootnote(text: String(localized: "A notification when each limit refills."))
+
+            SettingsGap()
+            SectionHeader(title: String(localized: "Smart notifications"))
+            SmartNotificationTogglesCard(accountID: accountID)
+
+            SettingsGap()
+            SectionHeader(title: String(localized: "Renewal"))
+            RenewalReminderCard(accountID: accountID)
+            SectionFootnote(text: String(localized: "AIMeter can't see your billing, so the day is the one you set. The reminder comes that many days before, every month."))
+
+            SettingsGap()
+            // Disconnecting deletes the account's history and alerts
+            // on this device, so it asks first.
+            Button(role: .destructive) {
+                confirmingDisconnect = true
+            } label: {
+                Text("Disconnect \(accountName)")
+                    .font(.body.weight(.medium))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Theme.card, in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
+            }
+            .disconnectConfirmation(accountID: accountID, isPresented: $confirmingDisconnect) {
+                onDisconnect?()
             }
         }
         .sheet(isPresented: $showingIconPicker) {

@@ -18,13 +18,6 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                if DemoModeSettings.leads(model) {
-                    // Demo mode's only entry point: the dashboard's
-                    // disconnected card stays just Connect, so Settings
-                    // is the one place to find "View Demo".
-                    DemoModeSettings()
-                    SettingsGap()
-                }
                 AccountListSettings()
                 SettingsGap()
                 Card {
@@ -47,12 +40,6 @@ struct SettingsView: View {
                             BackgroundRefreshSettings()
                             SettingsGap()
                             PrivacyLinkSettings()
-                        }
-                        Divider().overlay(Theme.track)
-                        SettingsGroupLink(title: String(localized: "About"), symbol: "info.circle") {
-                            if !DemoModeSettings.leads(model) {
-                                DemoModeSettings()
-                            }
                         }
                     }
                 }

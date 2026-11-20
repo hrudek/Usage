@@ -34,7 +34,7 @@ extension UsageModel {
 
     func setNotificationsEnabled(_ enabled: Bool, for kind: UsageWindow.Kind, accountID: String) {
         // Never schedule a real notification off fabricated demo resets.
-        let snapshot = isDemoMode ? nil : usage(for: accountID)?.snapshot
+        let snapshot = usage(for: accountID)?.snapshot
         let prefs = preferences(for: accountID)
         let label = accountLabel(for: accountID)
         Task { @MainActor in
@@ -69,7 +69,7 @@ extension UsageModel {
     /// so flipping their toggle has nothing to queue.
     func setSmartAlertEnabled(_ enabled: Bool, _ alert: SmartAlert, accountID: String) {
         // Never schedule a real notification off fabricated demo resets.
-        let snapshot = isDemoMode ? nil : usage(for: accountID)?.snapshot
+        let snapshot = usage(for: accountID)?.snapshot
         let prefs = preferences(for: accountID)
         let label = accountLabel(for: accountID)
         Task { @MainActor in
@@ -123,7 +123,6 @@ extension UsageModel {
             prefs.renewalDay = reminder.day
             prefs.renewalLeadDays = reminder.leadDays
             notificationsRevision += 1
-            guard !isDemoMode else { return }
             await NotificationScheduler.rescheduleRenewal(accountID: accountID, accountLabel: label, preferences: prefs)
         }
     }

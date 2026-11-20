@@ -62,7 +62,7 @@ extension UsageModel {
     }
 
     private func move(from: Int, to: Int) {
-        guard !isDemoMode, accounts.indices.contains(from), accounts.indices.contains(to) else { return }
+        guard accounts.indices.contains(from), accounts.indices.contains(to) else { return }
         let moved = accounts.remove(at: from)
         accounts.insert(moved, at: min(to, accounts.count))
         registry?.replaceAll(accounts.map(\.account))
@@ -119,7 +119,7 @@ extension UsageModel {
     @discardableResult
     func rename(_ accountID: String, to newName: String) -> Bool {
         let name = newName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !isDemoMode, let i = index(for: accountID) else { return true }
+        guard let i = index(for: accountID) else { return true }
         guard !name.isEmpty, !isNameTaken(name, excluding: accountID) else { return false }
         guard accounts[i].account.displayName != name else { return true }
         accounts[i].account.displayName = name
@@ -140,7 +140,7 @@ extension UsageModel {
     /// Live Activity); notifications carry no icon, so the reschedule in
     /// `propagateName` is a harmless no-op for them.
     func setIcon(_ icon: AccountIcon?, for accountID: String) {
-        guard !isDemoMode, let i = index(for: accountID) else { return }
+        guard let i = index(for: accountID) else { return }
         guard accounts[i].account.icon != icon else { return }
         accounts[i].account.icon = icon
         registry?.setIcon(icon, for: accountID)

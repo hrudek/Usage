@@ -220,9 +220,7 @@ struct DashboardView: View {
                 // Not in demo mode: `completeConnection` would register a
                 // real account underneath the fabricated row, invisible
                 // until Exit Demo.
-                if !model.isDemoMode {
-                    addAccountButton
-                }
+                addAccountButton
             }
         }
         .frame(maxWidth: isWideSingle ? 560 : (isGrid ? 1100 : .infinity))

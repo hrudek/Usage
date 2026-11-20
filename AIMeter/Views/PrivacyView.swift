@@ -12,8 +12,7 @@ struct PrivacyView: View {
     /// and in demo mode, whose accounts stand for any of them): how each
     /// connects and what it can reach is said only for those.
     private var families: [String] {
-        model.isDemoMode ? ProviderCatalog.providerIDs
-            : ProviderCatalog.familiesToDescribe(connected: model.accounts.map(\.account.providerID))
+        ProviderCatalog.familiesToDescribe(connected: model.accounts.map(\.account.providerID))
     }
 
     var body: some View {

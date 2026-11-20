@@ -138,24 +138,7 @@ extension UsageModel {
         accounts.removeAll { $0.account.accountID == accountID }
     }
 
-    // MARK: - Demo mode
 
-    func enterDemoMode() {
-        isDemoMode = true
-        connectionError = nil
-        // Two fabricated accounts (see `DemoUsageData.accounts`), so the
-        // demo — the source of App Store screenshots — shows the
-        // multi-account dashboard and a per-account icon.
-        accounts = DemoUsageData.accounts().map { AccountUsage(account: $0.account, snapshot: $0.snapshot) }
-        applyAccountOrder()
-    }
-
-    func exitDemoMode() {
-        guard isDemoMode else { return }
-        isDemoMode = false
-        connectionError = nil
-        loadAccounts()
-    }
 
 
 }

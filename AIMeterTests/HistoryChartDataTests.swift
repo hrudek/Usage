@@ -91,30 +91,5 @@ final class HistoryChartDataTests: XCTestCase {
         XCTAssertTrue(quiet.summary(for: .weekly).contains("No resets"))
     }
 
-    func testDemoTimelineEndsOnTheSnapshotAndHasResets() {
-        let timeline = DemoUsageData.timeline(now: now)
-        let snapshot = DemoUsageData.snapshot(now: now)
-        for window in snapshot.windows {
-            let series = try? XCTUnwrap(timeline[window.kind.storageKey])
-            XCTAssertEqual(series?.last?.usedPct, window.usedPct, "\(window.kind)")
-            XCTAssertEqual(series?.last?.timestamp, now)
-            XCTAssertGreaterThan(series?.count ?? 0, 1400, "30 days every 30 minutes")
-        }
-        let sessions = HistoryChartData(samples: timeline["session"] ?? [], range: .week, now: now)
-        XCTAssertGreaterThan(sessions.resets.count, 20, "about 33 five-hour cycles in a week")
-        XCTAssertEqual(HistoryChartData(samples: timeline["weekly"] ?? [], range: .week, now: now).resets.count, 1)
-        XCTAssertEqual(HistoryChartData(samples: timeline["weekly"] ?? [], range: .month, now: now).resets.count, 4, "one weekly reset per week over 30 days")
-        XCTAssertTrue(sessions.isReady)
-        XCTAssertLessThanOrEqual(sessions.peak?.usedPct ?? 101, 100)
-    }
 
-    func testSecondDemoTimelineEndsOnItsOwnSnapshot() {
-        let snapshot = DemoUsageData.secondSnapshot(now: now)
-        let timeline = DemoUsageData.timeline(now: now, for: snapshot)
-        for window in snapshot.windows {
-            XCTAssertEqual(timeline[window.kind.storageKey]?.last?.usedPct, window.usedPct, "\(window.kind)")
-        }
-        XCTAssertNil(timeline["model.Top model"], "no per-model window, no per-model series")
-        XCTAssertEqual(DemoUsageData.accounts(now: now).map(\.account.displayName), ["Personal", "Work"])
-    }
 }

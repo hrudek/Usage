@@ -35,19 +35,17 @@ struct AccountListSettings: View {
                 }
                 // In demo mode a connection would land under the fabricated
                 // accounts (the Dashboard's "Add account" hides there too).
-                if !model.isDemoMode {
-                    Divider().overlay(Theme.track)
-                    Button {
-                        connecting = true
-                    } label: {
-                        Label("Add account", systemImage: "plus")
-                            .font(Theme.rowTitle)
-                            .foregroundStyle(Theme.accent)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
+                Divider().overlay(Theme.track)
+                Button {
+                    connecting = true
+                } label: {
+                    Label("Add account", systemImage: "plus")
+                        .font(Theme.rowTitle)
+                        .foregroundStyle(Theme.accent)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 if AccountOrderToggle.isOffered(model) {
                     Divider().overlay(Theme.track)
                     AccountOrderToggle()
@@ -119,12 +117,12 @@ struct UsageRowsSettings: View {
 
     /// The third row's fallback reaches every account with a session or a
     /// week, Claude's and Codex's (Codex reports spend too).
-    static func applies(toFamilies providerIDs: [String], demo: Bool) -> Bool {
+    static func applies(toFamilies providerIDs: [String]) -> Bool {
         true
     }
 
     static func isOffered(_ model: UsageModel) -> Bool {
-        applies(toFamilies: model.accounts.map(\.account.providerID), demo: model.isDemoMode)
+        applies(toFamilies: model.accounts.map(\.account.providerID))
     }
 
     var body: some View {
@@ -148,7 +146,7 @@ struct UsageRowsSettings: View {
             }
         }
         // The Claude example only to someone with a Claude account.
-        if model.isDemoMode || ProviderCatalog.familiesToDescribe(connected: model.accounts.map(\.account.providerID)).contains(ClaudeProvider.providerID) {
+        if ProviderCatalog.familiesToDescribe(connected: model.accounts.map(\.account.providerID)).contains(ClaudeProvider.providerID) {
             SectionFootnote(text: String(localized: "Some plans don't include a per-model limit of their own (e.g. Fable 5 on Claude Pro). Auto shows your spend/credits there only when enabled on your account; Hidden and Credits force it off or on. When the Credits row shows, \"Show credit amounts\" adds its $ used and limit under the row in place of a reset line."))
         } else {
             SectionFootnote(text: String(localized: "Some plans don't include a per-model limit of their own. Auto shows your spend/credits there only when enabled on your account; Hidden and Credits force it off or on. When the Credits row shows, \"Show credit amounts\" adds its $ used and limit under the row in place of a reset line."))

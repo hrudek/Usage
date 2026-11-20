@@ -81,18 +81,6 @@ final class UsageModelNamingTests: XCTestCase {
     }
 
 
-    func testDemoModeSwapsInTheNeutralAccount() {
-        let model = makeModel()
-        model.enterDemoMode()
-        XCTAssertTrue(model.isDemoMode)
-        XCTAssertEqual(model.accounts.map(\.account.displayName), ["Personal", "Work"])
-        // Demo ignores renames silently (the UI hides the affordance) — not
-        // a rejection, so the alert never re-presents, but nothing changes.
-        model.rename("demo", to: "X")
-        XCTAssertEqual(model.accounts.first?.account.displayName, "Personal")
-        model.exitDemoMode()
-        XCTAssertEqual(model.accounts.map(\.id), ["acc-work", "acc-home"])
-    }
 
     func testSetIconWritesTheAccountAndTheRegistry() {
         let model = makeModel()

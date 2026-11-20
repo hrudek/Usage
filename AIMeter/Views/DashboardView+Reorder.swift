@@ -32,13 +32,13 @@ extension DashboardView {
         let index = model.accounts.firstIndex { $0.id == usage.id } ?? 0
         // Not while the order is urgency's (`AccountOrder`): a drag would
         // write the registry under an order that isn't shown.
-        let canReorder = model.accounts.count > 1 && !model.isDemoMode && !model.ordersByUrgency
+        let canReorder = model.accounts.count > 1 && !model.ordersByUrgency
         let isDragging = draggingID == usage.id
         let section = AccountSectionView(
             usage: usage,
             moveUp: canReorder && index > 0 ? { model.moveAccount(usage.id, by: -1) } : nil,
             moveDown: canReorder && index < model.accounts.count - 1 ? { model.moveAccount(usage.id, by: 1) } : nil,
-            canRename: !model.isDemoMode,
+            canRename: true,
             showsSparkline: !isLandscapePhone,
             inColumns: isGrid
         )

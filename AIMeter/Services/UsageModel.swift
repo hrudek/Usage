@@ -51,12 +51,6 @@ final class UsageModel {
 
     /// `private(set)` in spirit — only this type's own files mutate it.
     var accounts: [AccountUsage] = []
-    /// True while showing fabricated data from "View Demo" — lets someone
-    /// (an App Store reviewer, a curious user) explore every screen without
-    /// a real Claude account. Never touches `RefreshService`, the App Group
-    /// `SnapshotStore`, or `WidgetCenter`, so it can never leak into
-    /// widgets or a real connection.
-    var isDemoMode = false
     /// An account the "Open Account" intent asked for; the Dashboard's
     /// navigation stack opens its detail and clears it (`ContentView`). The
     /// Mac goes through `AppChrome.openAccount` instead.
@@ -124,22 +118,11 @@ final class UsageModel {
         loadAccounts()
         guard platformServices else { return }
         AppEnvironment.shared = self
-        #if DEBUG
-        // `-AIMeterDemo YES`: the demo from launch, for captures and for
-        // the Watch simulator, which the demo then reaches (`WatchBridge`).
-        if UserDefaults.standard.bool(forKey: "AIMeterDemo") {
-            enterDemoMode()
-        }
-        #endif
     }
 
     /// Reuses any already-live `RefreshService` per account (keyed off the
     /// previous `services` dict) instead of rebuilding one from scratch —
-    /// `loadAccounts()` runs more than once per process (`init`, and
-    /// `exitDemoMode()`), and on macOS a fresh `ClaudeAutoCredentialSource`
-    /// would drop its cached read of Claude Code's Keychain item, which
-    /// exists specifically to avoid re-prompting for Keychain access on
-    /// every refresh — see `ClaudeAutoCredentialSource.cachedLocal`.
+    /// `loadAccounts()` may run more than once per process.
     func loadAccounts() {
         let previousServices = services
         let connected = registry?.accounts() ?? []
@@ -172,7 +155,6 @@ final class UsageModel {
     }
 
     func refreshAll() async {
-        guard !isDemoMode else { return }
         let fetched = await withTaskGroup(of: Bool.self) { group in
             for account in accounts.map(\.account) {
                 group.addTask { await self.fetch(accountID: account.accountID) }
@@ -207,7 +189,7 @@ final class UsageModel {
     /// `reloadAllTimelines()` draws on WidgetKit's per-kind budget and N
     /// accounts would otherwise spend it N times per sweep.
     func fetch(accountID: String) async -> Bool {
-        guard !isDemoMode, let service = services[accountID],
+        guard let service = services[accountID],
               let startIndex = index(for: accountID), !accounts[startIndex].isRefreshing else { return false }
         accounts[startIndex].isRefreshing = true
         defer {
@@ -289,7 +271,6 @@ final class UsageModel {
     /// after a while updates the dashboard — and, via the refresh flow,
     /// pushes new snapshots to the widgets immediately.
     func refreshAllIfStale(maxAge: TimeInterval = 60) async {
-        guard !isDemoMode else { return }
         // A widget may have recorded samples while the app was away.
         reloadTimelines()
         let fetched = await withTaskGroup(of: Bool.self) { group in
@@ -319,10 +300,6 @@ final class UsageModel {
     /// and the forecast, showing a "learning" state instead of asserting a
     /// pace from too little history.
     func paceReady(for accountID: String) -> Bool {
-        // Demo data has no real observation history to warm up from — treat
-        // it as always ready so the pace captions and Forecast card show
-        // their full state instead of "Learning your pace…".
-        if isDemoMode { return true }
         return PaceCalculator.isReady(observingSince: services[accountID]?.paceObservingSince())
     }
 
