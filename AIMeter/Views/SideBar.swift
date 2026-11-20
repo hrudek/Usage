@@ -74,27 +74,13 @@ extension View {
     }
 }
 
+/// The vertical-bar detection needs the iOS 27.1 SDK (`toolbarVerticalEdge`),
+/// which the CI's Xcode lacks; the side bar is never shown in this fork.
 private struct VerticalBarReader: ViewModifier {
     @Binding var isVertical: Bool
 
     func body(content: Content) -> some View {
-        if #available(iOS 27.1, *) {
-            content.modifier(EdgeReader(isVertical: $isVertical))
-        } else {
-            content
-        }
-    }
-}
-
-@available(iOS 27.1, *)
-private struct EdgeReader: ViewModifier {
-    @Binding var isVertical: Bool
-    @Environment(\.toolbarVerticalEdge) private var edge
-
-    func body(content: Content) -> some View {
         content
-            .onAppear { isVertical = edge != nil }
-            .onChange(of: edge) { _, edge in isVertical = edge != nil }
     }
 }
 #endif

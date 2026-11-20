@@ -107,11 +107,6 @@ final class UsageModel {
     /// account) — "global" is a documented placeholder, never used as a
     /// real key.
     let peakPreferences = NotificationPreferences(accountID: "global")
-    #if os(iOS)
-    /// The Watch app's feed (`WatchBridge`); nil with no Watch to pair,
-    /// and in unit tests.
-    @ObservationIgnored var watch: WatchBridge?
-    #endif
     #if os(macOS)
     @ObservationIgnored var refreshScheduler: NSBackgroundActivityScheduler?
     /// Claude Code's local usage on this Mac (see `ClaudeCodeUsageModel`);
@@ -167,13 +162,9 @@ final class UsageModel {
         AppEnvironment.shared = self
         #if os(iOS)
         endDemoLiveActivities()
-        watch = WatchBridge.makeIfSupported()
-        watch?.model = self
         #endif
-        // The Watch and the other devices draw with the display
-        // preferences too.
+        // The other devices draw with the display preferences too.
         PreferencesModel.onWidgetVisibleChange = { [weak self] in
-            self?.notifyWatch()
             self?.cloud?.pushPreferences(Preferences.load())
         }
         if Preferences.load().cloudSync { startCloudSync() }
@@ -231,15 +222,6 @@ final class UsageModel {
         #endif
         reloadTimelines()
         applyAccountOrder()
-        notifyWatch()
-    }
-
-    /// Everything the Watch shows changed: accounts, a snapshot, a
-    /// preference. Coalesced on the bridge's side.
-    func notifyWatch() {
-        #if os(iOS)
-        watch?.pushSoon()
-        #endif
     }
 
     // MARK: - Refresh
@@ -281,7 +263,6 @@ final class UsageModel {
         await status
         if fetched { WidgetReload.all() }
         applyAccountOrder()
-        notifyWatch()
     }
 
     /// This account's current array index. Never captured across an
@@ -301,7 +282,6 @@ final class UsageModel {
         }
         await status
         applyAccountOrder()
-        notifyWatch()
     }
 
     /// One account's fetch + bookkeeping. Returns whether a new snapshot
@@ -414,7 +394,6 @@ final class UsageModel {
         await status
         if fetched { WidgetReload.all() }
         applyAccountOrder()
-        notifyWatch()
     }
 
     var isRefreshing: Bool { accounts.contains { $0.isRefreshing } }

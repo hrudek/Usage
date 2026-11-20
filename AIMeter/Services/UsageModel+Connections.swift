@@ -123,7 +123,6 @@ extension UsageModel {
             }
             registry?.remove(accountID)
             removeAccount(accountID: accountID)
-            notifyWatch()
             if accounts.count == 1 {
                 // Back to a single account: its queued notifications still
                 // carry the nickname prefix only a multi-account install
@@ -168,7 +167,6 @@ extension UsageModel {
         DemoSessions.shared.reset()
         #endif
         applyAccountOrder()
-        notifyWatch()
     }
 
     func exitDemoMode() {
