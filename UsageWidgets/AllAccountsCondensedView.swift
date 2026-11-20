@@ -52,11 +52,11 @@ struct CondensedAccountsView: View {
 
     private var header: some View {
         HStack(spacing: 5) {
-            ProviderMark(size: 15, cornerRadius: 3.5)
             Text("All Accounts")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(Theme.ink)
             Spacer(minLength: 0)
+            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius)
         }
     }
 

@@ -90,6 +90,7 @@ struct UsageWidget: Widget {
         }
         .configurationDisplayName("Usage Limits")
         .description("Your account's limits and when they reset. Edit the widget to pick which account.")
+        .contentMarginsDisabled()
         .supportedFamilies(Self.families)
     }
 

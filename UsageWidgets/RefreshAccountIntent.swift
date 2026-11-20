@@ -24,12 +24,7 @@ struct RefreshAccountIntent: AppIntent {
 
     func perform() async throws -> some IntentResult {
         _ = await WidgetRefresher.refreshNow(accountID: accountID)
-        WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.widgetKind)
-        WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.singleWidgetKind)
-        WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.allAccountsWidgetKind)
-        if #available(iOS 18.0, *) {
-            ControlCenter.shared.reloadControls(ofKind: AppConfig.controlKind)
-        }
+        reloadWidgetsAndControl()
         return .result()
     }
 }
@@ -49,12 +44,16 @@ struct RefreshAllAccountsIntent: AppIntent {
                 group.addTask { _ = await WidgetRefresher.refreshNow(accountID: account.accountID) }
             }
         }
+        reloadWidgetsAndControl()
+        return .result()
+    }
+}
+
+private func reloadWidgetsAndControl() {
         WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.widgetKind)
         WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.singleWidgetKind)
         WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.allAccountsWidgetKind)
         if #available(iOS 18.0, *) {
             ControlCenter.shared.reloadControls(ofKind: AppConfig.controlKind)
         }
-        return .result()
-    }
 }

@@ -25,6 +25,7 @@ struct SingleUsageWidgetView: View {
                     now: entry.date,
                     moneySubtitle: entry.snapshot.flatMap { entry.prefs.creditsAmountSubtitle(for: entry.kind, snapshot: $0) }
                 )
+                .widgetMargins()
             } else if entry.style == .ring {
                 RingUsageView(entry: entry)
                     .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
@@ -110,9 +111,7 @@ extension SingleUsageEntry {
     var windowName: String { window?.shortTitle ?? kind.shortName }
 }
 
-/// The account's name with its mark, the peak badge for a session in peak
-/// hours, and on the trailing edge the window's name in the ring style
-/// (the bar style names it over its figure instead).
+/// The account's name, with its mark in the top-right corner.
 private struct SingleUsageHeader: View {
     let entry: SingleUsageEntry
 
@@ -137,8 +136,8 @@ private struct SingleUsageHeader: View {
 /// The ring style: the header naming the window, then the window as a ring
 /// in its level's color with only its figure and its reset in the centre
 /// (the bare live countdown under a day, `ResetLineText(bare:)`), clear
-/// of the stroke by more than its width, and 12 pt of air under the
-/// header (Mike's review, 2026-10-21: no "used", and room around the
+/// of the stroke by more than its width, and 8 pt of air under the
+/// header and window name (Mike's review, 2026-10-21: no "used", and room around the
 /// ring). The track is the bars' and the stroke 9 pt.
 private struct RingUsageView: View {
     let entry: SingleUsageEntry
