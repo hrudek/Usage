@@ -8,10 +8,6 @@ import SwiftUI
 // Everywhere else, every other iPhone included, nothing here changes what
 // shows.
 
-/// The Dashboard's side bar: while the bar is vertical it holds Settings,
-/// Refresh and Add account, and the drawn header (`RoundIconButton`)
-/// shows neither of its buttons; otherwise the navigation bar stays
-/// hidden and the header is the Dashboard's, as always.
 struct DashboardSideBar: ViewModifier {
     @Binding var isVertical: Bool
     let isRefreshing: Bool
