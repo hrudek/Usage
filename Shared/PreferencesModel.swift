@@ -83,10 +83,6 @@ final class PreferencesModel {
     }
 
 
-    /// The user opened the island for the first time: the coupling the
-    /// upgrade deferred applies now — the icon goes, its replacement has
-    /// been found. Returns whether this call was that first time.
-    @discardableResult
 
     /// The current values as a plain `Preferences`, for code paths written
     /// against the value type (widgets' rendering helpers).
