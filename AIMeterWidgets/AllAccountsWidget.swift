@@ -32,7 +32,7 @@ struct AllAccountsEntry: TimelineEntry {
 struct AllAccountsTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> AllAccountsEntry {
         AllAccountsEntry(
-            date: .now, rows: [.init(account: ProviderCatalog.legacyAccount, snapshot: .sample)], prefs: Preferences()
+            date: .now, rows: [.init(account: ProviderCatalog.placeholderAccount, snapshot: .sample)], prefs: Preferences()
         )
     }
 

@@ -7,12 +7,9 @@ import UsageKit
 /// notifications. One instance per `ConnectedAccount` — `UsageModel` holds
 /// one per registered account and fans refreshes out concurrently.
 struct RefreshService {
-    /// `private(set) var` rather than `let` for exactly one mutation,
-    /// `renamed(to:)`: `displayName` is the only field of an account that
-    /// can change without invalidating the credential source built in
-    /// `init`, which depends on `accountID` and `credentialStrategy`
-    /// alone. A strategy change still rebuilds the whole service
-    /// (`UsageModel.reconnect`).
+    /// `private(set) var` rather than `let` for the display-only fields
+    /// (`renamed(to:)`, `withIcon(_:)`): the credential source built in
+    /// `init` depends on `accountID` and `providerID` alone.
     private(set) var account: ConnectedAccount
     /// Built by `ProviderCatalog.makeProvider` from `account.providerID` —
     /// nothing in this type knows which provider it's refreshing.
@@ -34,19 +31,14 @@ struct RefreshService {
         KeychainStore(service: AppConfig.keychainService, accessGroup: AppConfig.keychainAccessGroup)
     }
 
-    /// The same service under a new nickname. Keeps the provider — and with
-    /// it any in-memory cache it holds (the CLI-mirrored macOS account's
-    /// plan cache, see `ClaudeProvider`'s `PlanCache`) — where rebuilding the
-    /// service the way a reconnect must would throw that away for a change
-    /// that touches no credential.
+    /// The same service under a new nickname, keeping its provider.
     func renamed(to displayName: String) -> RefreshService {
         var copy = self
         copy.account.displayName = displayName
         return copy
     }
 
-    /// Same one-field copy as `renamed(to:)`, for the chosen glyph — the
-    /// other display-only field a fetch feeds to the Live Activity.
+    /// Same one-field copy as `renamed(to:)`, for the chosen glyph.
     func withIcon(_ icon: AccountIcon?) -> RefreshService {
         var copy = self
         copy.account.icon = icon
@@ -80,14 +72,8 @@ struct RefreshService {
                 .fillingMissingResets(from: previous)
         } catch {
             // Only `notAuthenticated` alerts, not everything
-            // `requiresReauthentication` covers: `tokenExpired` on macOS
-            // just means Claude Code hasn't rotated its own token yet (the
-            // CLI heals that on its next run), and `credentialsNotFound` is
-            // also what the speculative macOS auto-detect candidate throws
-            // when there's no CLI login to mirror — an account the app then
-            // drops rather than keeps. Notifying about either would be
-            // crying wolf; both still show the in-app sign-in affordance,
-            // which costs nothing when it turns out to be unnecessary.
+            // `requiresReauthentication` covers; the others still show the
+            // in-app sign-in affordance on the account's card.
             if case UsageError.notAuthenticated = error {
                 await NotificationScheduler.notifyReauthenticationNeeded(
                     accountID: account.accountID,

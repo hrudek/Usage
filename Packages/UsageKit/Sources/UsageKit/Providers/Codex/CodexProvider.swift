@@ -47,13 +47,9 @@ public struct CodexProvider: UsageProvider {
 
         var (data, response) = try await send(with: credentials)
 
-        if response.statusCode == 401 {
-            if credentialSource.allowsRefresh {
-                credentials = try await refreshed(credentials)
-                (data, response) = try await send(with: credentials)
-            } else {
-                credentialSource.invalidateCache()
-            }
+        if response.statusCode == 401, credentialSource.allowsRefresh {
+            credentials = try await refreshed(credentials)
+            (data, response) = try await send(with: credentials)
         }
 
         switch response.statusCode {
@@ -80,20 +76,13 @@ public struct CodexProvider: UsageProvider {
             throw UsageError.invalidResponse("no usage windows in response")
         }
 
-        let accountID = decoded.accountId ?? credentials.accountID
         return UsageSnapshot(
             providerID: id,
             planName: decoded.planType,
             fetchedAt: Date(),
             windows: windows,
-            spend: decoded.spendStatus(),
-            accountIdentity: accountID.map { Self.identity(for: $0) }
+            spend: decoded.spendStatus()
         )
-    }
-
-    /// The cross-device identity of a login, from the ChatGPT account id.
-    static func identity(for accountID: String) -> String {
-        "\(providerID):\(accountID)"
     }
 
     /// What an HTTP error shows of the response (`UsageError.displayBody`).

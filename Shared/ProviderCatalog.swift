@@ -12,8 +12,8 @@ import UsageKit
 /// pure functions, read from default arguments and from widget timeline
 /// code that runs off the main actor.
 nonisolated enum ProviderCatalog {
-    /// The provider the legacy single-account install belongs to, and
-    /// what an id the registry can't place fetches as.
+    /// The provider of `placeholderAccount`, and what an unknown family is
+    /// treated as.
     static let defaultProviderID = ClaudeProvider.providerID
 
     /// Every family this build can connect, in the order the Connect
@@ -22,8 +22,7 @@ nonisolated enum ProviderCatalog {
 
     /// The families Settings and Privacy & data talk about: those the
     /// connected accounts belong to, in the picker's order, so someone
-    /// without Copilot reads nothing about Copilot (Mike, 2026-10-22).
-    /// With nothing connected, every family, since then the text is what
+    /// without a family's account reads nothing about it. With nothing connected, every family, since then the text is what
     /// someone reads before choosing one.
     static func familiesToDescribe(connected providerIDs: [String]) -> [String] {
         let connected = Self.providerIDs.filter(providerIDs.contains)
@@ -51,37 +50,17 @@ nonisolated enum ProviderCatalog {
         }
     }
 
-    /// The pre-multi-account install's one account, and every widget's
-    /// fallback when the registry is empty (nothing connected yet, or the
-    /// app hasn't run its migration since this install's last update):
-    /// the literal `"claude"` accountID whose Keychain item, snapshot, and
-    /// history survived the upgrade unchanged.
-    static var legacyAccount: ConnectedAccount {
-        fallbackAccount(for: ClaudeKeychainCredentialSource.legacyAccountID)
-    }
-
-    /// What a caller holding only an accountID fetches as when the registry
-    /// can't place it (a read that came back empty, or the legacy id before
-    /// the migration ran): that same id — so its own Keychain key — as a
-    /// managed login of the default provider. For the legacy id this is
-    /// `legacyAccount` exactly; for any other it can never borrow another
-    /// account's login and file that account's figures under this one.
-    static func fallbackAccount(for accountID: String) -> ConnectedAccount {
-        ConnectedAccount(
-            accountID: accountID,
-            providerID: defaultProviderID,
-            displayName: displayName(for: defaultProviderID),
-            credentialStrategy: .managed
-        )
-    }
+    /// What a widget shows while no account is connected: its previews,
+    /// and the pickers' one option. Never stored and never fetched.
+    static let placeholderAccount = ConnectedAccount(
+        accountID: "placeholder",
+        providerID: defaultProviderID,
+        displayName: displayName(for: defaultProviderID)
+    )
 
     /// A working provider for one connected account, plus the credential
     /// store to clear on disconnect. Keyed by `account.providerID`; the
-    /// credential strategy and the account's Keychain key decide which
-    /// source backs it: on macOS an `.autoDetected` account mirrors the
-    /// CLI's own login (Claude Code's Keychain item, Codex's auth.json),
-    /// read-only; every `.managed` account has the app's own copy in the
-    /// Keychain (see each provider's CLAUDE.md).
+    /// account's own Keychain key backs it.
     ///
     /// `allowsRefresh` is false in the widget extension: it reads the
     /// stored login and never rotates it, so the app is the only process
@@ -116,11 +95,10 @@ nonisolated enum ProviderCatalog {
             assertionFailure("unknown provider \(account.providerID)")
             let claude = ConnectedAccount(
                 accountID: account.accountID, providerID: ClaudeProvider.providerID,
-                displayName: account.displayName, credentialStrategy: account.credentialStrategy,
+                displayName: account.displayName,
                 connectedAt: account.connectedAt, icon: account.icon
             )
             return makeProvider(for: claude, keychain: keychain, allowsRefresh: allowsRefresh, transport: transport)
         }
     }
-
 }

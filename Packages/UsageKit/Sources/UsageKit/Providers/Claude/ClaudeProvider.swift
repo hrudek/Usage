@@ -29,7 +29,6 @@ public struct ClaudeProvider: UsageProvider {
     private let transport: any HTTPTransport
     private let userAgent: String
     private let refresher: TokenRefresher
-    private let profileCache = ProfileCache()
 
     /// How long a rejected refresh waits before its last look at the
     /// store (see `rotate`). Tests set it to zero.
@@ -61,17 +60,9 @@ public struct ClaudeProvider: UsageProvider {
 
         var (data, response) = try await send(with: credentials)
 
-        if response.statusCode == 401 {
-            if credentialSource.allowsRefresh {
-                credentials = try await refreshed(credentials)
-                (data, response) = try await send(with: credentials)
-            } else {
-                // A read-only source may be serving a cached copy of a
-                // login its owner (Claude Code) has since replaced. Drop
-                // it so the next attempt reads the current one instead of
-                // failing identically until the cache expires on its own.
-                credentialSource.invalidateCache()
-            }
+        if response.statusCode == 401, credentialSource.allowsRefresh {
+            credentials = try await refreshed(credentials)
+            (data, response) = try await send(with: credentials)
         }
 
         switch response.statusCode {
@@ -99,60 +90,44 @@ public struct ClaudeProvider: UsageProvider {
             throw UsageError.invalidResponse("no usage windows in response")
         }
 
-        let profile = await profile(for: credentials)
+        let planName = await plan(for: credentials)
         return UsageSnapshot(
             providerID: id,
-            planName: profile.plan,
+            planName: planName,
             fetchedAt: Date(),
             windows: windows,
             spend: decoded.spendStatus(),
             extraUsage: decoded.extraUsageStatus(),
-            accountIdentity: profile.uuid.map { Self.identity(for: $0) },
             breakdown: decoded.usageBreakdown()
         )
     }
 
-    /// The cross-device identity of a login, from the profile's account id.
-    static func identity(for accountUUID: String) -> String {
-        "\(providerID):\(accountUUID)"
-    }
-
-    /// The stored plan and account id while the plan is still within
-    /// `planRecheckInterval`; otherwise re-resolved from the profile
-    /// endpoint and persisted, so later fetches skip the extra call until
-    /// it goes stale again. An account whose id was never read is due for
-    /// the call whatever its plan's age: the id is what iCloud sync keys
-    /// its history by. Best-effort: a profile failure keeps the last plan
-    /// and id we knew rather than blanking them.
+    /// The stored plan while it is still within `planRecheckInterval`;
+    /// otherwise re-resolved from the profile endpoint and persisted, so
+    /// later fetches skip the extra call until it goes stale again.
+    /// Best-effort: a profile failure keeps the last plan we knew rather
+    /// than blanking it.
     ///
     /// The write-back re-reads the source instead of saving the
     /// `credentials` value this fetch started with, and that matters: only
-    /// `subscriptionType`, `planCheckedAt` and `accountUUID` are ours to
-    /// persist here, while the token fields may have been rotated in the
-    /// meantime by a concurrent fetch. The refresher runs the write once no
-    /// rotation of this login does, on what the store holds then. Saving
-    /// the whole stale value would put a consumed refresh token back over
-    /// the fresh one — and Anthropic rejects a consumed refresh token
-    /// permanently, which bricks the account until the user signs in again.
-    private func profile(for credentials: ClaudeCredentials) async -> (plan: String?, uuid: String?) {
-        if let cached = profileCache.profile(checkedWithin: Self.planRecheckInterval) {
-            return cached
-        }
+    /// `subscriptionType` and `planCheckedAt` are ours to persist here,
+    /// while the token fields may have been rotated in the meantime by a
+    /// concurrent fetch. The refresher runs the write once no rotation of
+    /// this login does, on what the store holds then. Saving the whole
+    /// stale value would put a consumed refresh token back over the fresh
+    /// one, and Anthropic rejects a consumed refresh token permanently.
+    private func plan(for credentials: ClaudeCredentials) async -> String? {
         if let subscription = credentials.subscriptionType,
            let checkedAt = credentials.planCheckedAt,
-           let uuid = credentials.accountUUID,
            Date().timeIntervalSince(checkedAt) < Self.planRecheckInterval {
-            return (subscription, uuid)
+            return subscription
         }
-        guard let fetched = try? await fetchProfile(with: credentials), let plan = fetched.subscriptionType else {
-            // Unreachable profile — or one that reports no subscription at
+        guard let plan = try? await fetchProfile(with: credentials)?.subscriptionType else {
+            // Unreachable profile, or one that reports no subscription at
             // all, which is also what a shape change would look like. Keep
             // the last plan we knew instead of dropping the pill over it.
-            let known = profileCache.lastKnown
-            return (known?.plan ?? credentials.subscriptionType, known?.uuid ?? credentials.accountUUID)
+            return credentials.subscriptionType
         }
-        let uuid = fetched.accountUUID ?? credentials.accountUUID
-        profileCache.record(plan: plan, uuid: uuid)
         if credentialSource.allowsRefresh {
             let source = credentialSource
             let checkedAt = Date()
@@ -163,10 +138,9 @@ public struct ClaudeProvider: UsageProvider {
             ) { latest in
                 latest.subscriptionType = plan
                 latest.planCheckedAt = checkedAt
-                latest.accountUUID = uuid
             }
         }
-        return (plan, uuid)
+        return plan
     }
 
     private func fetchProfile(with credentials: ClaudeCredentials) async throws -> ClaudeProfileResponse? {
@@ -270,44 +244,6 @@ public struct ClaudeProvider: UsageProvider {
         let source = credentialSource
         await refresher.persist(updated, replacing: old.refreshToken, key: source.refreshKey) {
             try await source.save($0)
-        }
-    }
-}
-
-/// The plan and account id last resolved from the profile endpoint,
-/// remembered for the lifetime of one provider instance.
-///
-/// Sources the app owns persist the same thing in the credentials
-/// (`planCheckedAt`), which survives relaunches. The macOS mirror of Claude
-/// Code's own login can't be written to at all — `allowsRefresh` is false —
-/// so without this in-memory copy that account would re-fetch the profile on
-/// every single refresh, and would keep reporting the CLI item's own stale
-/// `subscriptionType` in between.
-private final class ProfileCache: @unchecked Sendable {
-    private let lock = NSLock()
-    private var plan: String?
-    private var uuid: String?
-    private var checkedAt: Date?
-
-    /// The last resolved plan and id, if checked within `interval`.
-    func profile(checkedWithin interval: TimeInterval) -> (plan: String?, uuid: String?)? {
-        lock.withLock {
-            guard let checkedAt, Date().timeIntervalSince(checkedAt) < interval else { return nil }
-            return (plan, uuid)
-        }
-    }
-
-    /// The last resolved values whatever their age — the fallback when a
-    /// re-check can't be completed; nil before the first.
-    var lastKnown: (plan: String?, uuid: String?)? {
-        lock.withLock { checkedAt == nil ? nil : (plan, uuid) }
-    }
-
-    func record(plan: String, uuid: String?) {
-        lock.withLock {
-            self.plan = plan
-            self.uuid = uuid
-            checkedAt = Date()
         }
     }
 }

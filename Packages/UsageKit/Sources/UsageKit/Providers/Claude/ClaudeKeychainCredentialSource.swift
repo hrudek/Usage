@@ -1,24 +1,12 @@
 import Foundation
 
-/// Credential source backed by the app's own Keychain. Used on iOS, where
-/// the user pastes their Claude Code credentials once and the app then owns
-/// the copy — including refreshing the token when it expires.
+/// The app's own copy of a Claude login, from the in-app sign-in, in the
+/// app's Keychain (the shared access group, so the widget can read it).
+/// Refreshed in place by the app only.
 public struct ClaudeKeychainCredentialSource: ClaudeCredentialSource {
-    public static let defaultKey = "claude.credentials"
-
-    /// The pre-multi-account install's literal accountID (not a UUID), so
-    /// its existing Keychain item/snapshot/history survive an upgrade with
-    /// zero rewrite. The one sentinel every other "claude" literal across
-    /// both build targets must stay byte-identical to.
-    public static let legacyAccountID = "claude"
-
-    /// The Keychain key for a given account. The legacy single-account
-    /// install's accountID is migrated as the literal `legacyAccountID`, so
-    /// this resolves to `defaultKey` for it — existing Keychain items keep
-    /// working with zero migration. Every other account gets its own
-    /// suffixed key.
+    /// The Keychain key for an account: every account gets its own.
     public static func storageKey(for accountID: String) -> String {
-        accountID == legacyAccountID ? defaultKey : "claude.credentials.\(accountID)"
+        "claude.credentials.\(accountID)"
     }
 
     public let allowsRefresh: Bool
@@ -31,7 +19,7 @@ public struct ClaudeKeychainCredentialSource: ClaudeCredentialSource {
     ///   rotate the login (the widget extension).
     public init(
         store: KeychainStore,
-        key: String = ClaudeKeychainCredentialSource.defaultKey,
+        key: String,
         allowsRefresh: Bool = true
     ) {
         self.store = store

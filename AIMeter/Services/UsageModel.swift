@@ -212,11 +212,6 @@ final class UsageModel {
             accounts[i].needsReauthentication = false
             accounts[i].isOffline = false
             reloadTimeline(for: accountID)
-            if registry?.account(for: accountID) == nil {
-                // The in-memory account rather than `service.account`: a
-                // rename during this fetch has already landed there.
-                registry?.add(accounts[i].account)
-            }
             if accounts[i].account.displayName != service.account.displayName {
                 // A rename landed while this fetch was in flight. The
                 // `service` captured above still carried the old nickname,
@@ -228,13 +223,7 @@ final class UsageModel {
             }
             return true
         } catch let error as UsageError {
-            if case .credentialsNotFound = error, registry?.account(for: accountID) == nil {
-                // The speculative macOS auto-detect candidate turned out to
-                // have nothing to detect — revert to genuinely disconnected
-                // instead of leaving a permanent error card for an account
-                // that was never really there.
-                removeAccount(accountID: accountID)
-            } else if let i = index(for: accountID) {
+            if let i = index(for: accountID) {
                 accounts[i].lastError = error.errorDescription
                 accounts[i].needsReauthentication = error.requiresReauthentication
                 accounts[i].isOffline = false

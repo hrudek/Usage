@@ -50,9 +50,7 @@ extension UsageModel {
     /// Puts `accounts` in the order the switch says: by urgency while it
     /// is on, else the registry's, the user's own. Called after every
     /// load and every sweep, before the Watch is told, so each surface
-    /// drawn from `accounts` (and the Watch) shows the same order. The
-    /// demo's accounts and a Mac's speculative CLI login are not in the
-    /// registry and keep their place.
+    /// drawn from `accounts` shows the same order.
     func applyAccountOrder() {
         if ordersByUrgency {
             accounts = AccountOrder.byUrgency(accounts) { $0.snapshot }
@@ -123,10 +121,6 @@ extension UsageModel {
         guard !name.isEmpty, !isNameTaken(name, excluding: accountID) else { return false }
         guard accounts[i].account.displayName != name else { return true }
         accounts[i].account.displayName = name
-        // A no-op for macOS's still-speculative auto-detect candidate,
-        // which isn't registered until a fetch confirms it —
-        // `refresh(accountID:)` registers the in-memory (already renamed)
-        // account at that point.
         registry?.rename(accountID, to: name)
         services[accountID] = services[accountID]?.renamed(to: name)
         propagateName(accountID: accountID)

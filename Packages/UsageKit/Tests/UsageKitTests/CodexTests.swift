@@ -76,34 +76,14 @@ final class CodexResponseMappingTests: XCTestCase {
 }
 
 final class CodexCredentialsTests: XCTestCase {
-    func testParsesTheCLIsAuthFileAndTheTokensClaims() throws {
+    func testReadsTheTokensClaims() throws {
         let token = fakeJWT([
             "exp": 1_800_000_000,
-            "https://api.openai.com/auth": ["chatgpt_account_id": "acct-1", "chatgpt_plan_type": "free"],
+            "https://api.openai.com/auth": ["chatgpt_account_id": "acct-1"],
         ])
-        let json = """
-        {"OPENAI_API_KEY": null, "tokens": {"id_token": "id.x.y", "access_token": "\(token)", "refresh_token": "rt-1", "account_id": "acct-1"},
-         "last_refresh": "2026-10-20T20:14:43.310363Z"}
-        """
-        let credentials = try CodexCredentials.fromAuthJSON(Data(json.utf8))
-        XCTAssertEqual(credentials.accessToken, token)
-        XCTAssertEqual(credentials.refreshToken, "rt-1")
-        XCTAssertEqual(credentials.accountID, "acct-1")
-        XCTAssertEqual(credentials.expiresAt, Date(timeIntervalSince1970: 1_800_000_000))
-        XCTAssertEqual(credentials.lastRefresh?.timeIntervalSince1970 ?? 0, 1_792_527_283.31, accuracy: 0.01)
-        XCTAssertFalse(credentials.isExpired)
-    }
-
-    func testAnAPIKeyLoginOrASignedOutFileIsNotALogin() {
-        let apiKey = #"{"OPENAI_API_KEY": "sk-x", "tokens": null, "last_refresh": null}"#
-        XCTAssertThrowsError(try CodexCredentials.fromAuthJSON(Data(apiKey.utf8))) { error in
-            guard case UsageError.credentialsNotFound = error else { return XCTFail("\(error)") }
-        }
-        let empty = #"{"tokens": {"access_token": "", "refresh_token": ""}}"#
-        XCTAssertThrowsError(try CodexCredentials.fromAuthJSON(Data(empty.utf8)))
-        XCTAssertThrowsError(try CodexCredentials.fromAuthJSON(Data("not json".utf8))) { error in
-            guard case UsageError.invalidResponse = error else { return XCTFail("\(error)") }
-        }
+        let claims = try XCTUnwrap(JWTClaims(token: token))
+        XCTAssertEqual(claims.accountID, "acct-1")
+        XCTAssertEqual(claims.expiresAt, Date(timeIntervalSince1970: 1_800_000_000))
     }
 
     func testClaimsOfAnOpaqueTokenAreNil() {
@@ -124,7 +104,6 @@ final class CodexProviderTests: XCTestCase {
         XCTAssertEqual(snapshot.providerID, "codex")
         XCTAssertEqual(snapshot.planName, "free")
         XCTAssertEqual(snapshot.windows.count, 1)
-        XCTAssertEqual(snapshot.accountIdentity, "codex:<redacted>", "the response's account id, as captured")
         let request = try XCTUnwrap(transport.requests.first)
         XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer valid-token")
         XCTAssertEqual(request.value(forHTTPHeaderField: "ChatGPT-Account-Id"), "acct-1")
@@ -165,7 +144,7 @@ final class CodexProviderTests: XCTestCase {
         XCTAssertEqual(transport.requests(to: CodexProvider.usageEndpoint).count, 2)
     }
 
-    func testTheMacsMirrorNeverRefreshes() async throws {
+    func testAReadOnlySourceNeverRefreshes() async throws {
         let transport = RoutedTransport()
         let expired = StubCodexSource(credentials: .expired, allowsRefresh: false)
         await assertThrows(UsageError.tokenExpired) {
@@ -178,7 +157,7 @@ final class CodexProviderTests: XCTestCase {
         await assertThrows(UsageError.notAuthenticated) {
             _ = try await CodexProvider(credentialSource: rejected, transport: transport).fetchUsage()
         }
-        XCTAssertEqual(rejected.invalidations, 1)
+        XCTAssertTrue(transport.requests(to: CodexOAuthClient.tokenEndpoint).isEmpty)
     }
 
     func testRejectedRefreshUsesAPairRotatedElsewhere() async throws {
@@ -335,7 +314,6 @@ private final class StubCodexSource: CodexCredentialSource, @unchecked Sendable 
     let allowsRefresh: Bool
     let refreshKey = UUID().uuidString
     private(set) var saved: [CodexCredentials] = []
-    private(set) var invalidations = 0
     private var credentials: CodexCredentials
     var rotatesTo: CodexCredentials?
     private var loads = 0
@@ -358,6 +336,5 @@ private final class StubCodexSource: CodexCredentialSource, @unchecked Sendable 
         self.credentials = credentials
     }
 
-    func invalidateCache() { invalidations += 1 }
     func clear() throws {}
 }

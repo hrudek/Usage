@@ -20,7 +20,7 @@ struct UsageAccountOption: AppEntity {
 }
 
 struct UsageAccountOptionQuery: EntityQuery {
-    /// Every id resolves (falling back to "Claude" for the legacy id via
+    /// Every id resolves (falling back to "Claude" for the placeholder via
     /// `WidgetAccountFallback.name(for:)`), matching `UsageWindowOption`'s
     /// tolerance for a previously-picked account that's since been removed.
     func entities(for identifiers: [String]) async throws -> [UsageAccountOption] {
@@ -33,7 +33,7 @@ struct UsageAccountOptionQuery: EntityQuery {
         currentOptions()
     }
 
-    /// Nothing connected yet: no default, rather than the legacy option,
+    /// Nothing connected yet: no default, rather than the placeholder,
     /// which would stay this widget's selection after the first connection
     /// (a UUID, on a clean install). Unset, the widget follows the first
     /// connected account (`WidgetAccountFallback`).
@@ -42,14 +42,14 @@ struct UsageAccountOptionQuery: EntityQuery {
         return currentOptions().first
     }
 
-    /// Falls back to the single legacy "claude" identity when nothing is
+    /// Falls back to the placeholder account when nothing is
     /// registered yet — same empty-registry contract as
     /// `UsageWindowOptionQuery`.
     private func currentOptions() -> [UsageAccountOption] {
         let accounts = AccountRegistryStore(suiteName: AppConfig.appGroupID)?.accounts() ?? []
         if accounts.isEmpty {
-            let legacy = ProviderCatalog.legacyAccount
-            return [UsageAccountOption(accountID: legacy.accountID, accountName: legacy.displayName)]
+            let placeholder = ProviderCatalog.placeholderAccount
+            return [UsageAccountOption(accountID: placeholder.accountID, accountName: placeholder.displayName)]
         }
         return accounts.map { UsageAccountOption(accountID: $0.accountID, accountName: $0.displayName) }
     }

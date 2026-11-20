@@ -16,16 +16,11 @@ final class AccountRegistryStoreTests: XCTestCase {
         super.tearDown()
     }
 
-    private func account(
-        _ accountID: String,
-        displayName: String = "Claude",
-        strategy: ConnectedAccount.CredentialStrategy = .managed
-    ) -> ConnectedAccount {
+    private func account(_ accountID: String, displayName: String = "Claude") -> ConnectedAccount {
         ConnectedAccount(
             accountID: accountID,
             providerID: "claude",
             displayName: displayName,
-            credentialStrategy: strategy,
             connectedAt: Date(timeIntervalSince1970: 1_800_000_000)
         )
     }
@@ -100,29 +95,6 @@ final class AccountRegistryStoreTests: XCTestCase {
 
         XCTAssertEqual(store.accounts().map(\.accountID), ["work-uuid", "claude"])
         XCTAssertEqual(store.account(for: "work-uuid")?.displayName, "Work")
-    }
-
-    func testSetCredentialStrategyConvertsOnlyThatAccount() {
-        let store = AccountRegistryStore(userDefaults: defaults)
-        store.add(account("claude", strategy: .autoDetected))
-        store.add(account("work-uuid", displayName: "Work", strategy: .managed))
-
-        // The macOS reconnect path: a CLI-mirrored login that stopped
-        // working gets app-owned credentials and becomes .managed.
-        store.setCredentialStrategy(.managed, for: "claude")
-
-        XCTAssertEqual(store.account(for: "claude")?.credentialStrategy, .managed)
-        XCTAssertEqual(store.account(for: "work-uuid")?.credentialStrategy, .managed)
-        XCTAssertEqual(store.accounts().map(\.accountID), ["claude", "work-uuid"])
-    }
-
-    func testCredentialStrategyRoundtripsThroughCodable() {
-        let store = AccountRegistryStore(userDefaults: defaults)
-        store.add(account("claude", strategy: .autoDetected))
-        store.add(account("work-uuid", strategy: .managed))
-
-        XCTAssertEqual(store.account(for: "claude")?.credentialStrategy, .autoDetected)
-        XCTAssertEqual(store.account(for: "work-uuid")?.credentialStrategy, .managed)
     }
 
     // MARK: Icons

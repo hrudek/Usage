@@ -40,7 +40,7 @@ struct UsageControl: ControlWidget {
 
     struct Provider: AppIntentControlValueProvider {
         func previewValue(configuration: UsageControlConfigurationIntent) -> ControlFigure {
-            ControlFigure(accountID: ProviderCatalog.legacyAccount.accountID, name: "AIMeter", snapshot: .sample, prefs: Preferences())
+            ControlFigure(accountID: ProviderCatalog.placeholderAccount.accountID, name: "AIMeter", snapshot: .sample, prefs: Preferences())
         }
 
         func currentValue(configuration: UsageControlConfigurationIntent) async throws -> ControlFigure {

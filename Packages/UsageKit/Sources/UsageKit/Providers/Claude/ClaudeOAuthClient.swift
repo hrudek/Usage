@@ -1,7 +1,6 @@
 import Foundation
 
-/// Refreshes Claude OAuth tokens. Used only for credential sources the app
-/// owns (e.g. a token pasted on iOS); never against Claude Code's own store.
+/// Refreshes the app's own Claude OAuth tokens.
 struct ClaudeOAuthClient: Sendable {
     static let tokenEndpoint = URL(string: "https://console.anthropic.com/v1/oauth/token")!
     /// Public client ID of Claude Code's PKCE flow.

@@ -60,15 +60,13 @@ struct UsageWindowOptionQuery: EntityQuery {
     /// no per-model window and the credits fallback actually showing
     /// (Settings: Credits, or Auto with credits enabled) also offers
     /// "Credits", same rule `WindowSlots` uses for the dashboard's third
-    /// slot. An empty registry (nothing connected yet, or the app hasn't
-    /// run its one-time account migration since this install's last
-    /// update) falls back to the single legacy "claude" identity rather
-    /// than an empty picker.
+    /// slot. An empty registry (nothing connected yet) falls back to the
+    /// placeholder account rather than an empty picker.
     private func currentOptions() -> [UsageWindowOption] {
         let registry = AccountRegistryStore(suiteName: AppConfig.appGroupID)
         let store = SnapshotStore(suiteName: AppConfig.appGroupID)
         let accounts = registry?.accounts() ?? []
-        let resolved = accounts.isEmpty ? [ProviderCatalog.legacyAccount] : accounts
+        let resolved = accounts.isEmpty ? [ProviderCatalog.placeholderAccount] : accounts
 
         return resolved.flatMap { account -> [UsageWindowOption] in
             let snapshot = store?.snapshot(for: account.accountID)

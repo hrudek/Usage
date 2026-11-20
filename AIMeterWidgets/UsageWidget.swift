@@ -22,8 +22,8 @@ struct UsageEntry: TimelineEntry {
 /// subject to WidgetKit's refresh budget.
 struct UsageTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> UsageEntry {
-        let legacy = ProviderCatalog.legacyAccount
-        return UsageEntry(date: .now, snapshot: .sample, accountID: legacy.accountID, accountName: legacy.displayName, prefs: Preferences())
+        let placeholder = ProviderCatalog.placeholderAccount
+        return UsageEntry(date: .now, snapshot: .sample, accountID: placeholder.accountID, accountName: placeholder.displayName, prefs: Preferences())
     }
 
     func snapshot(for configuration: UsageAccountConfigurationIntent, in context: Context) async -> UsageEntry {
@@ -64,8 +64,8 @@ struct UsageTimelineProvider: AppIntentTimelineProvider {
         // before WidgetKit has applied the intent's own default selection,
         // and for one placed while nothing was connected — fall back to the
         // first real connected account (matching
-        // `UsageAccountOptionQuery.defaultResult()`) rather than assuming
-        // the legacy sentinel, which a fresh multi-account install never uses.
+        // `UsageAccountOptionQuery.defaultResult()`) rather than the
+        // placeholder.
         let (accountID, accountName) = WidgetAccountFallback.resolve(
             configured: configuration.account?.accountID,
             name: configuration.account?.accountName

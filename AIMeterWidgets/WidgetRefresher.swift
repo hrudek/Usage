@@ -79,11 +79,10 @@ enum WidgetRefresher {
             accessGroup: AppConfig.keychainAccessGroup
         )
         // The registry says which provider this account is. An id it can't
-        // place still fetches with its own login, as the default
-        // provider's — never the legacy account's, whose figures would
-        // then be saved under this id.
-        let account = AccountRegistryStore(suiteName: AppConfig.appGroupID)?.account(for: accountID)
-            ?? ProviderCatalog.fallbackAccount(for: accountID)
+        // place (the placeholder, a removed account) has no login to read.
+        guard let account = AccountRegistryStore(suiteName: AppConfig.appGroupID)?.account(for: accountID) else {
+            return nil
+        }
         let provider = ProviderCatalog.makeProvider(
             for: account,
             keychain: keychain,
@@ -97,9 +96,6 @@ enum WidgetRefresher {
         // — the run-out predictor's recent-rate series and the chart's
         // timeline (`UsageRecorder` writes the two together).
         UsageRecorder.record(snapshot, for: accountID)
-        // Deliberately no Live Activity sync here: ActivityKit only exposes
-        // (and lets you update) activities from the app process, so the
-        // extension can't keep one fresh — the app's own next fetch does.
         return snapshot
     }
 }

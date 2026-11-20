@@ -183,20 +183,6 @@ final class ClaudeProviderTests: XCTestCase {
         }
     }
 
-    func test401WithoutRefreshInvalidatesTheSourceCache() async {
-        let transport = StubTransport()
-        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
-            (401, "{}"),
-        ])
-        let source = StubCredentialSource(credentials: .valid, allowsRefresh: false)
-        let provider = ClaudeProvider(credentialSource: source, transport: transport)
-
-        await assertThrows(UsageError.notAuthenticated) {
-            _ = try await provider.fetchUsage()
-        }
-        XCTAssertEqual(source.invalidations, 1)
-    }
-
     /// The widget extension's path: an expired login is left to the app.
     func testExpiredTokenWithoutRefreshThrowsTokenExpired() async {
         let transport = StubTransport()
@@ -426,70 +412,6 @@ final class ClaudeProviderTests: XCTestCase {
         XCTAssertTrue(source.saved.isEmpty)
     }
 
-    /// The profile is also where the account's id comes from, kept with
-    /// the plan and stamped on every snapshot as the login's identity.
-    func testTheProfileGivesTheSnapshotItsIdentityAndPersistsTheID() async throws {
-        let transport = StubTransport()
-        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
-            (200, Self.usageBody),
-        ])
-        transport.route(url: ClaudeProvider.profileEndpoint, responses: [
-            (200, #"{"account": {"uuid": "11111111-2222-3333-4444-555555555555", "email": "x@example.com", "has_claude_pro": true, "has_claude_max": false}}"#),
-        ])
-        let source = StubCredentialSource(credentials: .withoutSubscription, allowsRefresh: true)
-        let provider = ClaudeProvider(credentialSource: source, transport: transport)
-
-        let snapshot = try await provider.fetchUsage()
-
-        XCTAssertEqual(snapshot.accountIdentity, "claude:11111111-2222-3333-4444-555555555555")
-        XCTAssertEqual(source.saved.last?.accountUUID, "11111111-2222-3333-4444-555555555555")
-        // Cached with the plan: the next fetch asks nothing.
-        _ = try await provider.fetchUsage()
-        XCTAssertEqual(transport.requests.filter { $0.url == ClaudeProvider.profileEndpoint }.count, 1)
-    }
-
-    /// A login whose plan was checked before the id was kept is due for
-    /// one more profile call, however fresh its plan.
-    func testAFreshPlanWithoutAnIDRechecksTheProfileOnce() async throws {
-        let transport = StubTransport()
-        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
-            (200, Self.usageBody),
-        ])
-        transport.route(url: ClaudeProvider.profileEndpoint, responses: [
-            (200, #"{"account": {"uuid": "acct-9", "has_claude_pro": true, "has_claude_max": false}}"#),
-        ])
-        let source = StubCredentialSource(credentials: .validWithoutID, allowsRefresh: true)
-        let provider = ClaudeProvider(credentialSource: source, transport: transport)
-
-        let snapshot = try await provider.fetchUsage()
-
-        XCTAssertEqual(snapshot.accountIdentity, "claude:acct-9")
-        XCTAssertEqual(source.saved.last?.accountUUID, "acct-9")
-        XCTAssertEqual(source.saved.last?.subscriptionType, "pro")
-    }
-
-    /// A profile that stopped carrying the id (a shape change) keeps the
-    /// one the credentials already have.
-    func testAProfileWithoutAnIDKeepsTheKnownOne() async throws {
-        let transport = StubTransport()
-        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
-            (200, Self.usageBody),
-        ])
-        transport.route(url: ClaudeProvider.profileEndpoint, responses: [
-            (200, #"{"account": {"has_claude_pro": false, "has_claude_max": true}}"#),
-        ])
-        var credentials = ClaudeCredentials.stalePlan
-        credentials.accountUUID = "acct-1"
-        let source = StubCredentialSource(credentials: credentials, allowsRefresh: true)
-        let provider = ClaudeProvider(credentialSource: source, transport: transport)
-
-        let snapshot = try await provider.fetchUsage()
-
-        XCTAssertEqual(snapshot.planName, "max")
-        XCTAssertEqual(snapshot.accountIdentity, "claude:acct-1")
-        XCTAssertEqual(source.saved.last?.accountUUID, "acct-1")
-    }
-
     func testRecentlyCheckedSubscriptionSkipsProfileCall() async throws {
         let transport = StubTransport()
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
@@ -543,29 +465,6 @@ final class ClaudeProviderTests: XCTestCase {
         XCTAssertTrue(source.saved.isEmpty)
     }
 
-    /// A read-only source (macOS mirroring Claude Code's own login) has
-    /// nowhere to persist the check, so the resolved plan has to override
-    /// the CLI item's stale one in memory — and not re-ask on every fetch.
-    func testReadOnlySourceResolvesPlanOnceAndOverridesStoredOne() async throws {
-        let transport = StubTransport()
-        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
-            (200, Self.usageBody),
-        ])
-        transport.route(url: ClaudeProvider.profileEndpoint, responses: [
-            (200, #"{"account": {"has_claude_pro": false, "has_claude_max": true}}"#),
-        ])
-        let source = StubCredentialSource(credentials: .stalePlan, allowsRefresh: false)
-        let provider = ClaudeProvider(credentialSource: source, transport: transport)
-
-        let first = try await provider.fetchUsage()
-        let second = try await provider.fetchUsage()
-
-        XCTAssertEqual(first.planName, "max")
-        XCTAssertEqual(second.planName, "max")
-        XCTAssertTrue(source.saved.isEmpty)
-        XCTAssertEqual(transport.requests.filter { $0.url == ClaudeProvider.profileEndpoint }.count, 1)
-    }
-
     private static let usageBody = """
     {
       "limits": [
@@ -588,17 +487,6 @@ private extension ClaudeCredentials {
         refreshToken: "refresh-token",
         expiresAt: Date(timeIntervalSinceNow: 3600),
         subscriptionType: "pro",
-        planCheckedAt: Date(),
-        accountUUID: "acct-1"
-    )
-
-    /// A login checked before the profile's id was kept: the plan is
-    /// fresh, the id missing.
-    static let validWithoutID = ClaudeCredentials(
-        accessToken: "valid-token",
-        refreshToken: "refresh-token",
-        expiresAt: Date(timeIntervalSinceNow: 3600),
-        subscriptionType: "pro",
         planCheckedAt: Date()
     )
 
@@ -607,8 +495,7 @@ private extension ClaudeCredentials {
         refreshToken: "refresh-token",
         expiresAt: Date(timeIntervalSinceNow: -60),
         subscriptionType: "pro",
-        planCheckedAt: Date(),
-        accountUUID: "acct-1"
+        planCheckedAt: Date()
     )
 
     /// What the shared store holds after another process refreshed the
@@ -618,8 +505,7 @@ private extension ClaudeCredentials {
         refreshToken: "rotated-refresh",
         expiresAt: Date(timeIntervalSinceNow: 3600),
         subscriptionType: "pro",
-        planCheckedAt: Date(),
-        accountUUID: "acct-1"
+        planCheckedAt: Date()
     )
 
     /// A plan cached longer ago than `planRecheckInterval` — or, with
@@ -649,7 +535,6 @@ private final class StubCredentialSource: ClaudeCredentialSource, @unchecked Sen
     var failsSavesAfter: Int?
     private(set) var saveAttempts = 0
     private(set) var saved: [ClaudeCredentials] = []
-    private(set) var invalidations = 0
     private var credentials: ClaudeCredentials
     /// Replaces the stored credentials right after the first `load()`
     /// (or the `rotatesAfterLoad`th), standing in for another process
@@ -693,10 +578,6 @@ private final class StubCredentialSource: ClaudeCredentialSource, @unchecked Sen
             saved.append(credentials)
             self.credentials = credentials
         }
-    }
-
-    func invalidateCache() {
-        invalidations += 1
     }
 
     func clear() throws {}

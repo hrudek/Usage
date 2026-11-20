@@ -2,7 +2,7 @@ import Foundation
 import WidgetKit
 import UsageKit
 
-/// Adding, repairing, and removing accounts, plus demo mode — the parts
+/// Adding, repairing, and removing accounts: the parts
 /// of `UsageModel` that change *which* accounts exist. See the type doc
 /// in `UsageModel.swift` for how the files divide.
 extension UsageModel {
@@ -10,8 +10,7 @@ extension UsageModel {
 
     /// Called by the Connect sheet after a successful sign-in of any
     /// family (`ProviderLogin`). Adds a new account with the app's own
-    /// managed credentials — never the macOS auto-detect path, which only
-    /// ever applies to a CLI login found on this Mac, not a sign-in.
+    /// credentials.
     func completeConnection(_ login: ProviderLogin, displayName: String? = nil) async {
         let accountID = UUID().uuidString
         // The Connect sheet already refuses a taken nickname; this only
@@ -20,7 +19,7 @@ extension UsageModel {
         let name = isNameTaken(requested) ? suggestedNickname(providerID: login.providerID) : requested
         let account = ConnectedAccount(
             accountID: accountID, providerID: login.providerID,
-            displayName: name, credentialStrategy: .managed
+            displayName: name
         )
         let service = RefreshService(account: account)
         do {
@@ -51,20 +50,10 @@ extension UsageModel {
     /// `completeConnection`, which mints a new id.
     func reconnect(accountID: String, login: ProviderLogin) async {
         guard let startIndex = index(for: accountID) else { return }
-        var account = accounts[startIndex].account
+        let account = accounts[startIndex].account
         guard account.providerID == login.providerID else {
             connectionError = String(localized: "That sign-in is for another service than this account.")
             return
-        }
-        // Whatever the user just signed in with is a token pair the app
-        // owns, so a macOS account that used to mirror Claude Code's login
-        // stops being `.autoDetected` — and stops deferring to a CLI login
-        // that just proved unusable. It also ends the refresh-token
-        // standoff behind most of these failures: with its own pair,
-        // AIMeter can rotate freely without invalidating the CLI's.
-        let wasAutoDetected = account.credentialStrategy == .autoDetected
-        if wasAutoDetected {
-            account.credentialStrategy = .managed
         }
         let service = RefreshService(account: account)
         do {
@@ -74,28 +63,13 @@ extension UsageModel {
             return
         }
         connectionError = nil
-        // Only now that the credentials are stored. Flipping the registry
-        // first and then failing the save would leave a `.managed` account
-        // with nothing at its Keychain key — a permanent "no credentials"
-        // card on the next launch, with the CLI login it used to mirror
-        // no longer consulted either.
-        if wasAutoDetected {
-            registry?.setCredentialStrategy(.managed, for: accountID)
-        }
         NotificationScheduler.clearReauthenticationAlert(
             accountID: accountID, preferences: preferences(for: accountID)
         )
         guard let i = index(for: accountID) else { return }
         services[accountID] = service
-        accounts[i].account = account
         accounts[i].lastError = nil
         accounts[i].needsReauthentication = false
-        // The macOS auto-detect candidate is only speculative until a fetch
-        // confirms it (see `loadAccounts()`), so it may still be missing
-        // from the registry — signing in explicitly is that confirmation.
-        if registry?.account(for: accountID) == nil {
-            registry?.add(account)
-        }
         await refresh(accountID: accountID)
     }
 
@@ -137,8 +111,4 @@ extension UsageModel {
         services.removeValue(forKey: accountID)
         accounts.removeAll { $0.account.accountID == accountID }
     }
-
-
-
-
 }

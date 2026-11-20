@@ -34,7 +34,7 @@ final class UsageInsightsTests: XCTestCase {
 
     private func entry(_ id: String, _ name: String, used: Double, provider: String = ProviderCatalog.defaultProviderID)
         -> (account: ConnectedAccount, snapshot: UsageSnapshot?) {
-        (ConnectedAccount(accountID: id, providerID: provider, displayName: name, credentialStrategy: .managed),
+        (ConnectedAccount(accountID: id, providerID: provider, displayName: name),
          .make(windows: [.make(.weekly, used: used)]))
     }
 

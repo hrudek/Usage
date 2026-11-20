@@ -1,10 +1,8 @@
 import Foundation
 
-/// A Codex login: the ChatGPT OAuth tokens the Codex CLI keeps in
-/// `~/.codex/auth.json` (`tokens.access_token`, `refresh_token`,
-/// `account_id`) and that the in-app device-code sign-in mints. The
-/// access token is a JWT whose `exp` claim is the only expiry there is;
-/// `auth.json` carries none. The `id_token` (it carries the email) is
+/// A Codex login: the ChatGPT OAuth tokens the in-app device-code
+/// sign-in mints. The access token is a JWT whose `exp` claim is the
+/// only expiry there is. The `id_token` (it carries the email) is
 /// never kept: its one claim the app needs, the account id, is copied
 /// into `accountID` when the token arrives.
 public struct CodexCredentials: Codable, Equatable, Sendable {
@@ -12,11 +10,11 @@ public struct CodexCredentials: Codable, Equatable, Sendable {
     public var refreshToken: String?
     /// The ChatGPT account the usage belongs to (a workspace, or the
     /// personal account), sent as the `ChatGPT-Account-Id` header the
-    /// way the CLI sends it; also the login's cross-device identity.
+    /// way the CLI sends it.
     public var accountID: String?
     /// The access token's `exp` claim.
     public var expiresAt: Date?
-    /// When the pair was last rotated, as the CLI records it.
+    /// When the pair was last rotated.
     public var lastRefresh: Date?
 
     public init(
@@ -38,59 +36,14 @@ public struct CodexCredentials: Codable, Equatable, Sendable {
         return expiresAt <= Date()
     }
 
-    /// Parses the file `codex login` writes:
-    /// `{"OPENAI_API_KEY": null, "tokens": {...}, "last_refresh": "..."}`.
-    /// A file with no tokens (an API-key login, or logged out) is not a
-    /// login.
-    public static func fromAuthJSON(_ data: Data) throws -> CodexCredentials {
-        let file: AuthFile
-        do {
-            file = try JSONDecoder().decode(AuthFile.self, from: data)
-        } catch {
-            throw UsageError.invalidResponse("unrecognized Codex auth.json format")
-        }
-        guard let tokens = file.tokens, let accessToken = tokens.accessToken, !accessToken.isEmpty else {
-            throw UsageError.credentialsNotFound("Codex is signed in with an API key, or signed out")
-        }
-        let claims = JWTClaims(token: accessToken)
-        return CodexCredentials(
-            accessToken: accessToken,
-            refreshToken: tokens.refreshToken,
-            accountID: tokens.accountID ?? claims?.accountID,
-            expiresAt: claims?.expiresAt,
-            lastRefresh: file.lastRefresh.flatMap(Self.parseDate)
-        )
-    }
-
-    /// ISO 8601 with fractional seconds, as the CLI writes `last_refresh`.
+    /// ISO 8601 with fractional seconds, as the device-code sign-in sends
+    /// `expires_at`.
     static func parseDate(_ string: String) -> Date? {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         if let date = formatter.date(from: string) { return date }
         formatter.formatOptions = [.withInternetDateTime]
         return formatter.date(from: string)
-    }
-
-    private struct AuthFile: Decodable {
-        let tokens: Tokens?
-        let lastRefresh: String?
-
-        enum CodingKeys: String, CodingKey {
-            case tokens
-            case lastRefresh = "last_refresh"
-        }
-    }
-
-    private struct Tokens: Decodable {
-        let accessToken: String?
-        let refreshToken: String?
-        let accountID: String?
-
-        enum CodingKeys: String, CodingKey {
-            case accessToken = "access_token"
-            case refreshToken = "refresh_token"
-            case accountID = "account_id"
-        }
     }
 }
 
@@ -101,7 +54,6 @@ public struct CodexCredentials: Codable, Equatable, Sendable {
 struct JWTClaims {
     let expiresAt: Date?
     let accountID: String?
-    let planType: String?
 
     init?(token: String) {
         let parts = token.split(separator: ".")
@@ -112,7 +64,6 @@ struct JWTClaims {
               let claims = try? JSONDecoder().decode(Payload.self, from: data) else { return nil }
         expiresAt = claims.exp.map { Date(timeIntervalSince1970: $0) }
         accountID = claims.auth?.accountID
-        planType = claims.auth?.planType
     }
 
     private struct Payload: Decodable {
@@ -127,11 +78,9 @@ struct JWTClaims {
 
     private struct Auth: Decodable {
         let accountID: String?
-        let planType: String?
 
         enum CodingKeys: String, CodingKey {
             case accountID = "chatgpt_account_id"
-            case planType = "chatgpt_plan_type"
         }
     }
 }

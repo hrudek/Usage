@@ -32,6 +32,6 @@ extension UsageSnapshot {
 
 extension ConnectedAccount {
     static func managed(_ id: String, name: String) -> ConnectedAccount {
-        ConnectedAccount(accountID: id, providerID: ProviderCatalog.defaultProviderID, displayName: name, credentialStrategy: .managed)
+        ConnectedAccount(accountID: id, providerID: ProviderCatalog.defaultProviderID, displayName: name)
     }
 }

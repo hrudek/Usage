@@ -14,10 +14,6 @@ public struct UsageSnapshot: Codable, Hashable, Sendable {
     public var spend: SpendStatus?
     /// Extra-usage credit pool state, when the provider reports one.
     public var extraUsage: ExtraUsageStatus?
-    /// The login this is the usage of, the same on every device it is
-    /// signed in on ("claude:<account uuid>"); nil until the provider has
-    /// read its profile, and for snapshots saved before the field existed.
-    public var accountIdentity: String?
     /// Where the week's usage went, by app, when the provider says
     /// (Claude's `seven_day_breakdown`); nil otherwise and for snapshots
     /// saved before the field existed.
@@ -30,7 +26,6 @@ public struct UsageSnapshot: Codable, Hashable, Sendable {
         windows: [UsageWindow],
         spend: SpendStatus? = nil,
         extraUsage: ExtraUsageStatus? = nil,
-        accountIdentity: String? = nil,
         breakdown: UsageBreakdown? = nil
     ) {
         self.providerID = providerID
@@ -39,7 +34,6 @@ public struct UsageSnapshot: Codable, Hashable, Sendable {
         self.windows = windows
         self.spend = spend
         self.extraUsage = extraUsage
-        self.accountIdentity = accountIdentity
         self.breakdown = breakdown
     }
 

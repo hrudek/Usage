@@ -2,20 +2,17 @@ import Foundation
 
 /// Wire format of `GET https://api.anthropic.com/api/oauth/profile` —
 /// undocumented, like the usage endpoint. Used to resolve the plan name
-/// ("pro"/"max"/"ultra"), which the usage response doesn't carry, and the
-/// account's own id (`account.uuid`), the one thing about a login that
-/// is the same on every device it is signed in on. Nothing else of the
-/// response (the name, the email, the rest of the organization) is
+/// ("pro"/"max"/"ultra"), which the usage response doesn't carry. Nothing
+/// else of the response (the id, the name, the email, the rest of the
+/// organization) is
 /// decoded: of the organization, only its rate-limit tier, which is what
 /// tells Max from Ultra.
 struct ClaudeProfileResponse: Decodable {
     struct Account: Decodable {
-        let uuid: String?
         let hasClaudePro: Bool?
         let hasClaudeMax: Bool?
 
         enum CodingKeys: String, CodingKey {
-            case uuid
             case hasClaudePro = "has_claude_pro"
             case hasClaudeMax = "has_claude_max"
         }
@@ -31,12 +28,6 @@ struct ClaudeProfileResponse: Decodable {
 
     let account: Account?
     let organization: Organization?
-
-    /// The account's id, nil when the response has none (a shape change).
-    var accountUUID: String? {
-        guard let uuid = account?.uuid, !uuid.isEmpty else { return nil }
-        return uuid
-    }
 
     /// "max" wins when both flags are set, and a Max whose tier is the
     /// old 20x is "ultra": Anthropic renamed Max 5x to Max and Max 20x to

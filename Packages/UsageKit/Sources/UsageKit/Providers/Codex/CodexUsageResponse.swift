@@ -41,7 +41,6 @@ struct CodexUsageResponse: Decodable {
     }
 
     let planType: String?
-    let accountId: String?
     let rateLimit: RateLimit?
     let additionalRateLimits: [AdditionalRateLimit]?
     let spendControl: SpendControl?

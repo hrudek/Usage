@@ -87,41 +87,4 @@ final class ModelCodableTests: XCTestCase {
         XCTAssertEqual(decoded.sessionWindow?.usedPct, 24)
         XCTAssertEqual(decoded.modelWindows.first?.kind, .modelSpecific("Fable"))
     }
-
-    func testClaudeCodeCredentialsParsing() throws {
-        let json = """
-        {
-          "claudeAiOauth": {
-            "accessToken": "at",
-            "refreshToken": "rt",
-            "expiresAt": 4102444800000,
-            "scopes": ["user:profile", "user:inference"],
-            "subscriptionType": "pro"
-          }
-        }
-        """
-        let credentials = try ClaudeCredentials.fromClaudeCodeJSON(Data(json.utf8))
-
-        XCTAssertEqual(credentials.accessToken, "at")
-        XCTAssertEqual(credentials.refreshToken, "rt")
-        // 2100-01-01T00:00:00Z: `isExpired` compares against the real clock, so a
-        // fixture in the near future silently expires and turns this test red.
-        XCTAssertEqual(credentials.expiresAt, Date(timeIntervalSince1970: 4_102_444_800))
-        XCTAssertEqual(credentials.scopes, ["user:profile", "user:inference"])
-        XCTAssertEqual(credentials.subscriptionType, "pro")
-        XCTAssertFalse(credentials.isExpired)
-    }
-
-    func testBareOAuthObjectAlsoParses() throws {
-        let json = """
-        {"accessToken": "at", "expiresAt": 1000, "subscriptionType": "max"}
-        """
-        let credentials = try ClaudeCredentials.fromClaudeCodeJSON(Data(json.utf8))
-        XCTAssertEqual(credentials.accessToken, "at")
-        XCTAssertTrue(credentials.isExpired)
-    }
-
-    func testGarbageCredentialsThrow() {
-        XCTAssertThrowsError(try ClaudeCredentials.fromClaudeCodeJSON(Data("not json".utf8)))
-    }
 }

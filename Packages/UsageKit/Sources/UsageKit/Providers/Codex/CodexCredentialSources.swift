@@ -4,9 +4,7 @@ import Foundation
 /// sign-in, in the app's Keychain (the shared access group on iOS, so
 /// the widget can fetch with it). Refreshed in place by the app only.
 public struct CodexKeychainCredentialSource: CodexCredentialSource {
-    /// The Keychain key for an account: every Codex account gets its own
-    /// suffixed key (there is no legacy single-account install of this
-    /// provider to keep a bare key for).
+    /// The Keychain key for an account: every account gets its own.
     public static func storageKey(for accountID: String) -> String {
         "codex.credentials.\(accountID)"
     }

@@ -6,49 +6,28 @@ import Foundation
 /// and is the key actually used by SnapshotStore, UsageHistoryStore,
 /// Keychain, notifications, and widget account selection.
 public struct ConnectedAccount: Codable, Hashable, Sendable, Identifiable {
-    public enum CredentialStrategy: String, Codable, Sendable {
-        /// Credentials the app owns in its own Keychain item (in-app OAuth
-        /// or a pasted credentials JSON).
-        case managed
-        /// macOS only: mirrors Claude Code CLI's own login. Read-only,
-        /// never refreshed by AIMeter, and capped at one account per
-        /// machine since the CLI itself only tracks one login.
-        case autoDetected
-    }
-
     public var id: String { accountID }
     public let accountID: String
     public let providerID: String
     public var displayName: String
-    public var credentialStrategy: CredentialStrategy
     public var connectedAt: Date
     /// The glyph the user picked for this account, or nil for the app's
     /// default mark. Optional and absent from any registry written before
     /// it existed, so an upgrade decodes unchanged.
     public var icon: AccountIcon?
-    /// The login this account is, the same on every device it is signed
-    /// in on (`UsageSnapshot.accountIdentity`, "claude:<account uuid>");
-    /// nil until a fetch has read the provider's profile. What iCloud sync
-    /// matches an account across the iPhone and the Mac by: `accountID`
-    /// is this device's name for it, minted here.
-    public var syncIdentity: String?
 
     public init(
         accountID: String,
         providerID: String,
         displayName: String,
-        credentialStrategy: CredentialStrategy,
         connectedAt: Date = Date(),
-        icon: AccountIcon? = nil,
-        syncIdentity: String? = nil
+        icon: AccountIcon? = nil
     ) {
         self.accountID = accountID
         self.providerID = providerID
         self.displayName = displayName
-        self.credentialStrategy = credentialStrategy
         self.connectedAt = connectedAt
         self.icon = icon
-        self.syncIdentity = syncIdentity
     }
 }
 
@@ -157,36 +136,12 @@ public struct AccountRegistryStore: @unchecked Sendable {
         save(current)
     }
 
-    /// Re-points an account at a different credential strategy. The one
-    /// real transition is macOS's `.autoDetected` → `.managed`: an account
-    /// that mirrored Claude Code's login and then got its own credentials
-    /// through the in-app sign-in flow. It happens *because* the CLI-mirrored
-    /// login stopped working, and it's one-way — the app now owns a token
-    /// pair of its own, so it may refresh it without rotating the CLI's out
-    /// from under it.
-    public func setCredentialStrategy(_ strategy: ConnectedAccount.CredentialStrategy, for accountID: String) {
-        var current = accounts()
-        guard let index = current.firstIndex(where: { $0.accountID == accountID }) else { return }
-        current[index].credentialStrategy = strategy
-        save(current)
-    }
-
     /// Sets or clears (nil) the account's chosen glyph. Like `rename`, a
     /// change to how the account is *shown*, never to what it is.
     public func setIcon(_ icon: AccountIcon?, for accountID: String) {
         var current = accounts()
         guard let index = current.firstIndex(where: { $0.accountID == accountID }) else { return }
         current[index].icon = icon
-        save(current)
-    }
-
-    /// Records the login's cross-device identity once a fetch has read
-    /// it; a no-op for one already recorded.
-    public func setSyncIdentity(_ identity: String?, for accountID: String) {
-        var current = accounts()
-        guard let index = current.firstIndex(where: { $0.accountID == accountID }),
-              current[index].syncIdentity != identity else { return }
-        current[index].syncIdentity = identity
         save(current)
     }
 

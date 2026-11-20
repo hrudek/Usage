@@ -29,9 +29,9 @@ struct SingleUsageTimelineProvider: AppIntentTimelineProvider {
         SingleUsageEntry(
             date: .now,
             snapshot: .sample,
-            accountID: ProviderCatalog.legacyAccount.accountID,
+            accountID: ProviderCatalog.placeholderAccount.accountID,
             kind: .session,
-            accountName: ProviderCatalog.legacyAccount.displayName,
+            accountName: ProviderCatalog.placeholderAccount.displayName,
             prefs: Preferences()
         )
     }
@@ -72,8 +72,8 @@ struct SingleUsageTimelineProvider: AppIntentTimelineProvider {
     private func entry(for configuration: SingleUsageConfigurationIntent) -> SingleUsageEntry {
         let selection = configuration.window
         // Same nil-configuration timing edge case as the 3-window widget:
-        // fall back to the first real connected account instead of assuming
-        // the legacy sentinel.
+        // fall back to the first real connected account instead of the
+        // placeholder.
         let (accountID, accountName) = WidgetAccountFallback.resolve(
             configured: selection?.accountID,
             name: selection?.accountName
