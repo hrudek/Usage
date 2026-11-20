@@ -116,6 +116,12 @@ public actor TokenRefresher {
             unsaved[key] = nil
             return stored
         }
+        guard let current = unsaved[key]?.credentials as? C,
+              current.refreshToken == newer.refreshToken else {
+            // The kept pair was rotated during the load, so it is spent:
+            // start over from what is current now.
+            return try await credentials(key: key, load: load, save: save)
+        }
         // A rotation under way saves this pair's successor, and a write
         // under way may be saving this very pair: neither needs another.
         guard inFlight[key] == nil, writes[key] == nil else { return newer }
