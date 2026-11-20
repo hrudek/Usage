@@ -38,7 +38,6 @@ struct DashboardSideBar: ViewModifier {
                     }
                 }
             }
-            .toolbar(isVertical ? .visible : .hidden, for: .navigationBar)
     }
 }
 
