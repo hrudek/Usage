@@ -9,19 +9,13 @@ import Foundation
 /// AppIntents runs outside the main actor regardless of this project's
 /// build setting.
 nonisolated enum AppConfig {
-    static let appGroupID = "group.com.mikealvarado.aimeter"
-    static let keychainService = "com.mikealvarado.aimeter"
+    static let appGroupID = "group.dev.rudek.aimeter"
+    static let keychainService = "dev.rudek.aimeter"
     /// Keychain access group shared by app and widget so the widget can
-    /// read credentials and refresh usage itself. On iOS the App Group
-    /// doubles as a keychain group; on macOS the menu bar app feeds the
-    /// widget instead, and unsandboxed keychain groups behave differently.
+    /// read credentials and refresh usage itself. The App Group doubles as
+    /// the keychain group (see both targets' entitlements).
     static let keychainAccessGroup: String? = appGroupID
-    static let refreshTaskID = "com.mikealvarado.aimeter.refresh"
-    /// macOS `NSBackgroundActivityScheduler` identifier for the repeating
-    /// refresh. Distinct from `refreshTaskID` (iOS `BGTaskScheduler`) — two
-    /// different systems, and sharing one string across them only invites
-    /// confusion about which platform registered what.
-    static let refreshActivityID = "com.mikealvarado.aimeter.refresh.activity"
+    static let refreshTaskID = "dev.rudek.aimeter.refresh"
     static let widgetKind = "AIMeterUsage"
     /// Single-window widget: shows one provider/window the user picks from
     /// the widget's own Edit Widget configuration.

@@ -15,14 +15,14 @@ system, and behaviors. It should be enough to rebuild the app from zero.
 
 ## Identifiers
 
-- Bundle ID: `com.mikealvarado.aimeter`
-- Widget extension: `com.mikealvarado.aimeter.widgets`
-- Watch app: `com.mikealvarado.aimeter.watchkitapp`, with its
-  complications in `com.mikealvarado.aimeter.watchkitapp.widgets` (see
+- Bundle ID: `dev.rudek.aimeter`
+- Widget extension: `dev.rudek.aimeter.widgets`
+- Watch app: `dev.rudek.aimeter.watchkitapp`, with its
+  complications in `dev.rudek.aimeter.watchkitapp.widgets` (see
   "Apple Watch" below and `AIMeterWatch/CLAUDE.md`); both carry the App
   Group too (on watchOS a container of its own, shared by the Watch app
   and its extension).
-- App Group: `group.com.mikealvarado.aimeter` — must match exactly in both
+- App Group: `group.dev.rudek.aimeter` — must match exactly in both
   targets' entitlements and `Shared/AppConfig.swift`. On iOS it doubles as
   the **keychain access group** so the widget can read credentials — this
   needs BOTH the `com.apple.security.application-groups` entitlement AND a
@@ -31,9 +31,9 @@ system, and behaviors. It should be enough to rebuild the app from zero.
   shares `UserDefaults`/files, not Keychain items — a common trap, since it
   builds and even codesigns fine without the Keychain entitlement; it only
   fails at runtime on a real device (the Simulator is lenient about it).
-- Background task ID: `com.mikealvarado.aimeter.refresh`
+- Background task ID: `dev.rudek.aimeter.refresh`
 - macOS update check (`NSBackgroundActivityScheduler`):
-  `com.mikealvarado.aimeter.updates.activity` (`AppUpdater.activityID`)
+  `dev.rudek.aimeter.updates.activity` (`AppUpdater.activityID`)
 - Widget kinds: `AIMeterUsage` ("Usage Limits": the account's windows,
   rows in the small family, columns with a big figure each in the medium),
   `AIMeterSingleUsage` (single-window widget, user-configurable via
@@ -390,7 +390,7 @@ below and `AIMeterWatch/CLAUDE.md`.
   without the sandbox entitlement — every Mac build before 2.0.0's
   release was refused with "plug-ins must be sandboxed", so no Mac
   widget ever appeared — and `pluginkit -m -i
-  com.mikealvarado.aimeter.widgets` is the check that it registered.
+  dev.rudek.aimeter.widgets` is the check that it registered.
 - macOS widget freshness contract: both widgets appear in Notification
   Center / the desktop automatically — WidgetKit discovery, nothing to
   register — but on macOS they only ever render what the app last wrote.
@@ -942,7 +942,7 @@ the account silently freezes at its last snapshot.
   release is an offer only when it is not a draft or pre-release, its
   tag is a version newer than the running one, and it has
   `AIMeter-macOS.zip`. `UpdateInstaller.prepare` downloads that zip to
-  `~/Library/Caches/com.mikealvarado.aimeter/Updates/<version>/`, checks
+  `~/Library/Caches/dev.rudek.aimeter/Updates/<version>/`, checks
   its SHA-256 against the asset's `digest`, unpacks it with `ditto`,
   and keeps it only if the app inside is validly signed, Apple-anchored,
   this bundle ID and the same team as the running app (nested code
@@ -2308,7 +2308,7 @@ key exactly (`%@`, `%lld`, `%%`, positional `%1$@` when reordered).
   another app (`Name` must be globally unique across every developer in
   the store, unlike the Bundle ID or SKU, which are only scoped to this
   account). This is store-listing metadata only: the in-app title, Bundle
-  ID (`com.mikealvarado.aimeter`), App Group, and every other reference in
+  ID (`dev.rudek.aimeter`), App Group, and every other reference in
   this project and codebase stay `AIMeter`.
 - `DEVELOPMENT_TEAM` is not hardcoded in `project.pbxproj`: both targets'
   build configs read it from a `baseConfigurationReference` to

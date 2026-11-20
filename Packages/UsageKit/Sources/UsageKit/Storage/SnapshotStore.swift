@@ -16,7 +16,7 @@ public struct SnapshotStore: @unchecked Sendable {
     private let defaults: UserDefaults
 
     /// - Parameter suiteName: the App Group identifier,
-    ///   e.g. "group.com.mikealvarado.aimeter". Returns nil if the suite
+    ///   e.g. "group.dev.rudek.aimeter". Returns nil if the suite
     ///   cannot be opened (missing entitlement).
     public init?(suiteName: String) {
         guard let defaults = UserDefaults(suiteName: suiteName) else {

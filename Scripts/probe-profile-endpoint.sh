@@ -39,7 +39,7 @@ unset CREDS_JSON
 # a login signed in through AIMeter lives under its bundle ID, one item per
 # account (`claude.credentials.<accountID>`), as a bare credentials JSON.
 if [[ -z "$ACCESS_TOKEN" && "$(uname)" == "Darwin" ]]; then
-  OWN_JSON="$(security find-generic-password -s "com.mikealvarado.aimeter" -w 2>/dev/null || true)"
+  OWN_JSON="$(security find-generic-password -s "dev.rudek.aimeter" -w 2>/dev/null || true)"
   if [[ -n "$OWN_JSON" ]]; then
     ACCESS_TOKEN="$(jq -r '.accessToken // empty' <<<"$OWN_JSON")"
     [[ -n "$ACCESS_TOKEN" ]] && echo "token source: AIMeter's own login (the Claude Code item holds no token)" >&2

@@ -197,9 +197,9 @@ running on your own devices).
    gitignored) and set `DEVELOPMENT_TEAM` to your own Team ID. Every
    target reads it from there.
 3. If your team can't use the bundle identifiers as-is, change
-   `com.mikealvarado.aimeter`, `com.mikealvarado.aimeter.widgets`, the
+   `dev.rudek.aimeter`, `dev.rudek.aimeter.widgets`, the
    Watch's `…aimeter.watchkitapp` / `…watchkitapp.widgets`, and the App
-   Group `group.com.mikealvarado.aimeter` to your own. The App Group must
+   Group `group.dev.rudek.aimeter` to your own. The App Group must
    match in **every** target's entitlements and in `Shared/AppConfig.swift`.
 4. Build and run the `AIMeter` scheme.
 

@@ -4,7 +4,7 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.mikealvarado.aimeter.refresh</string>
+		<string>dev.rudek.aimeter.refresh</string>
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>

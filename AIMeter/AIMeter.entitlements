@@ -4,11 +4,11 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.mikealvarado.aimeter</string>
+		<string>group.dev.rudek.aimeter</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)group.com.mikealvarado.aimeter</string>
+		<string>$(AppIdentifierPrefix)group.dev.rudek.aimeter</string>
 	</array>
 </dict>
 </plist>
