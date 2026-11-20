@@ -31,7 +31,7 @@ final class UsageLevelTests: XCTestCase {
         XCTAssertEqual(UsageWindow.make(.session, used: 78).level(usageColors: false), .normal)
         XCTAssertEqual(flagged.tint(usageColors: false), Theme.accent)
         XCTAssertEqual(UsageWindow.tint(usedPct: 95, severity: .exceeded, usageColors: false), Theme.accent,
-                       "the Live Activity's call agrees")
+                       "the call without a whole window agrees")
         XCTAssertEqual(UsageWindow.tint(usedPct: 78, severity: nil, usageColors: true), Theme.warning)
     }
 
