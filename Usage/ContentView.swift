@@ -11,7 +11,6 @@ struct ContentView: View {
     /// can open an account's detail in it.
     @State private var path = NavigationPath()
     @State private var shownLayout = DashboardLayout.stack
-    @State private var selectedAccountID: String?
     @State private var actions = DashboardActions()
 
     var body: some View {
@@ -24,26 +23,31 @@ struct ContentView: View {
             )
             dashboard(layout, in: proxy.size)
                 .onAppear { shownLayout = layout }
-                .onChange(of: layout) { _, layout in shownLayout = layout }
+                .onChange(of: layout) { old, layout in
+                    shownLayout = layout
+                    if old.selectsAccounts, !layout.selectsAccounts {
+                        openSelectedAccountInStack()
+                    }
+                }
         }
         .environment(actions)
         .modifier(DashboardPresentations(actions: actions))
-        // An account disconnected (from its own settings page or
-        // Settings): back to the Dashboard, since the detail and the
-        // settings page in the stack have nothing left to show.
         .onChange(of: model.accounts.map(\.account.accountID)) { old, new in
             if !Set(old).isSubset(of: Set(new)), !path.isEmpty {
                 path = NavigationPath()
             }
         }
-        // The "Open Account" intent (Shortcuts, Siri).
+        .onChange(of: path) {
+            if path.isEmpty, !shownLayout.selectsAccounts {
+                actions.selectedAccountID = nil
+            }
+        }
         .onChange(of: model.accountToOpen) { _, accountID in
             guard let accountID else { return }
             model.accountToOpen = nil
-            selectedAccountID = accountID
-            path = NavigationPath()
+            actions.selectedAccountID = accountID
             if !shownLayout.selectsAccounts {
-                path.append(accountID)
+                openSelectedAccountInStack()
             }
         }
         .onChange(of: scenePhase) { _, phase in
@@ -79,7 +83,7 @@ struct ContentView: View {
     private func dashboard(_ layout: DashboardLayout, in size: CGSize) -> some View {
         let accountIDs = model.accounts.map(\.account.accountID)
         if layout.selectsAccounts,
-           let shown = DashboardLayout.shownAccount(selected: selectedAccountID, in: accountIDs) {
+           let shown = DashboardLayout.shownAccount(selected: actions.selectedAccountID, in: accountIDs) {
             Group {
                 if case .aboveAndBelow(let top, let gap) = layout {
                     DashboardPanes(accountID: shown, top: top, gap: gap)
@@ -87,9 +91,16 @@ struct ContentView: View {
                     DashboardSplitView(accountID: shown, sidebarWidth: DashboardLayout.sidebarWidth(in: size))
                 }
             }
-            .environment(\.accountSelection, AccountSelection(selectedID: shown) { selectedAccountID = $0 })
+            .environment(\.accountSelection, AccountSelection(selectedID: shown) { actions.selectedAccountID = $0 })
         } else {
             stack
+        }
+    }
+
+    private func openSelectedAccountInStack() {
+        path = NavigationPath()
+        if let accountID = actions.selectedAccountID, model.usage(for: accountID) != nil {
+            path.append(accountID)
         }
     }
 

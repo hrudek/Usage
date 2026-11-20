@@ -11,8 +11,7 @@ struct ProviderDetailView: View {
     let accountID: String
 
     @Environment(UsageModel.self) private var model
-    @Environment(PreferencesModel.self) private var prefs
-    @State private var showingReconnect = false
+    @Environment(DashboardActions.self) private var actions
 
     private var usage: UsageModel.AccountUsage? {
         model.usage(for: accountID)
@@ -35,7 +34,7 @@ struct ProviderDetailView: View {
                         UsageStatusFooter(
                             snapshot: usage?.snapshot,
                             error: usage?.lastError,
-                            reauthenticate: usage?.needsReauthentication == true ? { showingReconnect = true } : nil,
+                            reauthenticate: usage?.needsReauthentication == true ? { actions.reconnecting = usage?.account } : nil,
                             offline: usage?.isOffline == true
                         )
                     }
@@ -87,12 +86,6 @@ struct ProviderDetailView: View {
             .readableWidth()
         }
         .appBackground()
-        .sheet(isPresented: $showingReconnect) {
-            if let account = usage?.account {
-                ConnectAccountSheet(reconnecting: account)
-                    .withAppModels(model, prefs)
-            }
-        }
         .navigationTitle(accountName)
         .navigationBarTitleDisplayMode(.inline)
         // The account's own settings, a tap away from its card (Mike,

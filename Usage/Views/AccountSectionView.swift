@@ -37,14 +37,7 @@ struct AccountSectionView: View {
     /// protagonist the narrower figure (`HeroWindowView.narrow`).
     var inColumns = false
 
-    /// The sheet is owned here rather than by each caller because both
-    /// surfaces that render this card need the same recovery, and the
-    /// failure they're recovering from belongs to this account, not to the
-    /// screen.
-    @State private var showingReconnect = false
-    @State private var showingRename = false
-    @State private var renameDraft = ""
-    @State private var showingIconPicker = false
+    @Environment(DashboardActions.self) private var actions
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -81,15 +74,6 @@ struct AccountSectionView: View {
         .frame(maxWidth: .infinity, maxHeight: inColumns ? .infinity : nil, alignment: .topLeading)
         .cardSurface()
         .overlay { AccountDropHighlight(isTargeted: isSelected) }
-        .sheet(isPresented: $showingReconnect) {
-            ConnectAccountSheet(reconnecting: usage.account)
-                .withAppModels(model, prefs)
-        }
-        .renameAccountAlert(for: usage.account.accountID, isPresented: $showingRename, name: $renameDraft)
-        .sheet(isPresented: $showingIconPicker) {
-            AccountIconPicker(accountID: usage.account.accountID)
-                .withAppModels(model, prefs)
-        }
     }
 
     /// The error, the reconnect prompt, and "Updated X
@@ -103,7 +87,7 @@ struct AccountSectionView: View {
                 UsageStatusFooter(
                     snapshot: usage.snapshot,
                     error: usage.lastError,
-                    reauthenticate: usage.needsReauthentication ? { showingReconnect = true } : nil,
+                    reauthenticate: usage.needsReauthentication ? { actions.reconnecting = usage.account } : nil,
                     offline: usage.isOffline,
                     updated: .whenStale
                 )
@@ -149,13 +133,12 @@ struct AccountSectionView: View {
     private var accountMenu: some View {
         if canRename {
             Button {
-                renameDraft = usage.account.displayName
-                showingRename = true
+                actions.rename(usage.account)
             } label: {
                 Label("Rename…", systemImage: "pencil")
             }
             Button {
-                showingIconPicker = true
+                actions.iconPickerAccountID = usage.account.accountID
             } label: {
                 Label("Change icon…", systemImage: "sparkle")
             }
