@@ -50,6 +50,8 @@ struct DeviceCodeConnectView: View {
 
     @State private var phase: Phase = .starting
     @State private var prompt: DeviceCodePrompt?
+    /// The pasteboard's change count right after the code was copied.
+    @State private var copiedChangeCount: Int?
     @State private var nickname = ""
     @State private var copied = false
     /// Bumped by "Try again": the task that asks for a code and polls is
@@ -221,6 +223,7 @@ struct DeviceCodeConnectView: View {
 
     private func copy(_ code: String) {
         UIPasteboard.general.string = code
+        copiedChangeCount = UIPasteboard.general.changeCount
         copied = true
         AccessibilityNotification.Announcement(String(localized: "Copied")).post()
         Task {
@@ -236,20 +239,36 @@ struct DeviceCodeConnectView: View {
     }
 
     /// Asks for the code, then polls at the service's interval until the
-    /// login lands, the code expires, or the view goes away (the task is
-    /// cancelled with it, so no poll outlives the sheet).
+    /// login lands, the code expires (15 minutes when the service gives
+    /// no expiry), or the view goes away (the task is cancelled with it,
+    /// so no poll outlives the sheet). A throttled poll waits longer from
+    /// then on, and one network error in a row is retried.
     private func run() async {
         do {
             let prompt = try await start()
             self.prompt = prompt
             phase = .waiting
+            let expiresAt = prompt.expiresAt ?? Date().addingTimeInterval(15 * 60)
+            var interval = max(1, prompt.interval)
+            var networkFailures = 0
             while !Task.isCancelled {
-                if let expiresAt = prompt.expiresAt, Date() >= expiresAt {
+                if Date() >= expiresAt {
                     phase = .failed(String(localized: "The code expired before it was entered."))
                     return
                 }
-                try await Task.sleep(for: .seconds(max(1, prompt.interval)))
-                guard let login = try await prompt.poll() else { continue }
+                try await Task.sleep(for: .seconds(interval))
+                let login: ProviderLogin?
+                do {
+                    login = try await prompt.poll()
+                    networkFailures = 0
+                } catch UsageError.rateLimited(let retryAfter, _) {
+                    interval = max(interval + 5, retryAfter ?? 0)
+                    continue
+                } catch let error as URLError where networkFailures == 0 && error.code != .cancelled {
+                    networkFailures += 1
+                    continue
+                }
+                guard let login else { continue }
                 phase = .connecting
                 await connect(login)
                 return
@@ -272,6 +291,11 @@ struct DeviceCodeConnectView: View {
         if let connectionError = model.connectionError {
             phase = .failed(connectionError)
         } else {
+            // The code is spent; take it off the pasteboard (and the
+            // Universal Clipboard) unless something else was copied since.
+            if copiedChangeCount == UIPasteboard.general.changeCount {
+                UIPasteboard.general.items = []
+            }
             dismiss()
         }
     }

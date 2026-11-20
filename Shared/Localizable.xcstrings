@@ -4118,6 +4118,52 @@
         }
       }
     },
+    "Paste the whole code from the sign-in page, including the part after #." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füge den ganzen Code von der Anmeldeseite ein, auch den Teil nach #."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pega el código completo de la página de inicio de sesión, incluida la parte después de #."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collez le code complet de la page de connexion, y compris la partie après #."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サインインページのコードを、# 以降の部分も含めてすべて貼り付けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인 페이지의 코드를 # 뒤 부분까지 모두 붙여 넣으세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cole o código inteiro da página de login, incluindo a parte depois do #."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请粘贴登录页面上的完整代码，包括 # 之后的部分。"
+          }
+        }
+      }
+    },
     "Percent of limit" : {
       "comment" : "The History chart's vertical axis, read by VoiceOver's Audio Graph.",
       "localizations" : {
@@ -5737,6 +5783,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在思考"
+          }
+        }
+      }
+    },
+    "This code is from an earlier sign-in. Open the sign-in page again and paste the new code." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Code stammt von einer früheren Anmeldung. Öffne die Anmeldeseite erneut und füge den neuen Code ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este código es de un inicio de sesión anterior. Vuelve a abrir la página de inicio de sesión y pega el código nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce code provient d'une connexion précédente. Rouvrez la page de connexion et collez le nouveau code."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このコードは以前のサインインのものです。サインインページをもう一度開いて、新しいコードを貼り付けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 코드는 이전 로그인의 코드입니다. 로그인 페이지를 다시 열고 새 코드를 붙여 넣으세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este código é de um login anterior. Abra a página de login de novo e cole o novo código."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此代码来自之前的登录。请重新打开登录页面并粘贴新的代码。"
           }
         }
       }

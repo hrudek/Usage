@@ -35,6 +35,7 @@ struct AccountEntityQuery: EntityQuery {
 struct AccountUsageIntent: AppIntent {
     static var title: LocalizedStringResource = "Account Usage"
     static var description = IntentDescription("Says how much of each limit one account has used.")
+    static var authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     @Parameter(title: "Account") var account: AccountEntity
 
@@ -52,6 +53,7 @@ struct AccountUsageIntent: AppIntent {
 struct NextResetsIntent: AppIntent {
     static var title: LocalizedStringResource = "Next Resets"
     static var description = IntentDescription("Says when each of one account's limits resets.")
+    static var authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     @Parameter(title: "Account") var account: AccountEntity
 
@@ -69,6 +71,7 @@ struct NextResetsIntent: AppIntent {
 struct OpenAccountIntent: AppIntent {
     static var title: LocalizedStringResource = "Open Account"
     static var description = IntentDescription("Opens one account's details in AIMeter.")
+    static var authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
     static var openAppWhenRun = true
 
     @Parameter(title: "Account") var account: AccountEntity

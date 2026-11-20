@@ -9,6 +9,7 @@ import UsageKit
 struct RefreshUsageIntent: AppIntent {
     static var title: LocalizedStringResource = "Refresh Usage"
     static var description = IntentDescription("Fetches the latest usage for every connected account and updates the widgets.")
+    static var authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
@@ -25,6 +26,7 @@ struct RefreshUsageIntent: AppIntent {
 struct ShowUsageIntent: AppIntent {
     static var title: LocalizedStringResource = "Show Usage"
     static var description = IntentDescription("Opens AIMeter's dashboard.")
+    static var authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
     static var openAppWhenRun = true
 
     @MainActor

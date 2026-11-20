@@ -24,6 +24,8 @@ struct ConnectClaudeSheet: View {
     @State private var nickname = ""
     @State private var isExchanging = false
     @State private var errorText: String?
+    /// The pasteboard's change count when the code was pasted from it.
+    @State private var pastedChangeCount: Int?
 
     var body: some View {
         // Scrollable so content is never clipped/truncated at the `.medium`
@@ -172,6 +174,20 @@ struct ConnectClaudeSheet: View {
         return String(localized: "AIMeter will open Claude's sign-in page in your browser. After you approve, copy the code it shows and paste it back here to finish. Any sign-in method works.")
     }
 
+    /// Why the pasted code can't be this sign-in's, said before sending
+    /// it: the page shows `code#state`, and the state must be this one's.
+    private var codeProblem: String? {
+        let parts = code.trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(separator: "#", maxSplits: 1).map(String.init)
+        guard parts.count == 2 else {
+            return String(localized: "Paste the whole code from the sign-in page, including the part after #.")
+        }
+        guard parts[1] == session.state else {
+            return String(localized: "This code is from an earlier sign-in. Open the sign-in page again and paste the new code.")
+        }
+        return nil
+    }
+
     private var canConnect: Bool {
         !code.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isExchanging && !nicknameTaken
     }
@@ -196,10 +212,15 @@ struct ConnectClaudeSheet: View {
     private func pasteFromClipboard() {
         if let pasted = UIPasteboard.general.string {
             code = pasted
+            pastedChangeCount = UIPasteboard.general.changeCount
         }
     }
 
     private func connect() {
+        if let problem = codeProblem {
+            errorText = problem
+            return
+        }
         isExchanging = true
         errorText = nil
         Task {
@@ -214,6 +235,12 @@ struct ConnectClaudeSheet: View {
                 if let connectionError = model.connectionError {
                     errorText = connectionError
                 } else {
+                    // The code is spent; take it off the pasteboard (and
+                    // the Universal Clipboard) unless something else was
+                    // copied since it was pasted.
+                    if pastedChangeCount == UIPasteboard.general.changeCount {
+                        UIPasteboard.general.items = []
+                    }
                     dismiss()
                 }
             } catch {
