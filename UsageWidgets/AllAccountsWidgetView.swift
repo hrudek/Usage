@@ -23,9 +23,7 @@ struct AllAccountsWidgetView: View {
             }
         }
         .refreshesOnTap(RefreshAllAccountsIntent())
-        .containerBackground(for: .widget) {
-            WidgetBackdrop()
-        }
+        .widgetBackdrop()
     }
 
     private var standard: some View {
