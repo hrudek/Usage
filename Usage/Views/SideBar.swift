@@ -73,7 +73,6 @@ extension View {
     }
 }
 
-/// Not wired to `toolbarVerticalEdge` yet: the side bar is never shown.
 private struct VerticalBarReader: ViewModifier {
     @Binding var isVertical: Bool
 

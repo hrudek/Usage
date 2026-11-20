@@ -1,7 +1,6 @@
 name: iOS build check
 
-# Unsigned iOS Simulator build of the app and its widget extension with
-# Xcode 27.1 or later, then screenshots of it on an iPhone Duo simulator.
+# Unsigned iOS Simulator build of the app and its widget extension.
 # Pull requests only; pushes to main build and sign in testflight.yml.
 
 on:

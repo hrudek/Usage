@@ -180,8 +180,9 @@ any user-facing text, in any language.
 - Xcode 27.1 or later (iOS 27.1 SDK): built with an older SDK the app
   runs letterboxed in compatibility mode on iPhone Duo. Both workflows
   run on the GitHub image `xcode-27` (repository variable `MACOS_RUNNER`
-  overrides it) and start with `.github/ci/select-xcode.sh`, which prints
-  the Xcode and SDK versions and fails below 27.1.
+  overrides it) and start with `.github/ci/select-xcode.sh`, which keeps
+  the image's Xcode or switches to the newest installed one, prints the
+  Xcode and SDK versions and fails below 27.1.
 - No local Xcode is assumed. The gate is the GitHub Actions workflow
   "iOS build check" (`.github/workflows/ios-build.yml`): an unsigned iOS
   Simulator build of the `Usage` scheme, on pull requests, which lists
