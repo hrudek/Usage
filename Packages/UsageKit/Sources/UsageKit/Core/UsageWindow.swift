@@ -5,9 +5,7 @@ import Foundation
 public struct UsageWindow: Codable, Hashable, Sendable {
     /// The category of a usage window. Extensible: providers that expose
     /// per-model limits use `.modelSpecific` with the model's display name
-    /// exactly as the provider reports it (e.g. "Fable"), and a provider
-    /// whose allowances are neither a session nor an overall period
-    /// uses `.quota` with its own stable name for each.
+    /// exactly as the provider reports it (e.g. "Fable").
     public enum Kind: Hashable, Sendable {
         /// The short rolling window usage starts on first use: Claude's and
         /// Codex's 5 hours.
@@ -17,12 +15,6 @@ public struct UsageWindow: Codable, Hashable, Sendable {
         /// `duration`, not the kind.
         case weekly
         case modelSpecific(String)
-        /// A named allowance the provider meters on its own calendar and
-        /// nothing else fits. The string is the provider's stable
-        /// identifier for it (`premium_interactions`), never a display
-        /// name, so persistence keys stay the same in every language; the
-        /// presentation layer names it. Its length rides in `duration`.
-        case quota(String)
         /// Display-only pseudo-window synthesized by the presentation layer
         /// from `SpendStatus` (e.g. when a plan bills a model via usage
         /// credits instead of its own rate-limit window). Never produced by
@@ -93,7 +85,6 @@ extension UsageWindow.Kind {
         case .session: return "session"
         case .weekly: return "weekly"
         case .modelSpecific(let model): return "model.\(model)"
-        case .quota(let name): return "quota.\(name)"
         case .credits: return "credits"
         }
     }
@@ -108,8 +99,6 @@ extension UsageWindow.Kind {
         default:
             if storageKey.hasPrefix("model.") {
                 self = .modelSpecific(String(storageKey.dropFirst("model.".count)))
-            } else if storageKey.hasPrefix("quota.") {
-                self = .quota(String(storageKey.dropFirst("quota.".count)))
             } else {
                 return nil
             }
@@ -121,26 +110,18 @@ extension UsageWindow.Kind {
         if case .modelSpecific = self { return true }
         return false
     }
-
-    /// Whether this is a named quota.
-    public var isQuota: Bool {
-        if case .quota = self { return true }
-        return false
-    }
 }
 
 extension UsageWindow.Kind: Codable {
     private enum CodingKeys: String, CodingKey {
         case type
         case model
-        case quota
     }
 
     private enum KindType: String, Codable {
         case session
         case weekly
         case modelSpecific
-        case quota
         case credits
     }
 
@@ -153,8 +134,6 @@ extension UsageWindow.Kind: Codable {
             self = .weekly
         case .modelSpecific:
             self = .modelSpecific(try container.decode(String.self, forKey: .model))
-        case .quota:
-            self = .quota(try container.decode(String.self, forKey: .quota))
         case .credits:
             self = .credits
         }
@@ -170,9 +149,6 @@ extension UsageWindow.Kind: Codable {
         case .modelSpecific(let model):
             try container.encode(KindType.modelSpecific, forKey: .type)
             try container.encode(model, forKey: .model)
-        case .quota(let name):
-            try container.encode(KindType.quota, forKey: .type)
-            try container.encode(name, forKey: .quota)
         case .credits:
             try container.encode(KindType.credits, forKey: .type)
         }

@@ -73,12 +73,11 @@ extension CodexUsageResponse {
                 windows.append(window)
             }
         }
-        if let secondary = rateLimit?.secondaryWindow {
-            // Never seen beside a long primary; keyed apart if it ever is.
-            let kind: UsageWindow.Kind = windows.contains { $0.kind == .weekly } ? .quota("secondary_window") : .weekly
-            if let window = Self.window(secondary, kind: kind, exceeded: exceeded, now: now) {
-                windows.append(window)
-            }
+        // Never seen beside a long primary, which already took `.weekly`;
+        // skipped if it ever is.
+        if let secondary = rateLimit?.secondaryWindow, !windows.contains(where: { $0.kind == .weekly }),
+           let window = Self.window(secondary, kind: .weekly, exceeded: exceeded, now: now) {
+            windows.append(window)
         }
         for extra in additionalRateLimits ?? [] {
             guard let name = extra.limitName, !name.isEmpty,

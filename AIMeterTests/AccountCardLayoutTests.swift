@@ -42,15 +42,4 @@ final class AccountCardLayoutTests: XCTestCase {
         XCTAssertNil(layout.hero.window)
         XCTAssertEqual(layout.others.map(\.kind), [.weekly])
     }
-
-    func testAQuotaProviderLeadsWithItsMostUsedQuota() {
-        let snapshot = UsageSnapshot.make(windows: [
-            .make(.quota("premium_interactions"), used: 12, resetsIn: 86400),
-            .make(.quota("chat"), used: 55, resetsIn: 86400),
-            .make(.quota("completions"), used: 3, resetsIn: 86400),
-        ])
-        let layout = AccountCardLayout(snapshot: snapshot, modelSlotFallback: .auto)
-        XCTAssertEqual(layout.hero.kind, .quota("chat"))
-        XCTAssertEqual(layout.others.map(\.kind), [.quota("premium_interactions"), .quota("completions")])
-    }
 }

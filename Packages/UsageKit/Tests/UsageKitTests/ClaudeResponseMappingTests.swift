@@ -1,8 +1,8 @@
 import XCTest
 @testable import UsageKit
 
-/// Validates decoding against the real response captured by
-/// Scripts/probe-usage-endpoint.sh in Phase 1 (Fixtures/claude-usage-response.json).
+/// Validates decoding against a real captured response
+/// (Fixtures/claude-usage-response.json).
 final class ClaudeResponseMappingTests: XCTestCase {
     func testDecodesRealFixtureIntoThreeWindows() throws {
         let response = try decodeFixture()

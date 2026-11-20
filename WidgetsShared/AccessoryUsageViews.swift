@@ -23,7 +23,7 @@ struct CircularUsageView: View {
     /// rate windows ("5h", "7d", "30d" for a month, the space that fits),
     /// a currency glyph for Credits since that one has no fixed period,
     /// and the provider's own short name for a per-model window (e.g.
-    /// "Fable" on Max) or a quota ("Premium"), since no generic hint fits
+    /// "Fable" on Max), since no generic hint fits
     /// every plan's names. The metric falls back to the account's first
     /// window when it reports no window of the chosen kind.
     private var caption: String {
@@ -39,7 +39,7 @@ struct CircularUsageView: View {
             case .days(let days): return String(localized: "\(days)d")
             }
         case .credits: return String(localized: "$")
-        case .modelSpecific, .quota: return kind.shortName
+        case .modelSpecific: return kind.shortName
         }
     }
 }

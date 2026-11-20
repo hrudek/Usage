@@ -24,7 +24,7 @@ final class UsageInsightsTests: XCTestCase {
         XCTAssertNil(UsageInsights.dailyAllowance(for: .make(.weekly, used: 20, resetsIn: -60, now: now), now: now))
     }
 
-    /// A month-long window (Codex Free, a Copilot quota) shares by the
+    /// A month-long window (Codex Free) shares by the
     /// days of its own month.
     func testAMonthLongWindowSharesByItsOwnDays() throws {
         var month = UsageWindow.make(.weekly, used: 40, resetsIn: 20 * 86_400, now: now)

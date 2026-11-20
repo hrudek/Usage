@@ -5,7 +5,7 @@ import UsageKit
 /// whatever windows the snapshot contains — no provider names hardcoded.
 extension UsageWindow.Kind {
     /// Row title on dashboard/detail for a kind on its own: "5-hour
-    /// session", "Weekly", "Weekly · Fable", a quota's name. With the
+    /// session", "Weekly", "Weekly · Fable". With the
     /// window at hand, `UsageWindow.title` reads its real length instead
     /// (a 30-day week is "Monthly").
     var displayName: String {
@@ -21,7 +21,7 @@ extension UsageWindow.Kind {
     /// The row title for a window of this kind and length: the length
     /// is the provider's, so a session is "5-hour" or "3-hour", and the
     /// overall period "Weekly", "Monthly" or "14-day"; a per-model window
-    /// follows the same period; a quota is called by its name.
+    /// follows the same period.
     func title(duration: TimeInterval?) -> String {
         switch self {
         case .session:
@@ -39,8 +39,6 @@ extension UsageWindow.Kind {
             case .month: return String(localized: "Monthly · \(model)")
             case .days(let days): return String(localized: "\(days)-day · \(model)")
             }
-        case .quota(let id):
-            return Self.quotaName(id)
         case .credits:
             return String(localized: "Credits")
         }
@@ -59,8 +57,6 @@ extension UsageWindow.Kind {
             }
         case .modelSpecific(let model):
             return model
-        case .quota(let id):
-            return Self.quotaShortName(id)
         case .credits:
             return String(localized: "Credits")
         }
@@ -71,29 +67,7 @@ extension UsageWindow.Kind {
         case .session: return "clock"
         case .weekly: return "calendar"
         case .modelSpecific: return "sparkles"
-        case .quota: return "chart.bar"
         case .credits: return "creditcard"
-        }
-    }
-
-    /// A named quota's title, from the provider's own stable id (what the
-    /// kind carries, so keys stay the same in every language), as
-    /// readable words.
-    static func quotaName(_ id: String) -> String {
-        switch id {
-        case "premium_interactions": return String(localized: "Premium requests")
-        case "chat": return String(localized: "Chat")
-        case "completions": return String(localized: "Completions")
-        default:
-            let words = id.replacingOccurrences(of: "_", with: " ")
-            return words.prefix(1).uppercased() + words.dropFirst()
-        }
-    }
-
-    static func quotaShortName(_ id: String) -> String {
-        switch id {
-        case "premium_interactions": return String(localized: "Premium")
-        default: return quotaName(id)
         }
     }
 

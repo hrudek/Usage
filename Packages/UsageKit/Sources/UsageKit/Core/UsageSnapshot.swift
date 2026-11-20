@@ -49,11 +49,6 @@ public struct UsageSnapshot: Codable, Hashable, Sendable {
         windows.filter(\.kind.isModelSpecific)
     }
 
-    /// The named quotas, in the order the provider reports them.
-    public var quotaWindows: [UsageWindow] {
-        windows.filter(\.kind.isQuota)
-    }
-
     /// Providers omit `resetsAt` for windows with no usage yet, but weekly
     /// windows roll over on a fixed anchor: the previously reported date
     /// advanced by whole periods is still the true boundary. Fills those
@@ -87,13 +82,13 @@ public struct UsageSnapshot: Codable, Hashable, Sendable {
 
 extension UsageWindow {
     /// The window's rollover period, for advancing a reset the provider
-    /// left out: the periodic kinds (weekly, per-model, a named quota)
+    /// left out: the periodic kinds (weekly, per-model)
     /// repeat every `effectiveDuration` (7 days for Claude, a month for
     /// Codex Free). Sessions start on first use, so they have
     /// no fixed anchor, and credits are not a time window.
     var nominalPeriod: TimeInterval? {
         switch kind {
-        case .weekly, .modelSpecific, .quota:
+        case .weekly, .modelSpecific:
             return effectiveDuration
         case .session, .credits:
             return nil
@@ -106,8 +101,7 @@ extension UsageWindow.Kind {
     /// burn would put you now = elapsed / duration). Distinct from
     /// `UsageWindow.nominalPeriod`: a session has no fixed rollover
     /// anchor yet is still exactly 5 hours long. `.credits` is a spend
-    /// cap, not a time window, so it has no duration, and a named quota
-    /// has whatever length its provider states, nothing by default.
+    /// cap, not a time window, so it has no duration.
     ///
     /// These lengths (5h / 7d) are Claude's — the *default* for a kind.
     /// A provider with different lengths sets `UsageWindow.duration`
@@ -119,7 +113,7 @@ extension UsageWindow.Kind {
             return 5 * 3600
         case .weekly, .modelSpecific:
             return 7 * 86400
-        case .quota, .credits:
+        case .credits:
             return nil
         }
     }

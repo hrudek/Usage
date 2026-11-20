@@ -2,7 +2,7 @@ import XCTest
 @testable import UsageKit
 
 /// `codex-usage-response-free.json` is a real capture of a Free account
-/// (`Scripts/probe-codex-usage.sh -o`, 2026-10-20, ids redacted);
+/// (2026-10-20, ids redacted);
 /// `codex-usage-response-plus-synthetic.json` is hand-built on the CLI's
 /// published schema for a paid plan (a session, a week, one
 /// model-specific limit), since no paid account was at hand.

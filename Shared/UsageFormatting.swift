@@ -6,8 +6,7 @@ import UsageKit
 /// session and weekly, so the composition is there from the start. With
 /// a snapshot, what the account reports: its session and its overall
 /// period (the week, or Codex Free's month) in that order, then the third
-/// slot; or, for a provider that meters named quotas and no rate window,
-/// up to three of those in the provider's order.
+/// slot.
 ///
 /// The third slot only ever shows a real per-model window when the plan
 /// actually reports one (e.g. Max/Team Premium's Fable 5 allowance). When it
@@ -18,8 +17,6 @@ import UsageKit
 /// (the default) picks between those two by itself — the row appears
 /// exactly when the account's spend/credits status is enabled.
 struct WindowSlots {
-    static let maxSlots = 3
-
     let slots: [(kind: UsageWindow.Kind, window: UsageWindow?)]
 
     init(snapshot: UsageSnapshot?, modelSlotFallback: ModelSlotFallback) {
@@ -31,11 +28,6 @@ struct WindowSlots {
         if let session = snapshot.sessionWindow { built.append((.session, session)) }
         if let weekly = snapshot.weeklyWindow { built.append((.weekly, weekly)) }
         if built.isEmpty {
-            let quotas = snapshot.quotaWindows.prefix(Self.maxSlots).map { (kind: $0.kind, window: Optional($0)) }
-            if !quotas.isEmpty {
-                slots = quotas
-                return
-            }
             // A snapshot with no rate window at all keeps the placeholders.
             built = [(.session, nil), (.weekly, nil)]
         }
@@ -90,15 +82,15 @@ extension UsageSnapshot {
         switch kind {
         case .session: return sessionWindow
         case .weekly: return weeklyWindow
-        case .modelSpecific, .quota: return windows.first { $0.kind == kind }
+        case .modelSpecific: return windows.first { $0.kind == kind }
         case .credits: return creditsWindow
         }
     }
 
     /// The window kinds this account currently reports, for pickers that
     /// need a live list instead of a hardcoded one — session and weekly
-    /// while the account reports them (both, before the first fetch), or
-    /// else its named quotas; the per-model window (e.g. Fable on Max) is
+    /// while the account reports them (both, before the first fetch); the
+    /// per-model window (e.g. Fable on Max) is
     /// offered whenever the account has one; Credits only when the
     /// account has it enabled *and* the user hasn't turned the third-row
     /// fallback fully off — the same `modelSlotFallback` rule
@@ -110,7 +102,6 @@ extension UsageSnapshot {
         if let snapshot {
             if snapshot.sessionWindow != nil { kinds.append(.session) }
             if snapshot.weeklyWindow != nil { kinds.append(.weekly) }
-            if kinds.isEmpty { kinds = snapshot.quotaWindows.map(\.kind) }
         }
         if kinds.isEmpty { kinds = [.session, .weekly] }
         if let model = snapshot?.modelWindows.first {
