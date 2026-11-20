@@ -112,7 +112,6 @@ struct CondensedAccountsView: View {
             .min()
         if let soonest {
             HStack(spacing: 3) {
-                Image(systemName: "arrow.circlepath")
                 Text("Next session reset:")
                 ResetLineText(resetsAt: soonest, style: entry.prefs.resetStyle, now: entry.date, bare: true)
             }

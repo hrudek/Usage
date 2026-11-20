@@ -33,3 +33,28 @@ struct RefreshAccountIntent: AppIntent {
         return .result()
     }
 }
+
+/// The all-accounts widget's tap: fetch every connected account now (each
+/// with its own 5 s floor), then reload the widget kinds.
+struct RefreshAllAccountsIntent: AppIntent {
+    static var title: LocalizedStringResource = "Refresh"
+    static var isDiscoverable: Bool = false
+
+    init() {}
+
+    func perform() async throws -> some IntentResult {
+        let accounts = AccountRegistryStore(suiteName: AppConfig.appGroupID)?.accounts() ?? []
+        await withTaskGroup(of: Void.self) { group in
+            for account in accounts {
+                group.addTask { _ = await WidgetRefresher.refreshNow(accountID: account.accountID) }
+            }
+        }
+        WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.widgetKind)
+        WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.singleWidgetKind)
+        WidgetCenter.shared.reloadTimelines(ofKind: AppConfig.allAccountsWidgetKind)
+        if #available(iOS 18.0, *) {
+            ControlCenter.shared.reloadControls(ofKind: AppConfig.controlKind)
+        }
+        return .result()
+    }
+}

@@ -26,6 +26,7 @@ struct UsageWidgetView: View {
                     InlineUsageView(snapshot: snapshot, prefs: entry.prefs)
                 case .systemMedium:
                     MediumUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountID: entry.accountID, accountName: entry.accountName, accountIcon: entry.accountIcon)
+                        .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
                 case .systemSmall where !showsBackground:
                     let hero = AccountCardLayout(snapshot: snapshot, modelSlotFallback: entry.prefs.modelSlotFallback).hero
                     StandByUsageView(
@@ -38,6 +39,7 @@ struct UsageWidgetView: View {
                     )
                 default:
                     SystemUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountID: entry.accountID, accountName: entry.accountName, accountIcon: entry.accountIcon)
+                        .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
                 }
             } else {
                 Text("Open Usage to load your limits")
@@ -81,7 +83,8 @@ struct WidgetHeader: View {
                 font: .system(size: 12, weight: .semibold),
                 nameColor: Theme.ink,
                 planName: planName,
-                icon: accountIcon
+                icon: accountIcon,
+                showsMark: false
             )
             Spacer(minLength: 0)
             if snapshot.isStale {
@@ -92,15 +95,7 @@ struct WidgetHeader: View {
                 .font(.system(size: 8))
                 .foregroundStyle(Theme.inkSecondary.opacity(0.8))
             }
-            // Always present, not just while stale — a predictable, always-
-            // available manual refresh, same philosophy as the app's own
-            // Dashboard refresh button.
-            Button(intent: RefreshAccountIntent(accountID: accountID)) {
-                Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 9, weight: .semibold))
-                    .foregroundStyle(Theme.inkSecondary)
-            }
-            .buttonStyle(.plain)
+            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: accountIcon)
         }
     }
 }
@@ -175,10 +170,7 @@ struct WidgetHero: View {
                 Spacer(minLength: 4)
                 Group {
                     if let resetsAt = window?.resetsAt {
-                        HStack(spacing: 2) {
-                            Image(systemName: "arrow.circlepath")
-                            ResetLineText(resetsAt: resetsAt, style: prefs.resetStyle, now: now, bare: true)
-                        }
+                        ResetLineText(resetsAt: resetsAt, style: prefs.resetStyle, now: now, bare: true)
                     } else if let moneySubtitle {
                         Text(moneySubtitle)
                     }

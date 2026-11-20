@@ -22,6 +22,7 @@ struct AllAccountsWidgetView: View {
                 standard
             }
         }
+        .refreshesOnTap(RefreshAllAccountsIntent())
         .containerBackground(for: .widget) {
             WidgetBackdrop()
         }
@@ -59,8 +60,7 @@ struct AllAccountsWidgetView: View {
     }
 }
 
-/// One account's header (name + always-visible manual refresh, iOS only —
-/// see `RefreshAccountIntent`) followed by the app's card composition
+/// One account's header (the name, the mark in the top-right corner) followed by the app's card composition
 /// (4.0): its session as the protagonist and the others as
 /// compact lines, `WidgetHero` and `WidgetCompactRows`, the small
 /// widget's own pieces, decided by the same `AccountCardLayout`.
@@ -79,15 +79,11 @@ private struct AccountRow: View {
                     font: .system(size: 12, weight: .semibold),
                     nameColor: Theme.ink,
                     planName: row.snapshot?.planName,
-                    icon: row.account.icon
+                    icon: row.account.icon,
+                    showsMark: false
                 )
                 Spacer(minLength: 0)
-                Button(intent: RefreshAccountIntent(accountID: row.account.accountID)) {
-                    Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 9, weight: .semibold))
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-                .buttonStyle(.plain)
+                ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: row.account.icon)
             }
             if let snapshot = row.snapshot {
                 let layout = AccountCardLayout(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback)
