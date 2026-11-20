@@ -9,7 +9,7 @@ account's Codex limits, from the undocumented endpoint the Codex CLI's
 - `GET https://chatgpt.com/backend-api/wham/usage` with
   `Authorization: Bearer <access token>`, `ChatGPT-Account-Id` (when
   known) and `Accept: application/json`.
-- Decoded: `plan_type` (the plan pill), `account_id`, `rate_limit`
+- Decoded: `plan_type` (the plan pill), `rate_limit`
   (`limit_reached`, `primary_window`, `secondary_window`; each
   `used_percent`, `limit_window_seconds`, `reset_after_seconds`,
   `reset_at`), `additional_rate_limits[]`, and
@@ -20,7 +20,8 @@ account's Codex limits, from the undocumented endpoint the Codex CLI's
   it has one `.weekly` window of 30 days (titled "Monthly"). Each
   additional limit becomes `.modelSpecific(limit_name)`. `limit_reached`
   marks full windows `.exceeded`. A window without `used_percent` is
-  skipped; a secondary beside a long primary is `.quota("secondary_window")`.
+  skipped, and so is a secondary window beside a long primary (never
+  seen), which already took `.weekly`.
   `spend_control.individual_limit` maps to `SpendStatus`.
 - Statuses: 401 triggers one refresh (app only) and a retry, then
   `notAuthenticated`; 429 `rateLimited`; anything else `httpError`.
@@ -44,8 +45,7 @@ account's Codex limits, from the undocumented endpoint the Codex CLI's
   400 or 401 is `notAuthenticated`, 429 `rateLimited`, anything else
   `httpError`.
 - Tokens are JWTs. `JWTClaims` reads only `exp` and, under
-  `https://api.openai.com/auth`, `chatgpt_account_id` and
-  `chatgpt_plan_type`. The `id_token` is not stored: the account id is
+  `https://api.openai.com/auth`, `chatgpt_account_id`. The `id_token` is not stored: the account id is
   taken from the access token, else from the `id_token`, at sign-in and
   refresh, and kept as `CodexCredentials.accountID`.
 - `CodexKeychainCredentialSource`: key `codex.credentials.<accountID>`

@@ -34,7 +34,8 @@ the display preferences. `AIMeterWidgetsBundle` lists, in gallery order:
   without a reload.
 - When the stored snapshot is stale (`WidgetSchedule.isStale`: older than
   that interval, or overtaken by a reset), `WidgetRefresher.fetchIfStale`
-  fetches for that account with a 15 s request timeout. Instances of one
+  fetches for that account with a 15 s request timeout (only for an
+  account in the registry; the pickers' placeholder never fetches). Instances of one
   account share an in-flight stamp in the App Group so only one fetches.
   The result is saved to `SnapshotStore` and both histories
   (`UsageRecorder`).

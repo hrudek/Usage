@@ -48,7 +48,7 @@ says only what the code does.
 - A provider implements `UsageProvider.fetchUsage() async throws ->
   UsageSnapshot`. A snapshot holds `[UsageWindow]` plus optional `spend`,
   `extraUsage` and `breakdown`. `UsageWindow.Kind` is `.session`,
-  `.weekly`, `.modelSpecific(String)`, `.quota(String)` and `.credits`
+  `.weekly`, `.modelSpecific(String)` and `.credits`
   (display only, synthesized from `spend`, never stored). Views render
   whatever windows a snapshot has and never key on a provider name.
 - A window's length comes from the window (`duration`, read through
