@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Keeps the image's default Xcode when it is new enough, else switches to the
-# newest installed /Applications/Xcode*.app; fails below the minimum.
-# The iOS 27.1 SDK is what makes the app native on iPhone Duo.
 set -euo pipefail
 minimum=27.1
 at_least() { [[ "$(printf '%s\n%s\n' "$minimum" "$1" | sort -V | head -1)" == "$minimum" ]]; }

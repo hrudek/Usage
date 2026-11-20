@@ -73,8 +73,11 @@ environment; every sheet gets both again from its presenter
     device page, polled at the service's interval until approved (15 min
     cap, backs off when throttled).
   The same sheets repair a broken login in place (`reconnecting:`).
-- **iPhone Duo side bar** (`SideBar.swift`): Settings and Refresh at the
-  side of the screen when the display is split.
+- **iPhone Duo side bar** (`SideBar.swift`): `DashboardSideBar` and
+  `SheetDoneButton` would move Settings, Refresh and Done to the system's
+  vertical bar, but `VerticalBarReader` does not read
+  `toolbarVerticalEdge` yet, so the bar is never vertical and the drawn
+  header always shows.
 
 ## App Intents (`Intents/`)
 
