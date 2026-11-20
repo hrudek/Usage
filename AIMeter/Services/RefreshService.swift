@@ -53,29 +53,6 @@ struct RefreshService {
         return copy
     }
 
-    /// One-time move of credentials saved before keychain sharing into the
-    /// shared access group, so the widget extension can read them too. Runs
-    /// once at startup (`AccountMigration`), before any account is loaded —
-    /// not per-`RefreshService` instance, since it only concerns the legacy
-    /// default-key item.
-    static func migrateCredentialsToSharedGroup() {
-        guard AppConfig.keychainAccessGroup != nil else { return }
-        let legacy = KeychainStore(service: AppConfig.keychainService)
-        let key = ClaudeKeychainCredentialSource.defaultKey
-        guard (try? keychainStore.data(for: key)) == nil,
-              let data = try? legacy.data(for: key), !data.isEmpty else { return }
-        // Delete first: the legacy store names no access group, so its
-        // delete matches the key in every group the app can reach and
-        // would take the new shared copy with it. A write that fails puts
-        // the login back where it was instead of losing it.
-        try? legacy.delete(key)
-        do {
-            try keychainStore.set(data, for: key)
-        } catch {
-            try? legacy.set(data, for: key)
-        }
-    }
-
     func lastSnapshot() -> UsageSnapshot? {
         store?.snapshot(for: account.accountID)
     }
@@ -249,14 +226,6 @@ struct RefreshService {
     }
 
     // MARK: - Connection management (in-app OAuth flow)
-
-    /// Whether this specific account's credential key already has stored
-    /// credentials — used to detect a legacy single-account install during
-    /// migration (`AccountMigration`).
-    static func storedCredentialsExist(for accountID: String) -> Bool {
-        let key = ClaudeKeychainCredentialSource.storageKey(for: accountID)
-        return (try? keychainStore.data(for: key)) != nil
-    }
 
     /// The connect path: the one place this type is provider-typed,
     /// because the credentials themselves are (`ProviderLogin`: what each

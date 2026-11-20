@@ -105,14 +105,12 @@ final class UsageModel {
         ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }
 
-    /// `platformServices: false` is the unit-test seam: no migration (it
-    /// probes the real Keychain), no scheduler or observers, no
-    /// notification sweep — just the registry handed in.
+    /// `platformServices: false` is the unit-test seam: no scheduler or
+    /// observers, no notification sweep — just the registry handed in.
     init(registry: AccountRegistryStore?, platformServices: Bool) {
         self.registry = registry
         timelineStore = platformServices ? UsageTimelineStore(appGroupID: AppConfig.appGroupID) : nil
         if platformServices {
-            AccountMigration.run(registry: registry)
             ordersByUrgency = Preferences.load().ordersByUrgency
         }
         loadAccounts()
