@@ -73,11 +73,14 @@ environment; every sheet gets both again from its presenter
     device page, polled at the service's interval until approved (15 min
     cap, backs off when throttled).
   The same sheets repair a broken login in place (`reconnecting:`).
-- **iPhone Duo side bar** (`SideBar.swift`): `DashboardSideBar` and
-  `SheetDoneButton` would move Settings, Refresh and Done to the system's
-  vertical bar, but `VerticalBarReader` does not read
-  `toolbarVerticalEdge` yet, so the bar is never vertical and the drawn
-  header always shows.
+- **iPhone Duo side bar** (`SideBar.swift`): where the system lays the
+  bars vertically (`toolbarVerticalEdge` not nil, iOS 27.1: the outer
+  display, the inner one in landscape), `DashboardSideBar` puts Settings,
+  Refresh and Add account (opens the Connect sheet) there, each an icon
+  with a title, and the drawn header drops its two buttons; a sheet's
+  Done (`SheetDoneButton`) becomes a checkmark. Elsewhere (other
+  iPhones, iPad, the inner display in portrait) the navigation bar stays
+  hidden and the drawn header shows as always.
 
 ## App Intents (`Intents/`)
 
