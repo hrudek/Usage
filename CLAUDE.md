@@ -37,6 +37,10 @@ file says only what the code does.
   (`WindowDisplay`, `AccountCardLayout`, `AccountOrder`, `ResetLine`,
   `WidgetSchedule`, `HistoryChartData`, `UsageInsights`), `UsageRecorder`,
   `WidgetReload`, `Localizable.xcstrings`, `PrivacyInfo.xcprivacy`.
+- `Design/AppIcon.svg`: the app icon's source, a full-bleed square (iOS
+  applies the corner mask). It is exported to
+  `Usage/Assets.xcassets/AppIcon.appiconset/AppIcon.png`, 1024 x 1024,
+  no alpha (`rsvg-convert`, then flatten).
 - `Packages/UsageKit/`: the local Swift package (iOS 17) with the
   provider-agnostic core, the providers and the stores.
 - `UsageTests/`: the app's unit tests (hosted in the app).
