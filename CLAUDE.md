@@ -154,8 +154,8 @@ two or more accounts, titles start with the account's name.
 - Up to three rows per account (`WindowSlots`): session, the overall
   period, then a per-model window, or credits per "Usage rows".
 - Colors live in `Shared/Theme.swift`. Dark: backdrop a diagonal
-  gradient #2B2D42 to #0D0E14 (`Theme.backdrop`, app screens and widget
-  backgrounds), cards #2B2D42, bar track #3A3D52, ink #FFFFFF, secondary ink
+  gradient #2B2D42 to #0D0E14 (`Theme.backdrop`, app screens; widgets draw their
+  own, darker `WidgetBackdrop`), cards #2B2D42, bar track #3A3D52, ink #FFFFFF, secondary ink
   #8D99AE, accent #5DCAA5, red #E24B4A. Light keeps ivory surfaces with
   the same accent and red darkened to 4.5:1 (#387963, #C24040). Text on
   a filled accent shape uses `Theme.onAccent`.

@@ -41,6 +41,7 @@ struct WidgetCardHeader<Subtitle: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: icon)
         }
+        .padding(.bottom, WidgetMetrics.dividerGap + 1)
     }
 
     private var styledTitle: some View {

@@ -69,7 +69,7 @@ window shows it empty, and the gauge and control fall back from it as
 and the reload schedule keep every window.
 
 Every home screen widget's container background is `WidgetBackdrop`:
-the app's backdrop gradient (fixed sRGB colors, #292A3C to #0F1015 in
+a gradient of its own, darker than the app's `Theme.backdrop` (fixed sRGB colors, #292A3C to #0F1015 in
 dark, top-leading to bottom-trailing) in full color, nothing in the
 accented and vibrant rendering modes, where the system draws its own.
 
