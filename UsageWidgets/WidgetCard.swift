@@ -23,26 +23,23 @@ struct WidgetCardHeader<Subtitle: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: WidgetMetrics.dividerGap) {
-            HStack(alignment: .center, spacing: 6) {
-                VStack(alignment: .leading, spacing: 1) {
-                    if let planName {
-                        ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 5) {
-                                styledTitle
-                                PlanPill(name: planName, compact: true, font: .system(size: 10, weight: .semibold))
-                            }
+        HStack(alignment: .center, spacing: 6) {
+            VStack(alignment: .leading, spacing: 1) {
+                if let planName {
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 5) {
                             styledTitle
+                            PlanPill(name: planName, compact: true, font: .system(size: 10, weight: .semibold))
                         }
-                    } else {
                         styledTitle
                     }
-                    subtitle
+                } else {
+                    styledTitle
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: icon)
+                subtitle
             }
-            WidgetHairline()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: icon)
         }
     }
 
@@ -80,15 +77,6 @@ struct WidgetStaleHint: View {
             .foregroundStyle(Theme.inkSecondary.opacity(0.8))
             .lineLimit(1)
         }
-    }
-}
-
-struct WidgetHairline: View {
-    var body: some View {
-        Rectangle()
-            .fill(Theme.track)
-            .frame(height: 1)
-            .accessibilityHidden(true)
     }
 }
 

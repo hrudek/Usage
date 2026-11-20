@@ -34,15 +34,15 @@ Every home screen card opens with `WidgetCardHeader`
 (`UsageWidgets/WidgetCard.swift`): the account's name, its plan as a
 small pill while both fit on the line, the provider mark
 (`WidgetMetrics.markSize`, 32 pt, accent glyph on the accent wash) in
-the top-right corner, and a hairline under it. The `UsageLimits` small
+the top-right corner, with no rule under it. The `UsageLimits` small
 and medium families add the "updated X ago" hint under the name; the
 ring style puts the window's name there, the condensed
-layout the next session reset. Under the hairline: the small family
+layout the next session reset. Below the header: the small family
 and each account of the standard all-accounts layout show the leading
 window's name, its figure large with the reset beside it, a thick bar,
 then the other windows as compact lines (name, bar, figure); the medium
 family shows one column per window (name, figure, bar, reset line),
-split by hairlines. A reset countdown has no icon before it.
+split by vertical hairlines. A reset countdown has no icon before it.
 
 A figure is the bare percentage ("42%", or "--" without a window):
 never "used", "left" or "remaining" beside it, in any widget kind,
@@ -69,7 +69,7 @@ window shows it empty, and the gauge and control fall back from it as
 and the reload schedule keep every window.
 
 Every home screen widget's container background is `WidgetBackdrop`:
-the app's backdrop gradient (fixed sRGB colors, #2B2D42 to #0D0E14 in
+the app's backdrop gradient (fixed sRGB colors, #292A3C to #0F1015 in
 dark, top-leading to bottom-trailing) in full color, nothing in the
 accented and vibrant rendering modes, where the system draws its own.
 

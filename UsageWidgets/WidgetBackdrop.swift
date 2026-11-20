@@ -15,8 +15,8 @@ struct WidgetBackdrop: View {
         if renderingMode == .fullColor {
             LinearGradient(
                 stops: [
-                    .init(color: Color(hex: scheme == .dark ? 0x2B2D42 : 0xFCFBF8), location: 0),
-                    .init(color: Color(hex: scheme == .dark ? 0x0D0E14 : 0xF3F1EA), location: 1)
+                    .init(color: Color(hex: scheme == .dark ? 0x292A3C : 0xFCFBF8), location: 0),
+                    .init(color: Color(hex: scheme == .dark ? 0x0F1015 : 0xF3F1EA), location: 1)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
