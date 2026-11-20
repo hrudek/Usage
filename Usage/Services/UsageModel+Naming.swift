@@ -148,7 +148,7 @@ extension UsageModel {
     /// its fetch was in flight — that fetch re-synced the activity and
     /// re-issued the notifications from the name it started with.
     func propagateName(accountID: String) {
-        guard let usage = usage(for: accountID) else { return }
+        guard usage(for: accountID) != nil else { return }
         WidgetReload.all()
         let label = accountLabel(for: accountID)
         Task { await services[accountID]?.rescheduleNotifications(accountLabel: label) }
