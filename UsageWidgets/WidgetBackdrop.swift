@@ -28,11 +28,11 @@ struct WidgetBackdrop: View {
 }
 
 /// Draws `WidgetBackdrop` as the container background and again behind
-/// the content. On device the container background alone rendered lighter
-/// than the same gradient in a Scriptable widget; the copy in the content
-/// layer tests whether the system lightens only the container layer.
-/// Where the system hides the container background (StandBy), the
-/// content copy is left out too.
+/// the content. iOS renders the container background lighter than the
+/// same gradient in a Scriptable widget; the copy in the content layer is
+/// not lightened, which makes the two match on device. Where the system
+/// hides the container background (StandBy), the content copy is left
+/// out too.
 private struct WidgetBackdropModifier: ViewModifier {
     @Environment(\.showsWidgetContainerBackground) private var showsBackground
 

@@ -73,8 +73,9 @@ Every home screen widget's background is `WidgetBackdrop`, applied by
 #2B2D42 to #0D0E14 in dark, top-leading to bottom-trailing) in full
 color, nothing in the accented and vibrant rendering modes, where the
 system draws its own. It is the container background and is drawn again
-behind the content (not in StandBy), because the container background
-alone rendered lighter on device than the same gradient in Scriptable.
+behind the content (not in StandBy), because iOS renders the container
+background lighter than the same gradient in Scriptable; the content
+copy is not lightened and matches it on device.
 
 ## Timeline and fetching
 
