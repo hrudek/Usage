@@ -1,11 +1,9 @@
 name: iOS build check
 
 # Unsigned iOS Simulator build of the app and its widget extension.
-# Verifies that every trimming step still compiles; no signing, no secrets.
+# Pull requests only; pushes to main build and sign in testflight.yml.
 
 on:
-  push:
-    branches: [main]
   pull_request:
 
 permissions:

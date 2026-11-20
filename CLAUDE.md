@@ -168,8 +168,17 @@ any user-facing text, in any language.
 
 - No local Xcode is assumed. The gate is the GitHub Actions workflow
   "iOS build check" (`.github/workflows/ios-build.yml`): an unsigned iOS
-  Simulator build of the `Usage` scheme, on pull requests and on pushes
-  to `main`. It runs no tests.
+  Simulator build of the `Usage` scheme, on pull requests. It runs no
+  tests.
+- Release: every push to `main` runs "TestFlight"
+  (`.github/workflows/testflight.yml`, environment `testflight`): a signed
+  archive (manual signing, build number = run number) uploaded to
+  TestFlight. `.github/testflight/profiles.py` reuses or creates the
+  "Usage CI" App Store profiles through the App Store Connect API and
+  writes the CI's `Config.local.xcconfig` and export options. Secrets
+  (environment): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_BASE64`,
+  `IOS_CERTIFICATE_P12_BASE64`, `IOS_CERTIFICATE_PASSWORD`; variables:
+  `APPLE_TEAM_ID`, `APPLE_CERTIFICATE_ID`.
 - Signing: `Config.local.xcconfig` (gitignored, from
   `Config.local.xcconfig.example`) sets `DEVELOPMENT_TEAM`.
 - Unit tests: `UsageTests` (scheme `Usage`) and UsageKit's
