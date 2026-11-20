@@ -177,10 +177,19 @@ any user-facing text, in any language.
 
 ## Build and CI
 
+- Xcode 27.1 or later (iOS 27.1 SDK): built with an older SDK the app
+  runs letterboxed in compatibility mode on iPhone Duo. Both workflows
+  run on the GitHub image `xcode-27` (repository variable `MACOS_RUNNER`
+  overrides it) and start with `.github/ci/select-xcode.sh`, which prints
+  the Xcode and SDK versions and fails below 27.1.
 - No local Xcode is assumed. The gate is the GitHub Actions workflow
   "iOS build check" (`.github/workflows/ios-build.yml`): an unsigned iOS
-  Simulator build of the `Usage` scheme, on pull requests. It runs no
-  tests.
+  Simulator build of the `Usage` scheme, on pull requests, which lists
+  the build's warnings. It runs no tests. It then installs that build on
+  an iPhone Duo simulator (`.github/ci/duo-screenshots.sh`) and uploads
+  a screenshot of the outer display as the artifact `duo-screenshots`;
+  a screenshot never fails the check. simctl cannot unfold or rotate the
+  Duo, so the inner display is checked in Simulator.app by hand.
 - Release: every push to `main` runs "TestFlight"
   (`.github/workflows/testflight.yml`, environment `testflight`): a signed
   archive (manual signing, build number = run number) uploaded to
