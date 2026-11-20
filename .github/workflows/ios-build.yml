@@ -1,6 +1,7 @@
 name: iOS build check
 
-# Unsigned iOS Simulator build of the app and its widget extension.
+# Unsigned iOS Simulator build of the app and its widget extension with
+# Xcode 27.1 or later, then screenshots of it on an iPhone Duo simulator.
 # Pull requests only; pushes to main build and sign in testflight.yml.
 
 on:
@@ -15,10 +16,13 @@ concurrency:
 
 jobs:
   build:
-    runs-on: macos-26
-    timeout-minutes: 15
+    runs-on: ${{ vars.MACOS_RUNNER || 'xcode-27' }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Select and verify Xcode
+        run: bash .github/ci/select-xcode.sh
 
       - name: Local signing config (empty team, unsigned)
         run: printf 'DEVELOPMENT_TEAM =\n' > Config.local.xcconfig
@@ -34,6 +38,24 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             | tee build/xcodebuild.log | grep -E '(error|warning: unre|BUILD (SUCCEEDED|FAILED))' || true
           grep -q 'BUILD SUCCEEDED' build/xcodebuild.log
+
+      - name: Warnings
+        run: |
+          grep -E ' warning: ' build/xcodebuild.log | sed "s|$PWD/||" | sort -u | tee build/warnings.txt | head -n 80
+          echo "$(wc -l < build/warnings.txt) unique warnings"
+
+      - name: iPhone Duo screenshots
+        continue-on-error: true
+        run: bash .github/ci/duo-screenshots.sh build/dd/Build/Products/Debug-iphonesimulator/Usage.app build/screenshots
+
+      - name: Upload screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: duo-screenshots
+          path: build/screenshots
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Error summary
         if: failure()
