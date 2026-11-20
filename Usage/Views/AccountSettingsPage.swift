@@ -2,11 +2,9 @@ import SwiftUI
 import UsageKit
 
 /// One account's own settings and nothing general: signing in again when
-/// its login stopped working, its name and icon, its notifications, on
-/// and
-/// disconnecting it. Every general setting
-/// lives in Settings' other sections, so nothing is in two places
-/// (Mike's rule, 2026-10-19). Shown on the account's page
+/// its login stopped working, its name and icon, its notifications and
+/// disconnecting it. Every general setting lives in Settings' other
+/// sections, so nothing is in two places. Shown on the account's page
 /// (`AccountSettingsPage`, pushed from Settings' account list and from
 /// the end of Provider Detail).
 struct AccountSettingsCards: View {
@@ -56,69 +54,6 @@ struct AccountSettingsCards: View {
                 }
                 SettingsGap()
             }
-            // The discoverable route to the same rename and icon the
-            // Dashboard header's context menu offers — a context menu
-            // announces nothing about itself.
-            SectionHeader(title: String(localized: "Account"))
-            Card {
-                Button {
-                    renameDraft = usage?.account.displayName ?? ""
-                    showingRename = true
-                } label: {
-                    HStack(spacing: 12) {
-                        Text("Name")
-                            .font(Theme.rowTitle)
-                            .foregroundStyle(Theme.ink)
-                        Spacer()
-                        Text(accountName)
-                            .font(.body)
-                            .foregroundStyle(Theme.inkSecondary)
-                            .lineLimit(1)
-                        Image(systemName: "pencil")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(Theme.inkSecondary)
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text("Rename account"))
-                .accessibilityValue(Text(accountName))
-                Divider().overlay(Theme.track)
-                Button {
-                    showingIconPicker = true
-                } label: {
-                    HStack(spacing: 12) {
-                        Text("Icon")
-                            .font(Theme.rowTitle)
-                            .foregroundStyle(Theme.ink)
-                        Spacer()
-                        ProviderMark(size: 24, cornerRadius: 6, icon: usage?.account.icon)
-                        Image(systemName: "chevron.right")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(Theme.inkSecondary)
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text("Change icon"))
-            }
-            SectionFootnote(text: String(localized: "Shown on the dashboard, in widgets, and in notification titles."))
-            SettingsGap()
-
-            SectionHeader(title: String(localized: "Reset alerts"))
-            NotificationTogglesCard(accountID: accountID)
-            SectionFootnote(text: String(localized: "A notification when each limit refills."))
-
-            SettingsGap()
-            SectionHeader(title: String(localized: "Smart notifications"))
-            SmartNotificationTogglesCard(accountID: accountID)
-
-            SettingsGap()
-            SectionHeader(title: String(localized: "Renewal"))
-            RenewalReminderCard(accountID: accountID)
-            SectionFootnote(text: String(localized: "Usage can't see your billing, so the day is the one you set. The reminder comes that many days before, every month."))
-
-
             // The discoverable route to the same rename and icon the
             // Dashboard header's context menu offers — a context menu
             // announces nothing about itself.
