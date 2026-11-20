@@ -46,6 +46,7 @@ public enum AccountIcon: Codable, Hashable, Sendable {
     public enum Mark: String, Codable, Hashable, Sendable, CaseIterable {
         case claude
         case claudeCode
+        case openAI
     }
 
     private enum CodingKeys: String, CodingKey { case kind, value }

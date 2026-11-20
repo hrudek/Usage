@@ -1,21 +1,6 @@
 import SwiftUI
 import UsageKit
 
-/// The glyph that stands in for an account wherever a header reads
-/// "icon + name": `ProviderIdentityView` (dashboard, landscape, every
-/// widget), the Connect sheet header, and Privacy & data.
-///
-/// With no `icon` it is an SF Symbol on the app's own accent wash — the
-/// default every account starts with, and what shipped alone through
-/// 1.5. Since 1.6 the user may pick a glyph per account
-/// (`AccountIcon`): any SF Symbol, or one of the two marks in
-/// `Media.xcassets` (`ClaudeMark`, `ClaudeCodeMark` — Anthropic's Claude
-/// and Claude Code logos as single-path template SVGs, bundled as a
-/// deliberate product decision on 2026-10-07 knowing App Review 4.1(c)
-/// once flagged brand use in this app; see "App Review posture" in the
-/// repo-root CLAUDE.md). Marks are drawn exactly like symbols — a
-/// template glyph in the accent on the wash, at the same size — so a
-/// header never changes shape or weight with the choice.
 struct ProviderMark: View {
     let size: CGFloat
     let cornerRadius: CGFloat
@@ -59,6 +44,7 @@ struct ProviderMark: View {
         switch mark {
         case .claude: return "ClaudeMark"
         case .claudeCode: return "ClaudeCodeMark"
+        case .openAI: return "OpenAIMark"
         }
     }
 

@@ -132,4 +132,18 @@ final class AccountRegistryStoreTests: XCTestCase {
         XCTAssertEqual(json, ["kind": "mark", "value": "claude"])
         XCTAssertEqual(try JSONDecoder().decode(AccountIcon.self, from: data), .mark(.claude))
     }
+
+    func testStoredMarksDecodeUnchangedAlongsideOpenAI() throws {
+        let stored: [(String, AccountIcon)] = [
+            (#"{"kind":"mark","value":"claude"}"#, .mark(.claude)),
+            (#"{"kind":"mark","value":"claudeCode"}"#, .mark(.claudeCode)),
+            (#"{"kind":"symbol","value":"bolt.fill"}"#, .symbol("bolt.fill")),
+            (#"{"kind":"mark","value":"openAI"}"#, .mark(.openAI)),
+        ]
+        for (json, icon) in stored {
+            XCTAssertEqual(try JSONDecoder().decode(AccountIcon.self, from: Data(json.utf8)), icon)
+            let encoded = try JSONEncoder().encode(icon)
+            XCTAssertEqual(try JSONDecoder().decode(AccountIcon.self, from: encoded), icon)
+        }
+    }
 }

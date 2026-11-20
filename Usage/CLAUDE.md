@@ -42,6 +42,9 @@ environment; every sheet gets both again from its presenter
   30 days, 90 days), Forecast (projected run-outs, after a 20 h pace
   warm-up), Today (a share of a long window), This week by app, Spend,
   Extra usage. Its toolbar opens the account's settings.
+- **Account icon** (`AccountIconPicker`): the default sparkle, the
+  bundled marks (Claude, Claude Code, OpenAI; `ProviderMark.assetName`),
+  curated SF Symbols, or any SF Symbol by name.
 - **Account settings** (`AccountSettingsPage`): name, icon, reset alerts,
   smart notifications (near limit with up to three levels, limit reached,
   early reset, run-out, ahead of pace, sign-in), renewal reminder,

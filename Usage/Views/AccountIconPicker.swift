@@ -1,15 +1,6 @@
 import SwiftUI
 import UsageKit
 
-/// The one place an account's glyph is chosen (`AccountIcon`), reached
-/// from the Dashboard header's context menu ("Change icon…") and Provider
-/// Detail's Account card. Three parts: the bundled marks (the default
-/// sparkle, Claude, Claude Code), a curated grid of SF Symbols, and a
-/// field for any symbol by name — the full catalog is Apple's SF Symbols
-/// app, linked from the footnote, so the grid only has to cover the
-/// obvious picks. A tap applies immediately through
-/// `UsageModel.setIcon(_:for:)` (the preview at the top is the live
-/// account), and Done just closes.
 struct AccountIconPicker: View {
     let accountID: String
 
@@ -65,6 +56,7 @@ struct AccountIconPicker: View {
                             tile(nil, label: String(localized: "Default"))
                             tile(.mark(.claude), label: "Claude")
                             tile(.mark(.claudeCode), label: "Claude Code")
+                            tile(.mark(.openAI), label: "OpenAI")
                             Spacer(minLength: 0)
                         }
                     }
