@@ -13,12 +13,7 @@ struct AccountSettingsCards: View {
     var onDisconnect: (() -> Void)? = nil
 
     @Environment(UsageModel.self) private var model
-    @Environment(PreferencesModel.self) private var prefs
-    @State private var showingRename = false
-    @State private var renameDraft = ""
-    @State private var showingIconPicker = false
-    @State private var confirmingDisconnect = false
-    @State private var reconnecting: ConnectedAccount?
+    @Environment(AccountPresenter.self) private var presenter
 
     private var usage: UsageModel.AccountUsage? {
         model.usage(for: accountID)
@@ -41,7 +36,7 @@ struct AccountSettingsCards: View {
                             .font(Theme.caption)
                             .foregroundStyle(Theme.danger)
                         Button {
-                            reconnecting = usage.account
+                            presenter.reconnecting = usage.account
                         } label: {
                             Text("Sign in again")
                                 .font(.body.weight(.semibold))
@@ -60,8 +55,9 @@ struct AccountSettingsCards: View {
             SectionHeader(title: String(localized: "Account"))
             Card {
                 Button {
-                    renameDraft = usage?.account.displayName ?? ""
-                    showingRename = true
+                    if let account = usage?.account {
+                        presenter.rename(account)
+                    }
                 } label: {
                     HStack(spacing: 12) {
                         Text("Name")
@@ -83,7 +79,7 @@ struct AccountSettingsCards: View {
                 .accessibilityValue(Text(accountName))
                 Divider().overlay(Theme.track)
                 Button {
-                    showingIconPicker = true
+                    presenter.iconPickerAccountID = accountID
                 } label: {
                     HStack(spacing: 12) {
                         Text("Icon")
@@ -127,7 +123,7 @@ struct AccountSettingsCards: View {
             // Disconnecting deletes the account's history and alerts
             // on this device, so it asks first.
             Button(role: .destructive) {
-                confirmingDisconnect = true
+                presenter.confirmDisconnect(accountID, onDone: onDisconnect)
             } label: {
                 Text("Disconnect \(accountName)")
                     .font(.body.weight(.medium))
@@ -135,19 +131,7 @@ struct AccountSettingsCards: View {
                     .padding(.vertical, 12)
                     .background(Theme.card, in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
             }
-            .disconnectConfirmation(accountID: accountID, isPresented: $confirmingDisconnect) {
-                onDisconnect?()
-            }
         }
-        .sheet(isPresented: $showingIconPicker) {
-            AccountIconPicker(accountID: accountID)
-                .withAppModels(model, prefs)
-        }
-        .sheet(item: $reconnecting) { account in
-            ConnectAccountSheet(reconnecting: account)
-                .withAppModels(model, prefs)
-        }
-        .renameAccountAlert(for: accountID, isPresented: $showingRename, name: $renameDraft)
     }
 }
 
@@ -178,8 +162,7 @@ private struct WidgetModelWindowCard: View {
 
 /// Asks before disconnecting an account, saying what goes with it, and
 /// calls `onDone` only once it is gone (a failed cascade leaves it, its
-/// error on its card). Anchored to the control that asks, so iPad's
-/// popover points at it.
+/// error on its card).
 struct DisconnectConfirmation: ViewModifier {
     let accountID: String
     @Binding var isPresented: Bool

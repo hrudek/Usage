@@ -37,7 +37,7 @@ struct AccountSectionView: View {
     /// protagonist the narrower figure (`HeroWindowView.narrow`).
     var inColumns = false
 
-    @Environment(DashboardActions.self) private var actions
+    @Environment(AccountPresenter.self) private var presenter
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -87,7 +87,7 @@ struct AccountSectionView: View {
                 UsageStatusFooter(
                     snapshot: usage.snapshot,
                     error: usage.lastError,
-                    reauthenticate: usage.needsReauthentication ? { actions.reconnecting = usage.account } : nil,
+                    reauthenticate: usage.needsReauthentication ? { presenter.reconnecting = usage.account } : nil,
                     offline: usage.isOffline,
                     updated: .whenStale
                 )
@@ -133,12 +133,12 @@ struct AccountSectionView: View {
     private var accountMenu: some View {
         if canRename {
             Button {
-                actions.rename(usage.account)
+                presenter.rename(usage.account)
             } label: {
                 Label("Rename…", systemImage: "pencil")
             }
             Button {
-                actions.iconPickerAccountID = usage.account.accountID
+                presenter.iconPickerAccountID = usage.account.accountID
             } label: {
                 Label("Change icon…", systemImage: "sparkle")
             }

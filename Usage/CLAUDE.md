@@ -23,11 +23,18 @@ from the size class, its own size and the iPhone Duo's fold
 Beside or below, a card's header selects its account (outlined in the
 accent) instead of pushing; the detail shows the selected account, or
 the first once that one is gone, and the "Open Account" intent selects.
-The selection is the account open in the stack too, so a turn of the
-device keeps showing it. The Dashboard's sheets and alerts (Settings,
-Connect, reconnect, rename, icon), the selection and the refresh haptic
-hang on `DashboardActions`, above the layouts, so a turn of the device
-keeps an open sheet.
+Only an account chosen explicitly (a card tapped beside or below, a
+detail opened in the stack, the intent) is the selection
+(`DashboardActions.selectedAccountID`); the first account shown by
+default is not, and a disconnected one is dropped. Turning the device
+from the split to the stack opens the selection's detail, or the
+Dashboard when there is none; the other way the split shows it.
+Settings, Connect, the selection and the refresh haptic hang on
+`DashboardActions`; reconnect, rename, icon and disconnect confirmation,
+from a card, a detail or an account's settings, on `AccountPresenter`
+(`presentsAccountSheets()`, applied above the layouts and again inside
+Settings, which presents its own). Both sit above the switch between
+the stack and the split, so a turn of the device keeps an open sheet.
 
 ## Services
 
