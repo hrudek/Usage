@@ -48,6 +48,11 @@ struct AccountSectionView: View {
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accountSelection) private var selection
+
+    private var isSelected: Bool {
+        selection?.selectedID == usage.account.accountID
+    }
 
     var body: some View {
         let layout = AccountCardLayout(snapshot: usage.snapshot, modelSlotFallback: prefs.modelSlotFallback)
@@ -75,6 +80,7 @@ struct AccountSectionView: View {
         .padding(20)
         .frame(maxWidth: .infinity, maxHeight: inColumns ? .infinity : nil, alignment: .topLeading)
         .cardSurface()
+        .overlay { AccountDropHighlight(isTargeted: isSelected) }
         .sheet(isPresented: $showingReconnect) {
             ConnectAccountSheet(reconnecting: usage.account)
                 .withAppModels(model, prefs)
@@ -121,7 +127,15 @@ struct AccountSectionView: View {
 
     @ViewBuilder
     private var headerLink: some View {
-        if linksToDetail {
+        if let selection {
+            Button {
+                selection.select(usage.account.accountID)
+            } label: {
+                headerContent(showsChevron: false)
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+        } else if linksToDetail {
             NavigationLink(value: usage.account.accountID) {
                 headerContent(showsChevron: true)
             }

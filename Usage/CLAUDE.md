@@ -1,11 +1,31 @@
 ## The app
 
-`UsageApp` opens one `WindowGroup` with `ContentView` (a
-`NavigationStack` on the Dashboard) and registers the background refresh
+`UsageApp` opens one `WindowGroup` with `ContentView` and registers the background refresh
 (`.backgroundTask(.appRefresh(AppConfig.refreshTaskID))`). `UsageModel`
 (`@MainActor`, `@Observable`) and `PreferencesModel` go into the
 environment; every sheet gets both again from its presenter
 (`withAppModels(model, prefs)`, `PresentedModels.swift`).
+
+`ContentView` lays the Dashboard out by `DashboardLayout` (pure, tested),
+from the size class, its own size and the iPhone Duo's fold
+(`reservedRegions(kind: .division)`, iOS 27.1):
+- `stack`: a `NavigationStack` on the Dashboard whose cards push an
+  account's detail. A compact width (every iPhone, the Duo's outer
+  display), a regular width taller than wide (iPad and the open Duo
+  upright), or no account.
+- `sideBySide`: a regular width wider than tall (iPad and the open Duo on
+  their side) or a fold running down the display (the Duo partly open
+  like a book). `DashboardSplitView`: the cards in one column as the
+  sidebar, half the width, the selected account's detail beside it.
+- `aboveAndBelow`: a fold across the display (the Duo partly open like a
+  laptop). `DashboardPanes`: the cards above the fold, the detail below,
+  nothing on the fold.
+Beside or below, a card's header selects its account (outlined in the
+accent) instead of pushing; the detail shows the selected account, or
+the first once that one is gone, and the "Open Account" intent selects.
+Settings, the Connect sheet and the refresh haptic hang on
+`DashboardActions`, above the layouts, so a turn of the device keeps an
+open sheet.
 
 ## Services
 
@@ -36,9 +56,10 @@ environment; every sheet gets both again from its presenter
   others as compact rows, then an error, "Sign in again",
   or a stale hint. Header buttons: Settings and Refresh. Hold and drag to
   reorder (`DashboardView+Reorder`), withheld while "Order by urgency" is
-  on. Two columns at a regular width (iPad, an unfolded iPhone Duo on its
-  side), whatever the height: held sideways (`verticalSizeClass` compact)
-  only drops the sparklines and the status bar. With no account, a prompt
+  on. Two columns at a regular width in the stack (iPad and the open
+  iPhone Duo upright), one beside or above a detail: held sideways
+  (`verticalSizeClass` compact) only drops the sparklines and the status
+  bar. With no account, a prompt
   to connect.
 - **Provider Detail** (`ProviderDetailView`, `ProviderDetailCards`,
   `HistoryCard`): rate limits with pace captions, History (24 h, 7 days,
@@ -78,7 +99,10 @@ environment; every sheet gets both again from its presenter
   display, the inner one in landscape), `DashboardSideBar` puts Settings,
   Refresh and Add account (opens the Connect sheet) there, each an icon
   with a title, and the drawn header drops its two buttons; a sheet's
-  Done (`SheetDoneButton`) becomes a checkmark. Elsewhere (other
+  Done (`SheetDoneButton`) becomes a checkmark. In `DashboardSplitView`
+  the system lays only the detail's bar vertically: the three items go
+  on it there, beside the detail's account settings, and the Dashboard's
+  header drops its buttons. Elsewhere (other
   iPhones, iPad, the inner display in portrait) the navigation bar stays
   hidden and the drawn header shows as always.
 

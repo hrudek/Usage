@@ -4,13 +4,10 @@ import UsageKit
 struct DashboardView: View {
     @Environment(UsageModel.self) var model
     @Environment(PreferencesModel.self) private var prefs
-    @State private var showingSettings = false
-    @State private var settingsInColumns = false
-    @State private var showingConnect = false
+    @Environment(DashboardActions.self) private var actions
+    @Environment(\.accountSelection) private var selection
     /// The account a "Sign in again" asked to repair.
     @State private var reconnecting: ConnectedAccount?
-    /// Bumped per user-initiated refresh; drives the haptic only.
-    @State private var refreshRequests = 0
     /// The section being dragged, how far it has moved, and which section
     /// it would drop onto — see `accountSection(_:)` in
     /// `DashboardView+Reorder.swift` for why the reorder carries this state
@@ -45,13 +42,17 @@ struct DashboardView: View {
     /// An iPad's width: two or more accounts sit in two columns of the same
     /// cards, and a dragged card moves both ways (`accountSection`).
     var isGrid: Bool {
-        sizeClass == .regular && model.accounts.count > 1
+        sizeClass == .regular && model.accounts.count > 1 && selection == nil
     }
 
     /// An iPad's width with one account: its card, centred, at a width a
     /// card reads well at rather than the screen's.
     private var isWideSingle: Bool {
         sizeClass == .regular && model.accounts.count <= 1
+    }
+
+    private var headerShowsButtons: Bool {
+        !barIsVertical && !actions.detailBarHoldsActions
     }
 
     /// The accounts two by two, the rows of the two columns.
@@ -94,7 +95,7 @@ struct DashboardView: View {
         // button alike. Keyed on the request count, not `isRefreshing`:
         // that also flips for the foreground auto-refresh, which would
         // buzz the phone for something the user didn't do.
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: refreshRequests)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: actions.refreshRequests)
         // And a firmer one the moment a card lifts, which is the only
         // confirmation that the hold registered — the card hasn't moved yet.
         .sensoryFeedback(.impact(weight: .medium), trigger: draggingID) { was, now in
@@ -107,38 +108,17 @@ struct DashboardView: View {
             AccountSettingsPage(accountID: route.accountID, dismissesOnDisconnect: false)
         }
         .refreshable {
-            refreshRequests += 1
+            actions.refreshRequests += 1
             await model.refreshAll()
         }
         .modifier(DashboardSideBar(
             isVertical: $barIsVertical,
             isRefreshing: model.isRefreshing,
             settings: openSettings,
-            refresh: {
-                refreshRequests += 1
-                Task { await model.refreshAll() }
-            },
-            addAccount: { showingConnect = true }
+            refresh: { actions.refresh(model) },
+            addAccount: { actions.addAccount() }
         ))
-        #if DEBUG
-        // `-UsageShowSettings YES` opens Settings at launch, to check or
-        // capture it without a tap.
-        .onAppear {
-            if UserDefaults.standard.bool(forKey: "UsageShowSettings") { openSettings() }
-        }
-        #endif
-        .sheet(isPresented: presentsSettings(inColumns: false)) {
-            SettingsSheet()
-                .withAppModels(model, prefs)
-        }
-        .fullScreenCover(isPresented: presentsSettings(inColumns: true)) {
-            SettingsSplitView()
-                .withAppModels(model, prefs)
-        }
-        .sheet(isPresented: $showingConnect) {
-            ConnectAccountSheet()
-                .withAppModels(model, prefs)
-        }
+        .toolbar(barIsVertical ? .visible : .hidden, for: .navigationBar)
         .sheet(item: $reconnecting) { account in
             ConnectAccountSheet(reconnecting: account)
                 .withAppModels(model, prefs)
@@ -146,16 +126,7 @@ struct DashboardView: View {
     }
 
     private func openSettings() {
-        settingsInColumns = sizeClass == .regular
-        showingSettings = true
-    }
-
-    private func presentsSettings(inColumns: Bool) -> Binding<Bool> {
-        Binding {
-            showingSettings && settingsInColumns == inColumns
-        } set: {
-            showingSettings = $0
-        }
+        actions.openSettings(inColumns: sizeClass == .regular)
     }
 
     /// "Updated 2 min ago" for the most recent refresh of any account: the
@@ -169,7 +140,7 @@ struct DashboardView: View {
         // One row, so a larger text size wraps the line between the
         // buttons instead of running under them (a ZStack until 4.3.1).
         HStack(spacing: 12) {
-            if !barIsVertical {
+            if headerShowsButtons {
                 RoundIconButton(systemName: "gearshape", action: openSettings)
                     .accessibilityLabel(Text("Settings"))
             }
@@ -184,10 +155,9 @@ struct DashboardView: View {
                     .contentTransition(.opacity)
             }
             Spacer(minLength: 0)
-            if !barIsVertical {
+            if headerShowsButtons {
                 RoundIconButton(systemName: "arrow.clockwise", isBusy: model.isRefreshing) {
-                    refreshRequests += 1
-                    Task { await model.refreshAll() }
+                    actions.refresh(model)
                 }
                 .accessibilityLabel(Text("Refresh"))
             }
@@ -199,9 +169,7 @@ struct DashboardView: View {
             if model.needsConnection {
                 Card {
                     VStack(spacing: 14) {
-                        DisconnectedPrompt(buttonLabel: "Connect", verticalPadding: 12) {
-                            showingConnect = true
-                        }
+                        DisconnectedPrompt(buttonLabel: "Connect", verticalPadding: 12) { actions.addAccount() }
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -246,9 +214,7 @@ struct DashboardView: View {
     }
 
     private var addAccountButton: some View {
-        Button {
-            showingConnect = true
-        } label: {
+        Button { actions.addAccount() } label: {
             Label("Add account", systemImage: "plus")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Theme.accent)
