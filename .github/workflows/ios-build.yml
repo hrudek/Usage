@@ -30,7 +30,7 @@ jobs:
       - name: Detect build-relevant changes
         id: diff
         run: |
-          files=$(git diff --name-only HEAD^1 HEAD)
+          files=$(git diff --name-only --no-renames HEAD^1 HEAD)
           echo "$files"
           if echo "$files" | grep -qE '^(Usage|UsageWidgets|WidgetsShared|Shared|Packages|Usage\.xcodeproj|UsageTests)/|^\.github/ci/|^\.github/workflows/ios-build\.yml$'; then
             echo "build=true" >> "$GITHUB_OUTPUT"
@@ -40,7 +40,7 @@ jobs:
 
   build:
     needs: changes
-    if: needs.changes.outputs.build == 'true'
+    if: ${{ always() && !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.build != 'false') }}
     runs-on: ${{ vars.MACOS_RUNNER || 'xcode-27' }}
     timeout-minutes: 30
     steps:
