@@ -1,6 +1,5 @@
 import Foundation
 import UsageKit
-#if os(iOS)
 import ActivityKit
 
 /// Starts, updates, and ends the Session-window Live Activity for one
@@ -184,4 +183,3 @@ struct LiveActivityPreferences {
         defaults.removeObject(forKey: "liveActivity.pet.\(accountID)")
     }
 }
-#endif

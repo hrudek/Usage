@@ -8,9 +8,6 @@ import UsageKit
 /// export, and never in demo mode, whose history is fabricated.
 struct ExportSettings: View {
     @Environment(UsageModel.self) private var model
-    #if os(macOS)
-    @State private var exporting: UsageExport.Format?
-    #endif
 
     var body: some View {
         SectionHeader(title: String(localized: "Export"))
@@ -19,14 +16,6 @@ struct ExportSettings: View {
             Divider().overlay(Theme.track)
             row(.json, title: String(localized: "Export as JSON"))
         }
-        #if os(macOS)
-        .fileExporter(
-            isPresented: Binding(get: { exporting != nil }, set: { if !$0 { exporting = nil } }),
-            document: exporting.map { UsageExportDocument(export: model.usageExport, format: $0) },
-            contentType: exporting?.contentType ?? .data,
-            defaultFilename: exporting.map { model.usageExport.fileName($0) }
-        ) { _ in }
-        #endif
         SectionFootnote(text: String(localized: "Up to 90 days of usage per window for every account, as a file you can open in Numbers or Excel (CSV) or feed to a script (JSON). Nothing is uploaded: the file goes only where you send it."))
     }
 
@@ -37,7 +26,6 @@ struct ExportSettings: View {
 
     @ViewBuilder
     private func row(_ format: UsageExport.Format, title: String) -> some View {
-        #if os(iOS)
         // One item type per format, each with exactly one file
         // representation: the share sheet then never has to pick.
         let preview = SharePreview(String(localized: "Usage history"), image: Image(systemName: "chart.xyaxis.line"))
@@ -49,14 +37,6 @@ struct ExportSettings: View {
             ShareLink(item: UsageExportJSON(export: model.usageExport), preview: preview) { rowLabel(title) }
                 .buttonStyle(.plain)
         }
-        #else
-        Button {
-            exporting = format
-        } label: {
-            rowLabel(title)
-        }
-        .buttonStyle(.plain)
-        #endif
     }
 
     private func rowLabel(_ title: String) -> some View {
@@ -105,7 +85,6 @@ extension UsageModel {
     }
 }
 
-#if os(iOS)
 /// The share sheet's items: the file is written only once something is
 /// picked to receive it.
 nonisolated struct UsageExportCSV: Transferable {
@@ -132,26 +111,3 @@ extension UsageExport {
         return SentTransferredFile(url)
     }
 }
-#else
-/// The save panel's document: built in memory, written where the panel
-/// says. Never read back, so `init(configuration:)` only fails.
-nonisolated struct UsageExportDocument: FileDocument {
-    static let readableContentTypes: [UTType] = [.commaSeparatedText, .json]
-
-    let export: UsageExport
-    let format: UsageExport.Format
-
-    init(export: UsageExport, format: UsageExport.Format) {
-        self.export = export
-        self.format = format
-    }
-
-    init(configuration: ReadConfiguration) throws {
-        throw CocoaError(.fileReadUnsupportedScheme)
-    }
-
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        FileWrapper(regularFileWithContents: try export.data(format))
-    }
-}
-#endif

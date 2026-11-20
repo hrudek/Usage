@@ -91,15 +91,10 @@ struct ConnectAccountSheet: View {
                     .padding(.bottom, 8)
             }
             .padding(24)
-            #if os(macOS)
-            .frame(width: 420)
-            #endif
         }
         .appBackground()
-        #if os(iOS)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
-        #endif
     }
 
     /// The one line under a family's name: how its sign-in goes.

@@ -1,9 +1,7 @@
 import SwiftUI
 import WidgetKit
 import UsageKit
-#if os(iOS)
 import AppIntents
-#endif
 
 /// System families show the account header plus capsule bars with reset
 /// times: the small family as stacked rows mirroring the dashboard, the
@@ -20,17 +18,14 @@ struct UsageWidgetView: View {
         Group {
             if let snapshot = entry.snapshot {
                 switch family {
-                #if os(iOS)
                 case .accessoryCircular:
                     CircularUsageView(snapshot: snapshot, prefs: entry.prefs)
                 case .accessoryRectangular:
                     RectangularUsageView(snapshot: snapshot, prefs: entry.prefs)
                 case .accessoryInline:
                     InlineUsageView(snapshot: snapshot, prefs: entry.prefs)
-                #endif
                 case .systemMedium:
                     MediumUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountID: entry.accountID, accountName: entry.accountName, accountIcon: entry.accountIcon)
-                #if os(iOS)
                 case .systemSmall where !showsBackground:
                     let hero = AccountCardLayout(snapshot: snapshot, modelSlotFallback: entry.prefs.modelSlotFallback).hero
                     StandByUsageView(
@@ -41,7 +36,6 @@ struct UsageWidgetView: View {
                         now: entry.date,
                         moneySubtitle: entry.prefs.creditsAmountSubtitle(for: hero.kind, snapshot: snapshot)
                     )
-                #endif
                 default:
                     SystemUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountID: entry.accountID, accountName: entry.accountName, accountIcon: entry.accountIcon)
                 }
@@ -101,7 +95,6 @@ struct WidgetHeader: View {
                 .font(.system(size: 8))
                 .foregroundStyle(Theme.inkSecondary.opacity(0.8))
             }
-            #if os(iOS)
             // Always present, not just while stale — a predictable, always-
             // available manual refresh, same philosophy as the app's own
             // Dashboard refresh button. macOS omits it: a sandboxed widget
@@ -112,7 +105,6 @@ struct WidgetHeader: View {
                     .foregroundStyle(Theme.inkSecondary)
             }
             .buttonStyle(.plain)
-            #endif
         }
     }
 }

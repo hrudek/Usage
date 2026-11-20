@@ -99,19 +99,9 @@ enum Theme {
 extension Color {
     /// Dynamic color from light/dark hex values (0xRRGGBB).
     init(light: UInt32, dark: UInt32) {
-        #if os(macOS)
-        self.init(NSColor(name: nil) { appearance in
-            let hex = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? dark : light
-            return NSColor(Color(hex: hex))
-        })
-        #elseif os(watchOS)
-        // The Watch has one appearance, the dark one.
-        self.init(hex: dark)
-        #else
         self.init(UIColor { traits in
             UIColor(Color(hex: traits.userInterfaceStyle == .dark ? dark : light))
         })
-        #endif
     }
 
     init(hex: UInt32) {

@@ -7,7 +7,6 @@ import UsageKit
 // Compiled into both widget extensions (`WidgetsShared/`), never into the
 // Mac's families.
 
-#if !os(macOS)
 struct CircularUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences
@@ -80,26 +79,3 @@ struct InlineUsageView: View {
     }
 }
 
-#if os(watchOS)
-/// The corner complication: the glance window's figure, with a short
-/// gauge along the bezel as its label.
-struct CornerUsageView: View {
-    let snapshot: UsageSnapshot
-    let prefs: Preferences
-
-    var body: some View {
-        let kind = UsageSnapshot.glanceMetric(prefs.glanceMetric, for: snapshot, modelSlotFallback: prefs.modelSlotFallback)
-        let window = snapshot.window(for: kind)
-        let value = window?.displayedPct(prefs.displayMode)
-        Text(value.map { "\(Int($0))%" } ?? "--")
-            .font(Theme.figure(size: 22))
-            .widgetLabel {
-                Gauge(value: min(value ?? 0, 100), in: 0...100) {
-                    Text(window?.shortTitle ?? kind.shortName)
-                }
-                .gaugeStyle(.accessoryLinearCapacity)
-            }
-    }
-}
-#endif
-#endif

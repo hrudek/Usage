@@ -31,14 +31,6 @@ final class ProviderCatalogMultiProviderTests: XCTestCase {
         XCTAssertEqual(copilotBundle.provider.id, "copilot")
     }
 
-    #if os(macOS)
-    func testAnAutoDetectedCodexAccountMirrorsTheCLIsFile() {
-        let account = ConnectedAccount(accountID: "c2", providerID: CodexProvider.providerID, displayName: "Codex", credentialStrategy: .autoDetected)
-        let bundle = ProviderCatalog.makeProvider(for: account, keychain: keychain)
-        XCTAssertTrue(bundle.credentials is CodexFileCredentialSource)
-    }
-    #endif
-
     func testEveryFamilyHasAStatusPage() {
         XCTAssertTrue(ProviderCatalog.statusSource(for: CodexProvider.providerID) is StatuspageSource)
         XCTAssertTrue(ProviderCatalog.statusSource(for: CopilotProvider.providerID) is StatuspageSource)

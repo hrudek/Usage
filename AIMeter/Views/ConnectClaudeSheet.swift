@@ -84,9 +84,7 @@ struct ConnectClaudeSheet: View {
                         .textFieldStyle(.plain)
                         .font(.callout.monospaced())
                         .autocorrectionDisabled()
-                        #if os(iOS)
                         .textInputAutocapitalization(.never)
-                        #endif
                         .padding(.horizontal, 14)
                         .padding(.vertical, 12)
                         .background(Theme.track.opacity(0.6), in: Capsule())
@@ -127,22 +125,6 @@ struct ConnectClaudeSheet: View {
                 .disabled(!canConnect)
                 .keyboardShortcut(.defaultAction)
 
-                #if os(macOS)
-                // macOS only, and not by accident: the iOS build never asks
-                // for — or accepts — another app's credential file. Doing so
-                // is what App Review guideline 5.2.2 reads as "requesting
-                // third-party account information", and what Anthropic's
-                // authentication policy forbids outright ("developers may
-                // not collect, store, or intermediate Claude.ai
-                // credentials"). On the Mac the first account already mirrors
-                // Claude Code's own login by design, so this stays a
-                // fallback there; see `obtainCredentials`.
-                Text("You can also paste the full credentials JSON from ~/.claude/.credentials.json.")
-                    .font(Theme.caption)
-                    .foregroundStyle(Theme.inkSecondary)
-                    .multilineTextAlignment(.center)
-                #endif
-
                 // Said here, at the moment of connecting, not only buried in
                 // Privacy & data: what this app is, what the token is for,
                 // and where it stays. Every clause must remain true to the
@@ -177,15 +159,10 @@ struct ConnectClaudeSheet: View {
                     .padding(.bottom, 8)
             }
             .padding(24)
-            #if os(macOS)
-            .frame(width: 420)
-            #endif
         }
         .appBackground()
-        #if os(iOS)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
-        #endif
     }
 
     private var explainer: String {
@@ -217,15 +194,9 @@ struct ConnectClaudeSheet: View {
     }
 
     private func pasteFromClipboard() {
-        #if os(iOS)
         if let pasted = UIPasteboard.general.string {
             code = pasted
         }
-        #else
-        if let pasted = NSPasteboard.general.string(forType: .string) {
-            code = pasted
-        }
-        #endif
     }
 
     private func connect() {
@@ -259,11 +230,6 @@ struct ConnectClaudeSheet: View {
     /// credential file, so on iOS a pasted JSON is just an invalid code.
     private func obtainCredentials() async throws -> ClaudeCredentials {
         let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
-        #if os(macOS)
-        if trimmed.hasPrefix("{") {
-            return try ClaudeCredentials.fromClaudeCodeJSON(Data(trimmed.utf8))
-        }
-        #endif
         return try await ClaudeOAuth().exchange(pastedCode: trimmed, session: session)
     }
 }

@@ -1,4 +1,3 @@
-#if os(iOS)
 import SwiftUI
 import UsageKit
 
@@ -117,4 +116,3 @@ struct LiveActivityCard: View {
         usage?.account.providerID ?? ProviderCatalog.defaultProviderID
     }
 }
-#endif

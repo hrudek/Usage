@@ -62,50 +62,12 @@ struct PrivacyView: View {
                             title: String(localized: "iCloud sync is opt-in"),
                             text: String(localized: "If you turn it on in Settings, your display preferences and each account's usage history (the percentages and their dates, nothing else) go through your iCloud, under your Apple Account, to your other devices with AIMeter. Logins never do. There is no server of AIMeter's in between, and turning it off removes what it kept there.")
                         )
-                        #if os(iOS)
                         Divider().overlay(Theme.track)
                         PrivacyRow(
                             systemName: "applewatch",
                             title: String(localized: "The Watch shows what your iPhone fetched"),
                             text: String(localized: "The Watch app and its complications hold no credentials and never fetch on their own. Your iPhone sends them your accounts' figures, and Refresh on the Watch asks the iPhone.")
                         )
-                        #endif
-                        #if os(macOS)
-                        if Tour.claudeCodePresent {
-                        Divider().overlay(Theme.track)
-                        PrivacyRow(
-                            systemName: "terminal",
-                            title: String(localized: "Claude Code usage is opt-in"),
-                            text: String(localized: "If you turn it on in Settings, AIMeter reads the session logs Claude Code keeps in ~/.claude/projects to add up tokens per model and price them at API list rates. It decodes only the usage fields (never your prompts or the replies), keeps a small index of counts in its own Application Support folder, deletes that index when you turn it off, and sends nothing anywhere.")
-                        )
-                        Divider().overlay(Theme.track)
-                        PrivacyRow(
-                            systemName: "sparkles",
-                            title: String(localized: "Claude Code sessions"),
-                            text: String(localized: "To show which Claude Code sessions are working in the notch island and what each is doing, AIMeter follows the session logs in ~/.claude/projects and reads only what each record is, when it was written and the names of the tools Claude uses, plus each session's title and folder: never your prompts, the replies or what a tool is given. To open a session in the right app, it reads only the two ids in the record each Claude app keeps for it. It keeps nothing and sends nothing anywhere; turn it off in Settings. If you install the optional hooks, Claude Code passes each event to AIMeter over a private connection on this Mac that only your account can reach; AIMeter reads which session it is about and what happened, and discards the rest. With \"Answer from the island\" on, a permission prompt also shows the command, file or address it asks about, only while it is open.")
-                        )
-                        }
-                        if Tour.claudeCodePresent {
-                        Divider().overlay(Theme.track)
-                        PrivacyRow(
-                            systemName: "accessibility",
-                            title: String(localized: "Accessibility, only if you ask"),
-                            text: String(localized: "If you turn on \"Avoid covering the menu bar\" in Settings, macOS asks you to allow AIMeter under Accessibility. AIMeter uses it for one thing: reading where the open app's menu titles and the menu bar's icons are, so the notch island can shrink before it covers them. It reads nothing else and changes nothing.")
-                        )
-                        }
-                        Divider().overlay(Theme.track)
-                        PrivacyRow(
-                            systemName: "power",
-                            title: String(localized: "Opening at login is yours to choose"),
-                            text: String(localized: "AIMeter never adds itself to your login items. If you turn on \"Open at Login\" in Settings, it registers with macOS, which asks you to approve it, and turning it back off removes it. All it does when it starts is read your usage.")
-                        )
-                        Divider().overlay(Theme.track)
-                        PrivacyRow(
-                            systemName: "arrow.down.circle",
-                            title: String(localized: "Updates come from GitHub"),
-                            text: String(localized: "Once a day AIMeter asks GitHub (api.github.com) whether there is a newer version, and downloads it from the project's release page. The request carries nothing about you, and you can turn the check off in Settings.")
-                        )
-                        #endif
                     }
                 }
 
@@ -150,28 +112,18 @@ struct PrivacyView: View {
         }
         .appBackground()
         .navigationTitle(String(localized: "Privacy & data"))
-        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
 
     /// How one family connects, on this platform.
     static func connectingText(for family: String) -> String {
         switch family {
         case CodexProvider.providerID:
-            #if os(macOS)
-            String(localized: "Codex: AIMeter shows you a one-time code that you enter on ChatGPT's own device page in your browser, the same device code sign-in the Codex CLI offers. On the Mac it can instead read the login Codex keeps in ~/.codex, without ever changing it.")
-            #else
             String(localized: "Codex: AIMeter shows you a one-time code that you enter on ChatGPT's own device page in your browser, the same device code sign-in the Codex CLI offers.")
-            #endif
         case CopilotProvider.providerID:
             String(localized: "GitHub Copilot: the same kind of one-time code, entered on GitHub's device page in your browser. AIMeter asks GitHub for no scope at all.")
         default:
-            #if os(macOS)
-            String(localized: "Claude: on the Mac, AIMeter can read the login Claude Code already keeps on this computer, never modifying or rotating those tokens; Claude Code stays in charge of its own session. Or you sign in on Claude's own page in your browser and paste back the code it shows.")
-            #else
             String(localized: "Claude: you sign in on Claude's own page in your browser, never in an embedded web view, so AIMeter can't see your password. You only paste back the code Claude shows after you approve.")
-            #endif
         }
     }
 
@@ -219,11 +171,7 @@ struct PrivacyView: View {
     /// sandboxed widget there can't read Claude Code's own credential
     /// file) — this row must say the true thing for whichever one is running.
     private var keychainRowText: String {
-        #if os(macOS)
-        String(localized: "A login Claude Code or Codex already keeps on this Mac is only read, never changed, and one you sign in with through AIMeter is stored encrypted in the system Keychain. Nothing leaves this device. The widget doesn't access the Keychain directly; the menu bar app feeds it your usage instead.")
-        #else
         String(localized: "Your sign-in token is stored encrypted in the system Keychain, shared only with the widget (through the App Group's keychain access group) so it can refresh usage by itself. It is used exclusively to read your usage.")
-        #endif
     }
 }
 

@@ -1,4 +1,3 @@
-#if os(iOS)
 import ActivityKit
 import SwiftUI
 import WidgetKit
@@ -168,4 +167,3 @@ private struct LockScreenView: View {
         .accessibilityElement(children: .combine)
     }
 }
-#endif

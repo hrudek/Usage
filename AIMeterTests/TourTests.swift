@@ -19,11 +19,7 @@ final class TourTests: XCTestCase {
         for step in steps where step.canBeTurnedOn {
             XCTAssertNotNil(TourActions.title(for: step), "a step that can be turned on has its button: \(step.rawValue)")
         }
-        #if os(macOS)
-        XCTAssertFalse(steps.contains(.widgets), "the Mac's widgets need no walk-through")
-        #else
         XCTAssertEqual(steps, [.welcome, .widgets, .alerts, .connect])
-        #endif
     }
 
     private let release = WhatsNew.Release(version: "2.1.0", items: [
@@ -45,23 +41,6 @@ final class TourTests: XCTestCase {
                      "on already, or not for this Mac")
         XCTAssertNil(Tour.pendingOffers(in: nil, offered: [], canOffer: { _ in true }))
     }
-
-    #if os(macOS)
-    /// The session's name with the menu bar clearance is on once both
-    /// switches are, the way a login item waiting for approval is: what may
-    /// be left is macOS's permission, which the label says how to give,
-    /// never a button that would prompt again.
-    func testTheSessionNamesAreOnWithBothSwitches() {
-        let scratch = ScratchDefaults()
-        defer { scratch.wipe() }
-        let prefs = PreferencesModel(defaults: scratch.defaults)
-        let model = UsageModel(registry: AccountRegistryStore(userDefaults: scratch.defaults), platformServices: false)
-        prefs.claudeSessionsShowsName = true
-        XCTAssertFalse(TourActions.isActive(.sessionNames, model: model, prefs: prefs, notificationsAllowed: false))
-        prefs.claudeSessionsAvoidsMenus = true
-        XCTAssertTrue(TourActions.isActive(.sessionNames, model: model, prefs: prefs, notificationsAllowed: false))
-    }
-    #endif
 
     func testANoteNamesItsFeatureByRawValue() throws {
         let json = #"""

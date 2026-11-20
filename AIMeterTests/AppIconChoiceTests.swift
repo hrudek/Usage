@@ -1,10 +1,6 @@
 import XCTest
 @testable import AIMeter
-#if os(iOS)
 import UIKit
-#else
-import AppKit
-#endif
 
 /// The app icon picked in Settings: Sunset is the bundle's own, every
 /// other look has its alternate (iOS) or Dock image (Mac) in the bundle
@@ -27,15 +23,10 @@ final class AppIconChoiceTests: XCTestCase {
 
     func testEveryPreviewIsInTheBundle() {
         for choice in AppIconChoice.allCases {
-            #if os(iOS)
             XCTAssertNotNil(UIImage(named: choice.previewImageName), choice.rawValue)
-            #else
-            XCTAssertNotNil(NSImage(named: choice.previewImageName), choice.rawValue)
-            #endif
         }
     }
 
-    #if os(iOS)
     func testEveryAlternateIsDeclaredToTheSystem() throws {
         let icons = try XCTUnwrap(Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any])
         let alternates = try XCTUnwrap(icons["CFBundleAlternateIcons"] as? [String: Any], "ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES")
@@ -44,27 +35,4 @@ final class AppIconChoiceTests: XCTestCase {
             XCTAssertNotNil(alternates[name], name)
         }
     }
-    #else
-    func testEveryDockImageIsInTheBundle() {
-        for choice in AppIconChoice.allCases {
-            guard let name = choice.dockImageName else { continue }
-            let image = NSImage(named: name)
-            XCTAssertNotNil(image, name)
-            XCTAssertEqual(image?.size.width, image?.size.height, "\(name) is square, as a Dock tile is")
-        }
-    }
-
-    func testTheMacPreferenceDefaultsToSunsetAndRoundTrips() {
-        let scratch = ScratchDefaults()
-        defer { scratch.wipe() }
-        XCTAssertEqual(Preferences.load(from: scratch.defaults).appIcon, .sunset)
-
-        let model = PreferencesModel(defaults: scratch.defaults)
-        model.appIcon = .pet
-        XCTAssertEqual(Preferences.load(from: scratch.defaults).appIcon, .pet)
-
-        scratch.defaults.set("aurora", forKey: Preferences.Keys.appIcon)
-        XCTAssertEqual(Preferences.load(from: scratch.defaults).appIcon, .sunset, "an unknown value falls back to the bundle's own")
-    }
-    #endif
 }

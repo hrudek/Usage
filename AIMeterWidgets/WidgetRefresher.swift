@@ -1,4 +1,3 @@
-#if os(iOS)
 import Foundation
 import UsageKit
 
@@ -99,4 +98,3 @@ enum WidgetRefresher {
         return snapshot
     }
 }
-#endif

@@ -1,4 +1,3 @@
-#if os(iOS)
 import AppIntents
 import WidgetKit
 import UsageKit
@@ -35,4 +34,3 @@ struct RefreshAccountIntent: AppIntent {
         return .result()
     }
 }
-#endif

@@ -1,8 +1,6 @@
 import XCTest
 import UniformTypeIdentifiers
-#if os(iOS)
 import CoreTransferable
-#endif
 import UsageKit
 @testable import AIMeter
 
@@ -84,7 +82,6 @@ final class UsageExportTests: XCTestCase {
         XCTAssertEqual(export.fileName(.json).hasSuffix(".json"), true)
     }
 
-    #if os(iOS)
     /// What the share sheet receives from each item is the file itself.
     func testTheShareItemsExportTheirFiles() async throws {
         // `exported(as:)` is the test's own tool, not the app's: the share
@@ -95,7 +92,6 @@ final class UsageExportTests: XCTestCase {
         let jsonData = try await UsageExportJSON(export: export).exported(as: .json)
         XCTAssertEqual(jsonData, try export.json())
     }
-    #endif
 
     /// The day in the user's calendar, as the export names it.
     private static func day(of date: Date) -> String {

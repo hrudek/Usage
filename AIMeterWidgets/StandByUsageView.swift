@@ -1,4 +1,3 @@
-#if os(iOS)
 import SwiftUI
 import UsageKit
 import WidgetKit
@@ -68,4 +67,3 @@ struct StandByUsageView: View {
         .accessibilityElement(children: .combine)
     }
 }
-#endif

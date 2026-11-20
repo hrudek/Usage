@@ -122,17 +122,10 @@ struct AccountSettingsCards: View {
             RenewalReminderCard(accountID: accountID)
             SectionFootnote(text: String(localized: "AIMeter can't see your billing, so the day is the one you set. The reminder comes that many days before, every month."))
 
-            #if os(iOS)
             SettingsGap()
             SectionHeader(title: String(localized: "Live Activity"))
             LiveActivityCard(accountID: accountID)
             SectionFootnote(text: String(localized: "Shows this account's session countdown on the Lock Screen and Dynamic Island while a session is running, or, for an account with no session, its limit closest to full until it resets. Off by default. It updates whenever AIMeter or its widgets happen to refresh, not instantly, since there's no server to push updates."))
-            #endif
-
-            #if os(macOS)
-            SettingsGap()
-            DiscreetAccountSettings(accountID: accountID)
-            #endif
 
             if !model.isDemoMode {
                 SettingsGap()
@@ -224,9 +217,7 @@ struct AccountSettingsPage: View {
         // Not the account's name alone: that is Provider Detail's title,
         // the page under this one, and the two read as one screen.
         .navigationTitle(String(localized: "\(model.usage(for: accountID)?.account.displayName ?? "") Settings"))
-        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
 }
 

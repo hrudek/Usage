@@ -133,14 +133,12 @@ struct RefreshService {
         UsageRecorder.record(snapshot, for: account.accountID)
         // No `reloadAllTimelines()` here: the caller reloads once per sweep
         // (see `UsageModel.fetch(accountID:)`), not once per account.
-        #if os(iOS)
         LiveActivityManager.sync(
             accountID: account.accountID, accountName: account.displayName, accountIcon: account.icon,
             providerID: account.providerID, snapshot: snapshot,
             enabled: LiveActivityPreferences(accountID: account.accountID).enabled,
             mayStart: allowsLiveActivityStart
         )
-        #endif
 
         await NotificationScheduler.rescheduleResets(
             for: snapshot, accountID: account.accountID, accountLabel: accountLabel, preferences: prefs
@@ -309,9 +307,7 @@ struct RefreshService {
         let accountID = account.accountID
         Task { await NotificationScheduler.removeAll(accountID: accountID) }
         NotificationPreferences(accountID: accountID).clear()
-        #if os(iOS)
         LiveActivityManager.end(accountID: accountID)
         LiveActivityPreferences(accountID: accountID).clear()
-        #endif
     }
 }

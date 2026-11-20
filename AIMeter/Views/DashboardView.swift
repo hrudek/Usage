@@ -4,9 +4,6 @@ import UsageKit
 struct DashboardView: View {
     @Environment(UsageModel.self) var model
     @Environment(PreferencesModel.self) private var prefs
-    #if os(macOS)
-    @Environment(\.openSettings) private var openSettings
-    #endif
     @State private var showingSettings = false
     @State private var showingConnect = false
     /// Reconnect requested from a surface that can't present the sheet
@@ -31,7 +28,6 @@ struct DashboardView: View {
     /// why this exists and why it is a reference, not plain `@State`.
     @State var scrollTracker = ScrollMovementTracker()
     @Environment(\.accessibilityReduceMotion) var reduceMotion
-    #if os(iOS)
     @Environment(\.horizontalSizeClass) private var sizeClass
     /// An iPhone on its side: the same Dashboard, its buttons and links
     /// included, with no sparklines and no status bar. Until 4.3.1 a view
@@ -42,35 +38,22 @@ struct DashboardView: View {
     /// iPhone Duo's side bar holds Settings and Refresh in place of the
     /// header's buttons (`DashboardSideBar`).
     @State private var barIsVertical = false
-    #endif
 
     /// An iPhone held sideways (`verticalSizeClass` compact).
     var isLandscapePhone: Bool {
-        #if os(iOS)
         verticalSizeClass == .compact
-        #else
-        false
-        #endif
     }
 
     /// An iPad's width: two or more accounts sit in two columns of the same
     /// cards, and a dragged card moves both ways (`accountSection`).
     var isGrid: Bool {
-        #if os(iOS)
         sizeClass == .regular && model.accounts.count > 1
-        #else
-        false
-        #endif
     }
 
     /// An iPad's width with one account: its card, centred, at a width a
     /// card reads well at rather than the screen's.
     private var isWideSingle: Bool {
-        #if os(iOS)
         sizeClass == .regular && model.accounts.count <= 1
-        #else
-        false
-        #endif
     }
 
     /// The accounts two by two, the rows of the two columns.
@@ -83,9 +66,7 @@ struct DashboardView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.sectionSpacing) {
-                #if os(iOS)
                 header
-                #endif
                 // Only while the provider itself reports a problem — on a
                 // normal day the dashboard looks exactly as it always has.
                 if let incident = model.activeIncident {
@@ -95,17 +76,7 @@ struct DashboardView: View {
                         fallbackURL: ProviderCatalog.statusPageURL(for: incident.providerID)
                     )
                 }
-                #if os(macOS)
-                // Only while an update waits for a restart.
-                UpdateReadyNotice()
-                #endif
                 providerSection
-                #if os(macOS)
-                // Per machine, not per account — see `ClaudeCodeUsageModel`.
-                VStack(alignment: .leading, spacing: 10) {
-                    ClaudeCodeSection()
-                }
-                #endif
             }
             .padding(20)
             .background {
@@ -129,9 +100,7 @@ struct DashboardView: View {
         // press when this flips, so there is never a pan in progress to cut.
         .scrollDisabled(draggingID != nil)
         .appBackground()
-        #if os(iOS)
         .statusBarHidden(isLandscapePhone)
-        #endif
         // Soft tap when the *user* starts a refresh — pull gesture or
         // button alike. Keyed on the request count, not `isRefreshing`:
         // that also flips for the foreground auto-refresh, which would
@@ -148,12 +117,6 @@ struct DashboardView: View {
         .navigationDestination(for: AccountSettingsRoute.self) { route in
             AccountSettingsPage(accountID: route.accountID, dismissesOnDisconnect: false)
         }
-        #if os(macOS)
-        .navigationDestination(for: ClaudeCodeUsageRoute.self) { _ in
-            ClaudeCodeUsageView()
-        }
-        #endif
-        #if os(iOS)
         .refreshable {
             refreshRequests += 1
             await model.refreshAll()
@@ -186,7 +149,6 @@ struct DashboardView: View {
                 showingConnect = true
             }
         }
-        #endif
         .sheet(isPresented: $showingConnect) {
             ConnectAccountSheet()
                 .withAppModels(model, prefs)
@@ -195,60 +157,7 @@ struct DashboardView: View {
             ConnectAccountSheet(reconnecting: account)
                 .withAppModels(model, prefs)
         }
-        #if os(macOS)
-        // When the accounts last refreshed, once, under the window's title
-        // (a card says so itself only once its figures go stale).
-        .navigationSubtitle(lastUpdatedLabel ?? "")
-        // The Mac's window already has a title bar that says "AIMeter",
-        // so the in-page title and the floating round buttons became the
-        // window's toolbar: the title once, Refresh and Settings at its
-        // trailing edge, where a Mac app keeps them.
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                if model.isRefreshing {
-                    ProgressView()
-                        .controlSize(.small)
-                        .accessibilityLabel(Text("Refresh"))
-                } else {
-                    Button {
-                        refreshRequests += 1
-                        Task { await model.refreshAll() }
-                    } label: {
-                        Label("Refresh", systemImage: "arrow.clockwise")
-                    }
-                    .help(String(localized: "Refresh"))
-                    // ⌘R is the Usage menu's (`AIMeterApp.commands`), not
-                    // this button's: declaring it here too fired both.
-                }
-                Button {
-                    openSettings()
-                    NSApp.activate(ignoringOtherApps: true)
-                } label: {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                .help(String(localized: "Settings"))
-            }
-        }
-        .onAppear(perform: registerConnectHook)
-        .onDisappear {
-            AppChrome.presentConnect = nil
-        }
-        #endif
     }
-
-    #if os(macOS)
-    /// The menu bar popover and the island present no sheets of their
-    /// own; they hand a connect request to this window (`AppChrome.connect`).
-    private func registerConnectHook() {
-        AppChrome.presentConnect = { request in
-            switch request {
-            case .add: showingConnect = true
-            case .reconnect(let account): reconnecting = account
-            }
-        }
-        AppChrome.deliverPendingConnect()
-    }
-    #endif
 
     /// "Updated 2 min ago" for the most recent refresh of any account: the
     /// one freshness line on the Dashboard. A card whose own figures fall
@@ -257,7 +166,6 @@ struct DashboardView: View {
         model.accounts.compactMap(\.snapshot?.fetchedAt).max().map { UsageFormatting.updatedLabel($0) }
     }
 
-    #if os(iOS)
     private var header: some View {
         // One row, so a larger text size wraps the line between the
         // buttons instead of running under them (a ZStack until 4.3.1).
@@ -288,7 +196,6 @@ struct DashboardView: View {
             }
         }
     }
-    #endif
 
     private var providerSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -298,22 +205,6 @@ struct DashboardView: View {
                         DisconnectedPrompt(buttonLabel: "Connect", verticalPadding: 12) {
                             showingConnect = true
                         }
-                        #if os(macOS)
-                        // The way back to the zero-setup path after the
-                        // user disconnected the CLI-mirrored account (see
-                        // `Preferences.autoDetectDeclined`).
-                        if model.canRedetectClaudeCodeLogin {
-                            Button {
-                                Task { await model.redetectClaudeCodeLogin() }
-                            } label: {
-                                Text("Use Claude Code's login instead")
-                                    .font(Theme.caption)
-                                    .foregroundStyle(Theme.accent)
-                                    .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        #endif
                     }
                     .frame(maxWidth: .infinity)
                 }

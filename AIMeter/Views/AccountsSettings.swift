@@ -158,7 +158,6 @@ struct UsageRowsSettings: View {
     }
 }
 
-#if os(iOS)
 /// "Lock Screen widget": which window the circular gauge reads, for
 /// whichever account a widget instance is set to (`glanceMetric`, one
 /// shared value; see "Display prefs" in the repo-root CLAUDE.md). The
@@ -188,4 +187,3 @@ struct GlanceMetricSettings: View {
         SectionFootnote(text: String(localized: "Which usage window the Lock Screen circular widget shows, whichever account it is set to. The options are what your accounts report."))
     }
 }
-#endif

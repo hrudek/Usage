@@ -1,4 +1,3 @@
-#if os(iOS)
 import ActivityKit
 import Foundation
 import UsageKit
@@ -61,4 +60,3 @@ nonisolated struct SessionActivityAttributes: ActivityAttributes {
         return SessionPet(creature: creature, palette: palette, accessory: accessory)
     }
 }
-#endif

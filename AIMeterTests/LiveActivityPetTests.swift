@@ -29,7 +29,6 @@ final class LiveActivityPetTests: XCTestCase {
         XCTAssertEqual(SessionPetMood.almostOut.pose, .waiting)
     }
 
-    #if os(iOS)
     func testAnActivityFromAnOlderBuildHasNoPet() throws {
         let older = #"{"accountID":"claude","accountName":"Personal"}"#
         let attributes = try JSONDecoder().decode(SessionActivityAttributes.self, from: Data(older.utf8))
@@ -58,5 +57,4 @@ final class LiveActivityPetTests: XCTestCase {
         XCTAssertFalse(preferences.showsPet)
         XCTAssertNil(preferences.pet)
     }
-    #endif
 }

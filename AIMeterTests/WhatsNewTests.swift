@@ -74,11 +74,7 @@ final class WhatsNewTests: XCTestCase {
 
     func testSkippedVersionsAddUpNewestFirstAndOnlyForThisPlatform() throws {
         let due = try XCTUnwrap(WhatsNew.pending(notes: notes, current: version("2.2.0"), lastSeen: version("2.0.0"), hasPriorInstall: true))
-        #if os(macOS)
-        XCTAssertEqual(due.items.map(\.symbol), ["b", "mac", "a"])
-        #else
         XCTAssertEqual(due.items.map(\.symbol), ["b", "ios", "a"])
-        #endif
         XCTAssertNil(WhatsNew.pending(notes: notes, current: version("2.2.0"), lastSeen: version("2.2.0"), hasPriorInstall: true),
                      "already read")
         XCTAssertNil(WhatsNew.pending(notes: notes, current: version("2.3.0"), lastSeen: version("2.2.0"), hasPriorInstall: true),

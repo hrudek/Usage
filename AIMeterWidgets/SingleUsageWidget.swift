@@ -47,7 +47,6 @@ struct SingleUsageTimelineProvider: AppIntentTimelineProvider {
         var current = entry(for: configuration)
         // Floor the reload interval to stay within WidgetKit's refresh budget.
         let interval = max(current.prefs.refreshCadence.interval, AppConfig.widgetRefreshFloor)
-        #if os(iOS)
         if let fresh = await WidgetRefresher.fetchIfStale(
             accountID: current.accountID,
             current: current.snapshot,
@@ -64,7 +63,6 @@ struct SingleUsageTimelineProvider: AppIntentTimelineProvider {
                 style: current.style
             )
         }
-        #endif
         let next = WidgetSchedule.nextReload(
             after: current.date, interval: interval, resets: UsageTimelineProvider.resets(of: current.snapshot)
         )

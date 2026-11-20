@@ -16,7 +16,6 @@ struct SingleUsageWidgetView: View {
 
     var body: some View {
         Group {
-            #if os(iOS)
             if !showsBackground {
                 StandByUsageView(
                     accountName: entry.accountName,
@@ -31,13 +30,6 @@ struct SingleUsageWidgetView: View {
             } else {
                 bars
             }
-            #else
-            if entry.style == .ring {
-                RingUsageView(entry: entry)
-            } else {
-                bars
-            }
-            #endif
         }
         .containerBackground(for: .widget) {
             Theme.card

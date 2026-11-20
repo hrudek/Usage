@@ -38,7 +38,6 @@ struct UsageTimelineProvider: AppIntentTimelineProvider {
         // Floor the widget's own reload interval so it stays within
         // WidgetKit's refresh budget regardless of the display cadence.
         let interval = max(current.prefs.refreshCadence.interval, AppConfig.widgetRefreshFloor)
-        #if os(iOS)
         if let fresh = await WidgetRefresher.fetchIfStale(
             accountID: current.accountID,
             current: current.snapshot,
@@ -46,7 +45,6 @@ struct UsageTimelineProvider: AppIntentTimelineProvider {
         ) {
             current = UsageEntry(date: .now, snapshot: fresh, accountID: current.accountID, accountName: current.accountName, prefs: current.prefs, accountIcon: current.accountIcon)
         }
-        #endif
         let next = WidgetSchedule.nextReload(
             after: current.date, interval: interval, resets: Self.resets(of: current.snapshot)
         )
@@ -58,11 +56,7 @@ struct UsageTimelineProvider: AppIntentTimelineProvider {
     /// A Mac widget only ever shows what the app last wrote, so there a
     /// reload at the reset would redraw the same figure.
     static func resets(of snapshot: UsageSnapshot?) -> [Date] {
-        #if os(iOS)
         snapshot?.windows.compactMap(\.resetsAt) ?? []
-        #else
-        []
-        #endif
     }
 
     /// If Claude's peak-hours schedule flips before the next scheduled
@@ -114,10 +108,6 @@ struct UsageWidget: Widget {
     }
 
     private static var families: [WidgetFamily] {
-        #if os(iOS)
         [.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular, .accessoryInline]
-        #else
-        [.systemSmall, .systemMedium]
-        #endif
     }
 }

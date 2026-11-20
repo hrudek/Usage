@@ -9,7 +9,6 @@ struct ContentView: View {
     /// The Dashboard's navigation, held here so the Mac's popover can open
     /// an account's detail in it (`AppChrome.openAccount`).
     @State private var path = NavigationPath()
-    #if os(iOS)
     /// The full tour at the first launch (see `Tour`), and again from
     /// Settings (`.tourShowRequest`).
     @State private var showsTour = Tour.dueAtLaunch()
@@ -20,11 +19,9 @@ struct ContentView: View {
     /// Mac shows them in its update window instead); never over a first
     /// launch's tour, which shows what is new as well.
     @State private var whatsNew = Tour.dueAtLaunch() ? nil : WhatsNew.dueAtLaunch()
-    #endif
 
     var body: some View {
         dashboard
-        #if os(iOS)
         .onChange(of: scenePhase) { _, phase in
             if phase == .background {
                 BackgroundRefresh.scheduleNext()
@@ -70,16 +67,6 @@ struct ContentView: View {
         .task {
             await model.refreshAll()
         }
-        #else
-        // The launch refresh is the AppDelegate's: this window may never
-        // open (a restored Settings window) or close at once (a hidden
-        // Dock icon), and a view's `.task` is cancelled with it. Here only
-        // what went stale while it was closed, in a task its closing
-        // doesn't cancel.
-        .onAppear {
-            Task { await model.refreshAllIfStale() }
-        }
-        #endif
     }
 
     private var dashboard: some View {
@@ -101,7 +88,6 @@ struct ContentView: View {
                 path = NavigationPath()
             }
         }
-        #if os(iOS)
         // The "Open Account" intent (Shortcuts, Siri).
         .onChange(of: model.accountToOpen) { _, accountID in
             guard let accountID else { return }
@@ -109,8 +95,7 @@ struct ContentView: View {
             path = NavigationPath()
             path.append(accountID)
         }
-        #endif
-        #if os(iOS) && DEBUG
+        #if DEBUG
         // `-AIMeterOpenAccount <accountID>` opens that account's detail at
         // launch, and with `-AIMeterOpenAccountSettings YES` its settings
         // page, to check or capture them without a tap.
@@ -121,25 +106,6 @@ struct ContentView: View {
                 path.append(AccountSettingsRoute(accountID: id))
             }
         }
-        #endif
-        #if os(macOS)
-        // A click on an account in the menu bar popover opens its detail
-        // here (`AppChrome.openAccount`).
-        .onAppear {
-            AppChrome.presentAccount = { accountID in
-                path = NavigationPath()
-                path.append(accountID)
-            }
-            AppChrome.deliverPendingAccount()
-        }
-        .onDisappear {
-            AppChrome.presentAccount = nil
-        }
-        // The detail screens' toggles as trailing switches, like Settings'.
-        .toggleStyle(.settingsSwitch)
-        // Room for two accounts and an incident notice without scrolling;
-        // a window restored smaller than this grows to it.
-        .frame(minWidth: 380, minHeight: 560)
         #endif
     }
 }

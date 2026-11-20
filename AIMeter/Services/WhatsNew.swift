@@ -38,11 +38,7 @@ nonisolated struct WhatsNew: Decodable, Equatable, Sendable {
     static let languages = ["en", "es", "de", "fr", "ja", "ko", "pt-BR", "zh-Hans"]
     static let resourceName = "WhatsNew"
 
-    #if os(macOS)
-    static let platform = "macOS"
-    #else
     static let platform = "iOS"
-    #endif
 
     /// The notes `bundle` carries: this app's, or a downloaded update's.
     static func load(from bundle: Bundle = .main) -> WhatsNew? {

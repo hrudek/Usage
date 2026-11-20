@@ -15,11 +15,7 @@ nonisolated enum AppConfig {
     /// read credentials and refresh usage itself. On iOS the App Group
     /// doubles as a keychain group; on macOS the menu bar app feeds the
     /// widget instead, and unsandboxed keychain groups behave differently.
-    #if os(iOS)
     static let keychainAccessGroup: String? = appGroupID
-    #else
-    static let keychainAccessGroup: String? = nil
-    #endif
     static let refreshTaskID = "com.mikealvarado.aimeter.refresh"
     /// macOS `NSBackgroundActivityScheduler` identifier for the repeating
     /// refresh. Distinct from `refreshTaskID` (iOS `BGTaskScheduler`) — two

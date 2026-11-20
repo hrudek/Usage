@@ -80,11 +80,7 @@ struct SegmentedPill<Option: Hashable>: View {
         .accessibilityLabel(name.map { Text($0) } ?? Text(verbatim: ""))
     }
 
-    #if os(iOS)
     private static var segmentPadding: CGFloat { 12 }
-    #else
-    private static var segmentPadding: CGFloat { 8 }
-    #endif
 }
 
 /// Card container with the standard surface, radius, and padding. It
@@ -235,13 +231,9 @@ extension View {
     /// button, a reset line), without moving anything: the padding that
     /// widens the hit area is taken back from the layout.
     func tapTarget() -> some View {
-        #if os(iOS)
         let extra: CGFloat = 12
         return padding(.vertical, extra)
             .contentShape(Rectangle())
             .padding(.vertical, -extra)
-        #else
-        return self
-        #endif
     }
 }

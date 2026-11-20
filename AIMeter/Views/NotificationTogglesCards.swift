@@ -172,11 +172,7 @@ struct NotificationTogglesCard: View {
     }
 
     private var notificationSettingsURL: URL? {
-        #if os(iOS)
         URL(string: UIApplication.openNotificationSettingsURLString)
-        #else
-        URL(string: "x-apple.systempreferences:com.apple.preference.notifications")
-        #endif
     }
 
     private func binding(for kind: UsageWindow.Kind) -> Binding<Bool> {

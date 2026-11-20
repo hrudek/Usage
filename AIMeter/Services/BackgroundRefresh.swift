@@ -1,4 +1,3 @@
-#if os(iOS)
 import BackgroundTasks
 import Foundation
 
@@ -19,4 +18,3 @@ enum BackgroundRefresh {
         }
     }
 }
-#endif

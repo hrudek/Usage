@@ -3,9 +3,6 @@ import Observation
 import UserNotifications
 import WidgetKit
 import UsageKit
-#if os(macOS)
-import AppKit
-#endif
 
 /// UI-facing state for every connected account. Wraps one
 /// `RefreshService` per account and keeps each account's last known
@@ -60,12 +57,10 @@ final class UsageModel {
     /// `SnapshotStore`, or `WidgetCenter`, so it can never leak into
     /// widgets or a real connection.
     var isDemoMode = false
-    #if os(iOS)
     /// An account the "Open Account" intent asked for; the Dashboard's
     /// navigation stack opens its detail and clears it (`ContentView`). The
     /// Mac goes through `AppChrome.openAccount` instead.
     var accountToOpen: String?
-    #endif
     /// Transient error from the Connect sheet's own attempt to store fresh
     /// credentials — distinct from an already-connected account's ongoing
     /// `lastError`, since a failed connection never makes it into `accounts`.
@@ -107,12 +102,6 @@ final class UsageModel {
     /// account) — "global" is a documented placeholder, never used as a
     /// real key.
     let peakPreferences = NotificationPreferences(accountID: "global")
-    #if os(macOS)
-    @ObservationIgnored var refreshScheduler: NSBackgroundActivityScheduler?
-    /// Claude Code's local usage on this Mac (see `ClaudeCodeUsageModel`);
-    /// nil in unit tests. Rescanned on every refresh sweep while enabled.
-    var claudeCode: ClaudeCodeUsageModel?
-    #endif
 
     /// True when the user denied notification permission in the system
     /// settings — one OS-level toggle, not per account, so the toggles
@@ -160,20 +149,12 @@ final class UsageModel {
         loadStoredServiceStatus()
         guard platformServices else { return }
         AppEnvironment.shared = self
-        #if os(iOS)
         endDemoLiveActivities()
-        #endif
         // The other devices draw with the display preferences too.
         PreferencesModel.onWidgetVisibleChange = { [weak self] in
             self?.cloud?.pushPreferences(Preferences.load())
         }
         if Preferences.load().cloudSync { startCloudSync() }
-        #if os(macOS)
-        claudeCode = ClaudeCodeUsageModel(enabled: Preferences.load().claudeCodeUsageEnabled)
-        rebuildRefreshSchedule(interval: Preferences.load().refreshCadence.interval)
-        observeWake()
-        observeActivation()
-        #endif
         // Peak-hours alerts come from a fixed weekday schedule, not a
         // fetched snapshot, so they only need scheduling once here (and
         // whenever the toggle changes) — not on every refresh.
@@ -201,25 +182,6 @@ final class UsageModel {
             (account.accountID, previousServices[account.accountID] ?? RefreshService(account: account))
         })
         accounts = connected.map { AccountUsage(account: $0, snapshot: services[$0.accountID]?.lastSnapshot()) }
-        #if os(macOS)
-        // Nothing registered yet: speculatively try the CLI-mirrored login
-        // rather than assuming disconnected — this mirrors the pre-multi-
-        // account behavior of optimistically showing content until the
-        // first refresh proves there's nothing to show. Not persisted to
-        // the registry until that refresh actually confirms real
-        // credentials (see `refresh(accountID:)`), so a Mac with no Claude
-        // Code login never gets a phantom account.
-        // ...unless the user explicitly disconnected that mirrored login
-        // (`Preferences.autoDetectDeclined`), in which case re-mirroring it
-        // here would just undo the disconnect on every launch.
-        if accounts.isEmpty, !Preferences.autoDetectDeclined, !Self.isTestHost {
-            var candidate = ProviderCatalog.legacyAccount
-            candidate.credentialStrategy = .autoDetected
-            let service = previousServices[candidate.accountID] ?? RefreshService(account: candidate)
-            services[candidate.accountID] = service
-            accounts = [AccountUsage(account: candidate, snapshot: service.lastSnapshot())]
-        }
-        #endif
         reloadTimelines()
         applyAccountOrder()
     }
@@ -250,9 +212,6 @@ final class UsageModel {
 
     func refreshAll() async {
         guard !isDemoMode else { return }
-        #if os(macOS)
-        claudeCode?.rescanIfEnabled()
-        #endif
         async let status: Void = refreshServiceStatus()
         let fetched = await withTaskGroup(of: Bool.self) { group in
             for account in accounts.map(\.account) {
@@ -377,9 +336,6 @@ final class UsageModel {
     /// pushes new snapshots to the widgets immediately.
     func refreshAllIfStale(maxAge: TimeInterval = 60) async {
         guard !isDemoMode else { return }
-        #if os(macOS)
-        claudeCode?.rescanIfEnabled()
-        #endif
         // A widget may have recorded samples while the app was away.
         reloadTimelines()
         async let status: Void = refreshServiceStatus()

@@ -1,8 +1,6 @@
 import SwiftUI
 import UsageKit
-#if os(iOS)
 import UIKit
-#endif
 
 /// Where each Dashboard account section sits, keyed by accountID and
 /// resolved in the Dashboard's own named coordinate space.
@@ -44,7 +42,6 @@ enum ReorderPhase {
     case cancelled
 }
 
-#if os(iOS)
 /// Hold-then-drag as a plain UIKit `UILongPressGestureRecognizer`, for iOS
 /// 18 and later.
 ///
@@ -97,7 +94,6 @@ struct ReorderPressRecognizer: UIGestureRecognizerRepresentable {
         }
     }
 }
-#endif
 
 /// Outlines the section a release would drop onto. The only feedback the
 /// reorder gives besides the card following the finger, since it resolves

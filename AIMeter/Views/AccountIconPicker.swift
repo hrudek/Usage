@@ -42,11 +42,7 @@ struct AccountIconPicker: View {
     /// text field, so a typo can never be saved as an icon that draws
     /// nothing.
     nonisolated static func symbolExists(_ name: String) -> Bool {
-        #if os(macOS)
-        NSImage(systemSymbolName: name, accessibilityDescription: nil) != nil
-        #else
         UIImage(systemName: name) != nil
-        #endif
     }
 
     private var current: AccountIcon? {
@@ -99,22 +95,13 @@ struct AccountIconPicker: View {
             }
             .appBackground()
             .navigationTitle(Text("Account icon"))
-            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    #if os(iOS)
                     SheetDoneButton { dismiss() }
-                    #else
-                    Button("Done") { dismiss() }
-                    #endif
                 }
             }
         }
-        #if os(macOS)
-        .frame(minWidth: 460, idealWidth: 460, minHeight: 620, idealHeight: 620)
-        #endif
     }
 
     private var preview: some View {
@@ -161,9 +148,7 @@ struct AccountIconPicker: View {
                 TextField(String(localized: "Symbol name, e.g. bolt.fill"), text: $customName)
                     .textFieldStyle(.plain)
                     .font(.callout)
-                    #if os(iOS)
                     .textInputAutocapitalization(.never)
-                    #endif
                     .autocorrectionDisabled()
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)

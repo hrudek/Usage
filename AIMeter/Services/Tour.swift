@@ -20,11 +20,7 @@ enum Tour {
     /// (`TourActions.applies`): Claude Code's sessions without the notch
     /// island, or on a Mac where Claude Code has never run.
     static var steps: [TourFeature] {
-        #if os(macOS)
-        [.welcome, .notchIsland, .sessions, .sessionNames, .alerts, .openAtLogin, .connect]
-        #else
         [.welcome, .widgets, .alerts, .connect]
-        #endif
     }
 
     /// The full tour runs once: on an install that has never finished or
@@ -96,13 +92,6 @@ enum Tour {
         }
     }
 
-    #if os(macOS)
-    /// Whether Claude Code has run on this Mac (its logs folder exists),
-    /// the same test as the Dashboard's invitation to its usage.
-    static var claudeCodePresent: Bool {
-        FileManager.default.fileExists(atPath: ClaudeSessionLogWatcher.defaultRoot.path)
-    }
-    #else
     /// "Show the tour" in the iOS Settings sheet: the tour opens once the
     /// sheet is gone (`deliverPendingShow`, from the sheet's `onDismiss`),
     /// since nothing can be presented over a sheet that is going away.
@@ -114,7 +103,6 @@ enum Tour {
         showRequested = false
         NotificationCenter.default.post(name: .tourShowRequest, object: nil)
     }
-    #endif
 }
 
 extension TourFeature {

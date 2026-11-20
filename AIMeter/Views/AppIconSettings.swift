@@ -1,7 +1,5 @@
 import SwiftUI
-#if os(iOS)
 import UIKit
-#endif
 
 /// "App icon": the notch island in four looks, a picture and a name each,
 /// the one in use ringed in the accent. iOS changes the icon itself and
@@ -9,9 +7,6 @@ import UIKit
 /// only change the Dock's (`AppChrome.applyAppIcon`), which the footnote
 /// says. See `AppIconChoice` for the names behind each look.
 struct AppIconSettings: View {
-    #if os(macOS)
-    @Environment(PreferencesModel.self) private var prefs
-    #endif
     @State private var current: AppIconChoice = .sunset
     @State private var failed = false
 
@@ -28,11 +23,7 @@ struct AppIconSettings: View {
     /// iOS can say no to alternate icons (an iPad app running on a Mac
     /// does): then there is nothing to pick, so no card.
     private static var isAvailable: Bool {
-        #if os(iOS)
         UIApplication.shared.supportsAlternateIcons
-        #else
-        true
-        #endif
     }
 
     @ViewBuilder
@@ -91,24 +82,15 @@ struct AppIconSettings: View {
     }
 
     private var footnote: String? {
-        #if os(iOS)
         failed ? String(localized: "The icon couldn't be changed.", comment: "Settings, App icon: iOS refused to switch the icon.") : nil
-        #else
-        String(localized: "macOS lets an app change only its Dock icon, while it runs. Finder keeps Sunset.", comment: "Settings on the Mac, App icon: what the choice changes there.")
-        #endif
     }
 
     private func readCurrent() {
-        #if os(iOS)
         current = AppIconChoice(alternateIconName: UIApplication.shared.alternateIconName)
-        #else
-        current = prefs.appIcon
-        #endif
     }
 
     private func choose(_ choice: AppIconChoice) {
         guard choice != current else { return }
-        #if os(iOS)
         current = choice
         failed = false
         Task { @MainActor in
@@ -121,10 +103,5 @@ struct AppIconSettings: View {
                 failed = true
             }
         }
-        #else
-        current = choice
-        prefs.appIcon = choice
-        AppChrome.applyAppIcon(choice)
-        #endif
     }
 }

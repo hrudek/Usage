@@ -9,11 +9,9 @@ struct AIMeterWidgetsBundle: WidgetBundle {
         UsageWidget()
         SingleUsageWidget()
         AllAccountsWidget()
-        #if os(iOS)
         SessionLiveActivity()
         if #available(iOS 18.0, *) {
             UsageControl()
         }
-        #endif
     }
 }

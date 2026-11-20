@@ -1,9 +1,7 @@
 import SwiftUI
 import WidgetKit
 import UsageKit
-#if os(iOS)
 import AppIntents
-#endif
 
 /// One peak-hours badge for the whole widget, not repeated per account —
 /// same rule the macOS menu bar popover already follows ("peak is
@@ -96,14 +94,12 @@ private struct AccountRow: View {
                     icon: row.account.icon
                 )
                 Spacer(minLength: 0)
-                #if os(iOS)
                 Button(intent: RefreshAccountIntent(accountID: row.account.accountID)) {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 9, weight: .semibold))
                         .foregroundStyle(Theme.inkSecondary)
                 }
                 .buttonStyle(.plain)
-                #endif
             }
             if let snapshot = row.snapshot {
                 let layout = AccountCardLayout(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback)

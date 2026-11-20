@@ -26,14 +26,7 @@ struct TourVisual: View {
         case .widgets: WidgetDemo()
         case .alerts: AlertDemo()
         case .connect: ConnectDemo()
-        #if os(macOS)
-        case .notchIsland: IslandDemo()
-        case .sessions: PetsDemo()
-        case .sessionNames: NamesDemo()
-        case .openAtLogin: LoginDemo()
-        #else
         case .notchIsland, .sessions, .sessionNames, .openAtLogin: ConnectDemo()
-        #endif
         }
     }
 

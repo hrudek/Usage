@@ -75,11 +75,7 @@ struct OpenAccountIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        #if os(macOS)
-        AppChrome.openAccount(account.id)
-        #else
         AppEnvironment.shared?.accountToOpen = account.id
-        #endif
         return .result()
     }
 }

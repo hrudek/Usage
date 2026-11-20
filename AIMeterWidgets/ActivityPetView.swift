@@ -1,4 +1,3 @@
-#if os(iOS)
 import SwiftUI
 import UsageKit
 
@@ -66,4 +65,3 @@ extension SessionPetMood {
         self.init(usedPct: state.usedPct, severity: state.severity)
     }
 }
-#endif

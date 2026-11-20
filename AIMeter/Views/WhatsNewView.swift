@@ -70,11 +70,6 @@ struct WhatsNewView<Actions: View>: View {
         }
         .onAppear {
             guard showsFeatures else { return }
-            #if os(macOS)
-            // Whether the hooks are in is read from Claude Code's settings,
-            // and may not have been yet at launch.
-            ClaudeSessionMonitor.shared.refreshHooksState()
-            #endif
             // Notifications' state is only known asynchronously; read as
             // off here, an alerts card shows, and its own check turns its
             // button into "On" if they are allowed already.
@@ -108,7 +103,6 @@ struct CapsuleActionButton: View {
     }
 }
 
-#if os(iOS)
 /// The notes as an iOS sheet as tall as they are, not a full-screen card
 /// with most of it empty: the content is measured and the sheet's one
 /// detent is that height plus the home indicator's inset. Notes taller
@@ -133,4 +127,3 @@ struct WhatsNewSheet: View {
         .presentationDetents(contentHeight > 0 ? [.height(contentHeight + bottomInset)] : [.large])
     }
 }
-#endif

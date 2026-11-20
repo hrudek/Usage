@@ -1,4 +1,3 @@
-#if os(iOS)
 import AppIntents
 import SwiftUI
 import UsageKit
@@ -63,4 +62,3 @@ struct UsageControlConfigurationIntent: ControlConfigurationIntent {
 
     init() {}
 }
-#endif

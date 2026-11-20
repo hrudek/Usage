@@ -29,9 +29,6 @@ struct ShowUsageIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        #if os(macOS)
-        AppChrome.revealMainWindow()
-        #endif
         return .result()
     }
 }

@@ -1,7 +1,5 @@
 import SwiftUI
-#if os(iOS)
 import UIKit
-#endif
 
 /// "Send feedback": a new issue in the project's repository, with the
 /// version and the system already in its text. GitHub rather than mail,
@@ -58,10 +56,6 @@ struct FeedbackSettings: View {
     static var runningSystem: String {
         let v = ProcessInfo.processInfo.operatingSystemVersion
         let number = v.patchVersion > 0 ? "\(v.majorVersion).\(v.minorVersion).\(v.patchVersion)" : "\(v.majorVersion).\(v.minorVersion)"
-        #if os(iOS)
         return "\(UIDevice.current.systemName) \(number)"
-        #else
-        return "macOS \(number)"
-        #endif
     }
 }

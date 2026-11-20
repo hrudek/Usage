@@ -106,11 +106,6 @@ extension UsageModel {
         guard let service = services[accountID] else { return false }
         do {
             try service.disconnect()
-            #if os(macOS)
-            // Its discreet-mode mark goes with it: the id can come back
-            // (the Claude Code mirror is always "claude") and would inherit it.
-            AppEnvironment.prefs?.setDiscreet(false, accountID: accountID)
-            #endif
             if service.account.credentialStrategy == .autoDetected, service.account.providerID == ClaudeProvider.providerID {
                 // See `Preferences.autoDetectDeclined`: without this the
                 // CLI login comes right back on the next launch. Only
@@ -162,10 +157,6 @@ extension UsageModel {
         // demo — the source of App Store screenshots — shows the
         // multi-account dashboard and a per-account icon.
         accounts = DemoUsageData.accounts().map { AccountUsage(account: $0.account, snapshot: $0.snapshot) }
-        #if os(macOS)
-        claudeCode?.enterDemo()
-        DemoSessions.shared.reset()
-        #endif
         applyAccountOrder()
     }
 
@@ -173,15 +164,10 @@ extension UsageModel {
         guard isDemoMode else { return }
         isDemoMode = false
         connectionError = nil
-        #if os(macOS)
-        claudeCode?.exitDemo()
-        #else
         endDemoLiveActivities()
-        #endif
         loadAccounts()
     }
 
-    #if os(iOS)
     /// A Live Activity turned on in the demo counts down fabricated
     /// figures, so it ends with the demo and its switches go with it; one
     /// a demo left running when the app was quit ends at the next launch.
@@ -191,52 +177,5 @@ extension UsageModel {
             LiveActivityPreferences(accountID: account.accountID).clear()
         }
     }
-    #endif
 
-    #if os(macOS)
-    /// Whether the Connect sheet may offer the login the Codex CLI keeps
-    /// on this Mac: the file holds one, and no account mirrors it yet
-    /// (the CLI tracks one login per machine, so one account is the cap,
-    /// as for Claude Code's).
-    var canConnectCodexCLILogin: Bool {
-        CodexFileCredentialSource.isAvailable
-            && !accounts.contains { $0.account.providerID == CodexProvider.providerID && $0.account.credentialStrategy == .autoDetected }
-    }
-
-    /// Connects the login the Codex CLI keeps on this Mac as a read-only
-    /// mirror (`.autoDetected`, `CodexFileCredentialSource`), the Codex
-    /// counterpart of the Claude Code login the first account mirrors;
-    /// unlike that one it is never guessed at launch, only added here.
-    /// Signing in again later makes it `.managed` (`reconnect`).
-    func connectCodexCLILogin(displayName: String? = nil) async {
-        guard canConnectCodexCLILogin else { return }
-        let requested = displayName ?? suggestedNickname(providerID: CodexProvider.providerID)
-        let name = isNameTaken(requested) ? suggestedNickname(providerID: CodexProvider.providerID) : requested
-        let account = ConnectedAccount(
-            accountID: UUID().uuidString, providerID: CodexProvider.providerID,
-            displayName: name, credentialStrategy: .autoDetected
-        )
-        connectionError = nil
-        registry?.add(account)
-        addAccount(account, service: RefreshService(account: account))
-        if accounts.count == 2 {
-            relabelPendingNotifications(except: account.accountID)
-        }
-        await refresh(accountID: account.accountID)
-    }
-
-    /// The disconnected Dashboard card's way back to the zero-setup path:
-    /// true once the user removed the CLI-mirrored account
-    /// (`Preferences.autoDetectDeclined`), which is what stops
-    /// `loadAccounts()` from re-mirroring it on every launch.
-    var canRedetectClaudeCodeLogin: Bool {
-        needsConnection && Preferences.autoDetectDeclined
-    }
-
-    func redetectClaudeCodeLogin() async {
-        Preferences.autoDetectDeclined = false
-        loadAccounts()
-        await refreshAll()
-    }
-    #endif
 }

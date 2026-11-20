@@ -1,4 +1,3 @@
-#if os(iOS)
 import SwiftUI
 
 // iPhone Duo's side bar. In some poses (always on the outer display,
@@ -83,4 +82,3 @@ private struct VerticalBarReader: ViewModifier {
         content
     }
 }
-#endif

@@ -16,9 +16,7 @@ struct TourView: View {
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    #if os(iOS)
     @Environment(\.scenePhase) private var scenePhase
-    #endif
     /// The step on screen; nil until the first one is left.
     @State private var current: TourFeature?
     @State private var notificationsAllowed = false
@@ -73,21 +71,10 @@ struct TourView: View {
         .frame(maxWidth: 460)
         .task(id: revision) {
             notificationsAllowed = await TourActions.notificationsAuthorized()
-            #if os(macOS)
-            ClaudeSessionMonitor.shared.refreshHooksState()
-            #endif
         }
-        #if os(macOS)
-        .task {
-            for await _ in NotificationCenter.default.notifications(named: NSApplication.didBecomeActiveNotification) {
-                revision += 1
-            }
-        }
-        #else
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { revision += 1 }
         }
-        #endif
     }
 
     @ViewBuilder
@@ -162,36 +149,6 @@ struct TourActiveLabel: View {
             Label(TourActions.activeLabel(for: feature), systemImage: "checkmark.circle.fill")
                 .font(.callout.weight(.semibold))
                 .foregroundStyle(Theme.accent)
-            #if os(macOS)
-            if feature == .openAtLogin, LoginItemManager().needsApproval {
-                HStack(spacing: 8) {
-                    Text("Waiting for approval in System Settings.")
-                        .font(Theme.caption)
-                        .foregroundStyle(Theme.inkSecondary)
-                    Button(String(localized: "Open Settings")) {
-                        if let url = LoginItemManager.settingsURL { openURL(url) }
-                    }
-                    .buttonStyle(.plain)
-                    .font(Theme.caption.weight(.semibold))
-                    .foregroundStyle(Theme.accent)
-                }
-            }
-            if let remedy = accessibility?.remedy {
-                VStack(spacing: 4) {
-                    Text(remedy)
-                        .font(Theme.caption)
-                        .foregroundStyle(Theme.inkSecondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Button(String(localized: "Open Settings")) {
-                        if let url = AccessibilityAccess.settingsURL { openURL(url) }
-                    }
-                    .buttonStyle(.plain)
-                    .font(Theme.caption.weight(.semibold))
-                    .foregroundStyle(Theme.accent)
-                }
-            }
-            #endif
         }
     }
 }
@@ -248,16 +205,6 @@ struct TourFeatureCard: View {
         }
         .task(id: revision) {
             notificationsAllowed = await TourActions.notificationsAuthorized()
-            #if os(macOS)
-            ClaudeSessionMonitor.shared.refreshHooksState()
-            #endif
         }
-        #if os(macOS)
-        .task {
-            for await _ in NotificationCenter.default.notifications(named: NSApplication.didBecomeActiveNotification) {
-                revision += 1
-            }
-        }
-        #endif
     }
 }

@@ -93,30 +93,14 @@ nonisolated enum ProviderCatalog {
         case ClaudeProvider.providerID:
             let key = ClaudeKeychainCredentialSource.storageKey(for: account.accountID)
             let source: any ClaudeCredentialSource
-            #if os(macOS)
-            if account.credentialStrategy == .autoDetected {
-                source = ClaudeAutoCredentialSource(store: keychain, key: key)
-            } else {
-                source = ClaudeKeychainCredentialSource(store: keychain, key: key)
-            }
-            #else
             source = ClaudeKeychainCredentialSource(store: keychain, key: key)
-            #endif
             let provider = transport.map { ClaudeProvider(credentialSource: source, transport: $0) }
                 ?? ClaudeProvider(credentialSource: source)
             return (provider, source)
         case CodexProvider.providerID:
             let key = CodexKeychainCredentialSource.storageKey(for: account.accountID)
             let source: any CodexCredentialSource
-            #if os(macOS)
-            if account.credentialStrategy == .autoDetected {
-                source = CodexFileCredentialSource()
-            } else {
-                source = CodexKeychainCredentialSource(store: keychain, key: key)
-            }
-            #else
             source = CodexKeychainCredentialSource(store: keychain, key: key)
-            #endif
             let provider = transport.map { CodexProvider(credentialSource: source, transport: $0) }
                 ?? CodexProvider(credentialSource: source)
             return (provider, source)

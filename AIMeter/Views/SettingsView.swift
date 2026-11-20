@@ -43,14 +43,12 @@ struct SettingsView: View {
                             }
                         }
                         Divider().overlay(Theme.track)
-                        #if os(iOS)
                         SettingsGroupLink(title: String(localized: "Widgets"), symbol: "square.grid.2x2") {
                             GlanceMetricSettings()
                             SettingsGap()
                             WidgetHowToSettings()
                         }
                         Divider().overlay(Theme.track)
-                        #endif
                         SettingsGroupLink(title: String(localized: "Refresh & data"), symbol: "arrow.clockwise") {
                             BackgroundRefreshSettings()
                             SettingsGap()
@@ -105,9 +103,7 @@ private struct SettingsGroupLink<Content: View>: View {
             }
             .appBackground()
             .navigationTitle(title)
-            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: symbol)
@@ -130,7 +126,6 @@ private struct SettingsGroupLink<Content: View>: View {
     }
 }
 
-#if os(iOS)
 /// Widgets: how to put one on the Home Screen or the Lock Screen, since
 /// the app can't place them itself.
 private struct WidgetHowToSettings: View {
@@ -144,9 +139,7 @@ private struct WidgetHowToSettings: View {
         }
     }
 }
-#endif
 
-#if os(iOS)
 /// Sheet wrapper with a Done button, matching the reference presentation.
 struct SettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
@@ -163,4 +156,3 @@ struct SettingsSheet: View {
         }
     }
 }
-#endif

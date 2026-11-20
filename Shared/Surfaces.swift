@@ -55,7 +55,6 @@ private struct CardSurface: ViewModifier {
 
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
-        #if os(iOS) || os(macOS)
         if #available(iOS 26, macOS 26, *) {
             content
                 .glassEffect(.regular.tint(Theme.card.opacity(scheme == .dark ? 0.62 : 0.78)), in: shape)
@@ -63,9 +62,6 @@ private struct CardSurface: ViewModifier {
         } else {
             solid(content, shape: shape)
         }
-        #else
-        solid(content, shape: shape)
-        #endif
     }
 
     private func solid(_ content: Content, shape: RoundedRectangle) -> some View {
@@ -91,15 +87,11 @@ private struct GlassControl<S: InsettableShape>: ViewModifier {
     @Environment(\.colorScheme) private var scheme
 
     func body(content: Content) -> some View {
-        #if os(iOS) || os(macOS)
         if #available(iOS 26, macOS 26, *) {
             content.glassEffect(.regular.interactive(), in: shape)
         } else {
             material(content)
         }
-        #else
-        material(content)
-        #endif
     }
 
     private func material(_ content: Content) -> some View {

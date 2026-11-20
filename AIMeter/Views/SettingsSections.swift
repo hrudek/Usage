@@ -98,11 +98,6 @@ struct AppearanceSettings: View {
                 name: String(localized: "Appearance")
             )
         }
-        #if os(macOS)
-        .onChange(of: prefs.appearance) { _, mode in
-            AppChrome.applyAppearance(mode)
-        }
-        #endif
 
         SettingsGap()
         SectionHeader(title: String(localized: "Display"))
@@ -238,22 +233,14 @@ struct BackgroundRefreshSettings: View {
             }
         }
         .onChange(of: prefs.refreshCadence) { _, newValue in
-            #if os(iOS)
             BackgroundRefresh.scheduleNext()
-            #else
-            model.rebuildRefreshSchedule(interval: newValue.interval)
-            #endif
         }
         SectionFootnote(text: footnote)
     }
 
     private var footnote: String {
         var text: String
-        #if os(iOS)
         text = String(localized: "AIMeter refreshes usage in the background when iOS permits it, then updates your widgets. Timing depends on battery, connectivity, and how often you use the app.")
-        #else
-        text = String(localized: "AIMeter refreshes usage on this schedule while the menu bar app is running, then updates your widgets.")
-        #endif
         if let scheduled = prefs.lastScheduledAt {
             let minutes = max(0, Int(Date().timeIntervalSince(scheduled) / 60))
             text += "\n" + String(localized: "Scheduled \(minutes) minutes ago.")

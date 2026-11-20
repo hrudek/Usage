@@ -15,10 +15,6 @@ final class FeedbackSettingsTests: XCTestCase {
 
     func testTheRunningVersionAndSystemAreNamed() {
         XCTAssertTrue(FeedbackSettings.runningVersion.contains("("), FeedbackSettings.runningVersion)
-        #if os(macOS)
-        XCTAssertTrue(FeedbackSettings.runningSystem.hasPrefix("macOS "), FeedbackSettings.runningSystem)
-        #else
         XCTAssertTrue(FeedbackSettings.runningSystem.contains("OS "), FeedbackSettings.runningSystem)
-        #endif
     }
 }

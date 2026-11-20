@@ -146,15 +146,10 @@ struct DeviceCodeConnectView: View {
                     .padding(.bottom, 8)
             }
             .padding(24)
-            #if os(macOS)
-            .frame(width: 420)
-            #endif
         }
         .appBackground()
-        #if os(iOS)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
-        #endif
         .task(id: attempt) {
             await run()
         }
@@ -225,12 +220,7 @@ struct DeviceCodeConnectView: View {
     }
 
     private func copy(_ code: String) {
-        #if os(iOS)
         UIPasteboard.general.string = code
-        #else
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(code, forType: .string)
-        #endif
         copied = true
         AccessibilityNotification.Announcement(String(localized: "Copied")).post()
         Task {
@@ -325,43 +315,7 @@ struct CodexConnectView: View {
     /// macOS: the login the Codex CLI keeps in ~/.codex, mirrored
     /// read-only, the way the first Claude account mirrors Claude Code's.
     private var cliLogin: AnyView? {
-        #if os(macOS)
-        guard model.canConnectCodexCLILogin else { return nil }
-        return AnyView(
-            VStack(spacing: 6) {
-                Button {
-                    connectingCLI = true
-                    Task {
-                        await model.connectCodexCLILogin()
-                        connectingCLI = false
-                        if model.connectionError == nil { dismiss() }
-                    }
-                } label: {
-                    Group {
-                        if connectingCLI {
-                            ProgressView().controlSize(.small).tint(.white)
-                        } else {
-                            Text("Use Codex's login on this Mac")
-                        }
-                    }
-                    .font(.body.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 13)
-                    .contentShape(Capsule())
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.white)
-                .background(Theme.accent, in: Capsule())
-                .disabled(connectingCLI)
-                Text("Reads the login Codex keeps in ~/.codex, without changing it. Or sign in below with a code of your own.")
-                    .font(Theme.caption)
-                    .foregroundStyle(Theme.inkSecondary)
-                    .multilineTextAlignment(.center)
-            }
-        )
-        #else
         return nil
-        #endif
     }
 }
 

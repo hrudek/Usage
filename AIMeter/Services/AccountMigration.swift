@@ -1,7 +1,4 @@
 import Foundation
-#if os(macOS)
-import AppKit
-#endif
 import UsageKit
 
 /// One-time, idempotent migration from the pre-multi-account single-Claude-
@@ -13,12 +10,6 @@ enum AccountMigration {
     static func run(registry: AccountRegistryStore?) {
         RefreshService.migrateCredentialsToSharedGroup()
         migrateNotificationPreferencesIfNeeded()
-        #if os(macOS)
-        migrateNotchIslandIfNeeded(
-            defaults: UserDefaults(suiteName: AppConfig.appGroupID) ?? .standard,
-            hasNotch: NSScreen.screens.contains { $0.safeAreaInsets.top > 0 }
-        )
-        #endif
         guard let registry else { return }
         registerLegacyManagedAccountIfNeeded(registry: registry)
     }

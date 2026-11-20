@@ -7,10 +7,8 @@ import WidgetKit
 enum WidgetReload {
     static func all() {
         WidgetCenter.shared.reloadAllTimelines()
-        #if os(iOS)
         if #available(iOS 18.0, *) {
             ControlCenter.shared.reloadAllControls()
         }
-        #endif
     }
 }

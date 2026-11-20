@@ -108,9 +108,7 @@ struct ProviderDetailView: View {
             }
         }
         .navigationTitle(accountName)
-        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
         // The account's own settings, a tap away from its card (Mike,
         // 2026-10-22: a row at the end of the page went unfound).
         .toolbar {

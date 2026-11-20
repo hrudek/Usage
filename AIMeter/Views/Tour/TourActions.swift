@@ -38,14 +38,7 @@ enum TourActions {
     /// sessions live in the notch island and need Claude Code, and
     /// installing the hooks on a Mac without it would create its folder.
     static func applies(_ feature: TourFeature, prefs: PreferencesModel) -> Bool {
-        #if os(macOS)
-        switch feature {
-        case .sessions, .sessionNames: prefs.notchIslandEnabled && Tour.claudeCodePresent
-        default: true
-        }
-        #else
         true
-        #endif
     }
 
     /// Whether `feature` is on already; `notificationsAllowed` is read
@@ -59,20 +52,7 @@ enum TourActions {
         case .colors: prefs.usageColors
         case .alerts: notificationsAllowed
         case .connect: !model.accounts.isEmpty
-        #if os(macOS)
-        case .notchIsland: prefs.notchIslandEnabled
-        case .sessions: ClaudeSessionMonitor.shared.hooksInstalled
-        // The switches count, as for the login item: what may be left is
-        // macOS's permission, which the label says how to give
-        // (`TourActiveLabel`), rather than a button that would prompt
-        // again for a permission System Settings may show as on.
-        case .sessionNames: prefs.claudeSessionsShowsName && prefs.claudeSessionsAvoidsMenus
-        // Registered counts, as in Settings' switch: the app did its part,
-        // and what is left is the user's approval (`TourActiveLabel`).
-        case .openAtLogin: LoginItemManager().isEnabled || LoginItemManager().needsApproval
-        #else
         case .notchIsland, .sessions, .sessionNames, .openAtLogin: false
-        #endif
         }
     }
 
@@ -89,27 +69,9 @@ enum TourActions {
             _ = await NotificationScheduler.ensureAuthorization()
             await model.refreshNotificationAuthorization()
         case .connect:
-            #if os(macOS)
-            AppChrome.connect(.add)
-            #else
             NotificationCenter.default.post(name: .tourConnectRequest, object: nil)
-            #endif
-        #if os(macOS)
-        case .notchIsland:
-            prefs.setNotchIsland(enabled: true)
-            AppChrome.setNotchIsland(enabled: true)
-        case .sessions:
-            ClaudeSessionMonitor.shared.installHooks()
-        case .sessionNames:
-            prefs.claudeSessionsShowsName = true
-            prefs.claudeSessionsAvoidsMenus = true
-            AccessibilityAccess.request(prefs: prefs)
-        case .openAtLogin:
-            LoginItemManager().setEnabled(true)
-        #else
         case .notchIsland, .sessions, .sessionNames, .openAtLogin:
             break
-        #endif
         }
     }
 
@@ -117,11 +79,7 @@ enum TourActions {
     /// permission, for `.sessionNames`'s "On" label; nil for every other
     /// feature and on iOS.
     static func accessibility(for feature: TourFeature, prefs: PreferencesModel) -> AccessibilityState? {
-        #if os(macOS)
-        feature == .sessionNames ? AccessibilityAccess.state(prefs: prefs) : nil
-        #else
         nil
-        #endif
     }
 
     /// Whether notifications are allowed, for `.alerts`.

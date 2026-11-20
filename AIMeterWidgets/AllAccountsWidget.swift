@@ -50,9 +50,7 @@ struct AllAccountsTimelineProvider: AppIntentTimelineProvider {
         // Same floor every other widget uses, so this stays within
         // WidgetKit's refresh budget regardless of display cadence.
         let interval = max(current.prefs.refreshCadence.interval, AppConfig.widgetRefreshFloor)
-        #if os(iOS)
         current = await refreshingStaleRows(of: current, cadence: interval)
-        #endif
         let next = WidgetSchedule.nextReload(
             after: current.date, interval: interval,
             resets: current.rows.flatMap { UsageTimelineProvider.resets(of: $0.snapshot) }
@@ -68,7 +66,6 @@ struct AllAccountsTimelineProvider: AppIntentTimelineProvider {
         return AllAccountsEntry(date: .now, rows: rows, prefs: Preferences.load(), layout: layout).ordered()
     }
 
-    #if os(iOS)
     private func refreshingStaleRows(of entry: AllAccountsEntry, cadence: TimeInterval) async -> AllAccountsEntry {
         let fetched = await withTaskGroup(of: (String, UsageSnapshot?).self) { group in
             for row in entry.rows {
@@ -90,7 +87,6 @@ struct AllAccountsTimelineProvider: AppIntentTimelineProvider {
         }
         return AllAccountsEntry(date: entry.date, rows: rows, prefs: entry.prefs, layout: entry.layout).ordered()
     }
-    #endif
 }
 
 struct AllAccountsWidget: Widget {

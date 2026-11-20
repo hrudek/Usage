@@ -33,16 +33,6 @@ final class ProviderCatalogTests: XCTestCase {
         XCTAssertEqual(bundle.provider.id, ClaudeProvider.providerID)
     }
 
-    #if os(macOS)
-    func testAutoDetectedAccountGetsTheCLIMirror() {
-        let keychain = KeychainStore(service: "aimeter.tests")
-        var account = ConnectedAccount.managed("claude", name: "Claude")
-        account.credentialStrategy = .autoDetected
-        let bundle = ProviderCatalog.makeProvider(for: account, keychain: keychain)
-        XCTAssertTrue(bundle.credentials is ClaudeAutoCredentialSource)
-    }
-    #endif
-
     /// Settings and Privacy & data talk only about the families connected,
     /// in the picker's order; with none, about every family.
     func testOnlyConnectedFamiliesAreDescribed() {

@@ -79,7 +79,6 @@ extension DashboardView {
     /// behaves identically.
     @ViewBuilder
     private func withReorderGesture(_ content: some View, for accountID: String) -> some View {
-        #if os(iOS)
         if #available(iOS 18, *) {
             content.gesture(
                 ReorderPressRecognizer(coordinateSpace: .named(Self.reorderSpace)) { phase in
@@ -89,9 +88,6 @@ extension DashboardView {
         } else {
             content.gesture(reorderGesture(for: accountID))
         }
-        #else
-        content.gesture(reorderGesture(for: accountID))
-        #endif
     }
 
     private func handleReorderPhase(_ phase: ReorderPhase, for accountID: String) {
