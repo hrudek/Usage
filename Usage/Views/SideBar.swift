@@ -8,24 +8,22 @@ import SwiftUI
 // Everywhere else, every other iPhone included, nothing here changes what
 // shows.
 
-/// The Dashboard's buttons: while the bar is vertical, Settings and
-/// Refresh leave the drawn header (`RoundIconButton`) for the system
-/// toolbar; otherwise the navigation bar stays hidden and the header is
-/// the Dashboard's, as always.
+/// The Dashboard's side bar: while the bar is vertical it holds Settings,
+/// Refresh and Add account, and the drawn header (`RoundIconButton`)
+/// shows neither of its buttons; otherwise the navigation bar stays
+/// hidden and the header is the Dashboard's, as always.
 struct DashboardSideBar: ViewModifier {
     @Binding var isVertical: Bool
     let isRefreshing: Bool
     let settings: () -> Void
     let refresh: () -> Void
+    let addAccount: () -> Void
 
     func body(content: Content) -> some View {
         content
             .readsVerticalBar($isVertical)
             .toolbar {
                 if isVertical {
-                    // The top of the bar is for navigation, then the
-                    // prominent action (Apple's order): Settings leads,
-                    // Refresh follows.
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: settings) {
                             Label("Settings", systemImage: "gearshape")
@@ -36,6 +34,11 @@ struct DashboardSideBar: ViewModifier {
                             Label("Refresh", systemImage: "arrow.clockwise")
                         }
                         .disabled(isRefreshing)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: addAccount) {
+                            Label("Add account", systemImage: "plus")
+                        }
                     }
                 }
             }
@@ -77,6 +80,22 @@ private struct VerticalBarReader: ViewModifier {
     @Binding var isVertical: Bool
 
     func body(content: Content) -> some View {
+        if #available(iOS 27.1, *) {
+            content.modifier(ToolbarVerticalEdgeReader(isVertical: $isVertical))
+        } else {
+            content
+        }
+    }
+}
+
+@available(iOS 27.1, *)
+private struct ToolbarVerticalEdgeReader: ViewModifier {
+    @Binding var isVertical: Bool
+    @Environment(\.toolbarVerticalEdge) private var edge
+
+    func body(content: Content) -> some View {
         content
+            .onAppear { isVertical = edge != nil }
+            .onChange(of: edge) { _, edge in isVertical = edge != nil }
     }
 }
