@@ -106,7 +106,7 @@ extension UsageWindow {
 }
 
 /// How close a window is to its limit — the one decision behind every
-/// bar and percentage color. Terracotta up to 70 % used, yellow from 71 % (or
+/// bar and percentage color. Accent up to 70 % used, yellow from 71 % (or
 /// when the provider flags a warning), red from 86 % (or when the
 /// provider flags trouble). Three colors, nothing else — and only while
 /// the user keeps usage colors on (`Preferences.usageColors`); off, every
@@ -116,7 +116,7 @@ enum UsageLevel: Int, Comparable {
 
     static func < (lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
 
-    /// Usage *above* these turns the level: 70 % is still terracotta, 85 % still
+    /// Usage *above* these turns the level: 70 % is still the accent, 85 % still
     /// yellow.
     static let warningAbove: Double = 70
     static let dangerAbove: Double = 85

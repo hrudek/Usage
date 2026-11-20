@@ -171,7 +171,7 @@ struct DeviceCodeConnectView: View {
                             Image(systemName: copied ? "checkmark" : "doc.on.doc")
                                 .accessibilityLabel(Text("Copy code"))
                                 .font(.body.weight(.medium))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Theme.onAccent)
                                 .frame(width: 44, height: 44)
                                 .background(Theme.accent, in: Circle())
                         }

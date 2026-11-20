@@ -108,7 +108,7 @@ struct Preferences: Sendable {
     var showCreditsAmount: Bool = false
     /// Bars turn yellow above 70 % used and red above 85 % (`UsageLevel`);
     /// off, every bar — widgets included —
-    /// stays terracotta whatever the figure. On by default, so it loads through the presence check.
+    /// stays the accent whatever the figure. On by default, so it loads through the presence check.
     var usageColors: Bool = true
 
     /// The account closest to a limit first, everywhere accounts are

@@ -95,7 +95,7 @@ struct ConnectClaudeSheet: View {
                         Image(systemName: "doc.on.clipboard")
                             .accessibilityLabel(Text("Paste"))
                             .font(.body.weight(.medium))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.onAccent)
                             .frame(width: 44, height: 44)
                             .background(Theme.accent, in: Circle())
                     }
@@ -105,7 +105,7 @@ struct ConnectClaudeSheet: View {
                 Button(action: connect) {
                     Group {
                         if isExchanging {
-                            ProgressView().controlSize(.small).tint(.white)
+                            ProgressView().controlSize(.small).tint(Theme.onAccent)
                         } else {
                             Text("Connect")
                         }
@@ -120,7 +120,7 @@ struct ConnectClaudeSheet: View {
                 .buttonStyle(.plain)
                 // Disabled, its word in the secondary ink: white on the
                 // track (1.2:1) hid the button altogether.
-                .foregroundStyle(canConnect ? Color.white : Theme.inkSecondary)
+                .foregroundStyle(canConnect ? Theme.onAccent : Theme.inkSecondary)
                 .background(
                     (canConnect ? Theme.accent : Theme.track) , in: Capsule()
                 )

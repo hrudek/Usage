@@ -208,7 +208,7 @@ struct DisconnectedPrompt: View {
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .foregroundStyle(.white)
+        .foregroundStyle(Theme.onAccent)
         .background(Theme.accent, in: Capsule())
     }
 }

@@ -47,7 +47,7 @@ struct UsageWidgetView: View {
             }
         }
         .containerBackground(for: .widget) {
-            Theme.card
+            WidgetBackdrop()
         }
     }
 }

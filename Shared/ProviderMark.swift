@@ -48,11 +48,9 @@ struct ProviderMark: View {
         }
     }
 
-    /// The one tile every glyph sits on: accent on the wash, or white on
-    /// a filled accent tile when `prominent`.
     private func tile<Glyph: View>(@ViewBuilder _ glyph: () -> Glyph) -> some View {
         glyph()
-            .foregroundStyle(prominent ? Color.white : Theme.accent)
+            .foregroundStyle(prominent ? Theme.onAccent : Theme.accent)
             .frame(width: size, height: size)
             .background(
                 prominent ? Theme.accent : Theme.accentWash,

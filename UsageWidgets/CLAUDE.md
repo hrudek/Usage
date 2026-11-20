@@ -26,6 +26,10 @@ the display preferences. `UsageWidgetsBundle` lists, in gallery order:
   in Control Center, on the Lock Screen or the Action button; a tap runs
   `RefreshAccountIntent`. It never fetches on its own.
 
+Every home screen widget's container background is `WidgetBackdrop`:
+the app's `Theme.backdrop` gradient in full color, nothing in the
+accented and vibrant rendering modes, where the system draws its own.
+
 ## Timeline and fetching
 
 - One entry per timeline, reloaded at

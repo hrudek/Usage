@@ -1,18 +1,13 @@
 import SwiftUI
 
 /// Usage design tokens — single source of truth for app and widgets.
-///
-/// Identity: warm, editorial, Claude-inspired. Terracotta accent over warm
-/// ivory/charcoal neutrals, a serif display face for headers (nod to
-/// Claude's editorial serif), sans body, monospaced digits for numbers.
-/// Deliberately distinct from stock-iOS blue/gray utility apps.
 enum Theme {
     // MARK: - Palette (all colors adapt to light/dark)
 
-    /// Terracotta — bars, buttons, links, selected states. (#D97757)
-    static let accent = Color(light: 0xD97757, dark: 0xE08B6D)
+    static let accent = Color(light: 0x387963, dark: 0x5DCAA5)
     /// Soft accent wash for pills, selected segments, icon chips.
-    static let accentWash = Color(light: 0xD97757, dark: 0xE08B6D).opacity(0.14)
+    static let accentWash = accent.opacity(0.14)
+    static let onAccent = Color(light: 0xFFFFFF, dark: 0x0D0E14)
     /// Warm yellow for usage above 70 % or provider-flagged warning —
     /// clearly yellow, with enough warmth to sit with the terracotta on
     /// ivory and charcoal cards (a cold, pure yellow glared on a light
@@ -20,28 +15,24 @@ enum Theme {
     static let warning = Color(light: 0xDDA712, dark: 0xF0BF3A)
     /// The warning yellow on pure black.
     static let islandWarning = Color(hex: 0xF5C443)
-    /// Pure red for usage above 85 %, errors, and major incidents — no
-    /// orange in it, so it never reads as a darker terracotta.
-    static let danger = Color(light: 0xD70015, dark: 0xFF3B30)
+    static let danger = Color(light: 0xC24040, dark: 0xE24B4A)
 
-    /// Screen background: warm ivory / warm charcoal, Claude's own two
-    /// neutrals. A flat fill where a screen has no room for `AppBackground`
-    /// (the widgets); every app screen draws `AppBackground`, which eases
-    /// from `backgroundTop` to `backgroundBottom` around this same tone.
-    static let background = Color(light: 0xFAF9F5, dark: 0x262624)
-    /// The top of the app's backdrop: a touch lighter than `background`.
-    static let backgroundTop = Color(light: 0xFCFBF8, dark: 0x2A2927)
-    /// The bottom of the app's backdrop: a touch deeper, so cards float.
-    static let backgroundBottom = Color(light: 0xF3F1EA, dark: 0x1F1E1C)
+    static let backgroundStart = Color(light: 0xFCFBF8, dark: 0x2B2D42)
+    static let backgroundEnd = Color(light: 0xF3F1EA, dark: 0x0D0E14)
+    static let backdrop = LinearGradient(
+        colors: [backgroundStart, backgroundEnd],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
     /// Card surface.
-    static let card = Color(light: 0xFFFFFF, dark: 0x30302E)
+    static let card = Color(light: 0xFFFFFF, dark: 0x2B2D42)
     /// Progress bar track and hairlines: warm paper.
-    static let track = Color(light: 0xEDEAE1, dark: 0x3E3D3A)
+    static let track = Color(light: 0xEDEAE1, dark: 0x3A3D52)
 
     /// Primary text: warm near-black / warm ivory.
-    static let ink = Color(light: 0x1F1E1D, dark: 0xFAF9F5)
+    static let ink = Color(light: 0x1F1E1D, dark: 0xFFFFFF)
     /// Secondary text (reset lines, footers, captions).
-    static let inkSecondary = Color(light: 0x87867F, dark: 0x9B9A93)
+    static let inkSecondary = Color(light: 0x87867F, dark: 0x8D99AE)
 
     // MARK: - Typography
 

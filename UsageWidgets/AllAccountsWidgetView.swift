@@ -23,7 +23,7 @@ struct AllAccountsWidgetView: View {
             }
         }
         .containerBackground(for: .widget) {
-            Theme.card
+            WidgetBackdrop()
         }
     }
 

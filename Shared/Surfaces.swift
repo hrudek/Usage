@@ -1,29 +1,10 @@
 import SwiftUI
 
-/// The app's backdrop: Claude's warm ivory (warm charcoal in dark) easing a
-/// shade deeper towards the bottom, with a faint terracotta glow at the top
-/// edge, so cards have something to float over without the screen reading
-/// as a gradient. Every app screen draws it behind its content; widgets keep
-/// the flat `Theme.background`, which is its middle tone.
 struct AppBackground: View {
     var body: some View {
-        LinearGradient(
-            colors: [Theme.backgroundTop, Theme.background, Theme.backgroundBottom],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .overlay {
-            // Wider than tall and anchored past the top-right corner: a
-            // warmth in the light, never a visible spot.
-            EllipticalGradient(
-                colors: [Theme.accent.opacity(0.045), Theme.accent.opacity(0)],
-                center: UnitPoint(x: 0.8, y: -0.05),
-                startRadiusFraction: 0,
-                endRadiusFraction: 0.75
-            )
-        }
-        .ignoresSafeArea()
-        .accessibilityHidden(true)
+        Theme.backdrop
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
     }
 }
 
