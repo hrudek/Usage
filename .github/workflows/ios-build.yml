@@ -1,0 +1,64 @@
+name: iOS build check
+
+# Unsigned iOS Simulator build of the app and its widget extension.
+# Verifies that every trimming step still compiles; no signing, no secrets.
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: Also run the unit tests on a simulator
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode version
+        run: xcodebuild -version
+
+      - name: Local signing config (empty team, unsigned)
+        run: printf 'DEVELOPMENT_TEAM =\n' > Config.local.xcconfig
+
+      - name: Build (iOS Simulator)
+        run: |
+          mkdir -p build
+          xcodebuild build \
+            -project AIMeter.xcodeproj \
+            -scheme AIMeter \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build/xcodebuild.log | grep -E '(error|warning: unre|BUILD (SUCCEEDED|FAILED))' || true
+          grep -q 'BUILD SUCCEEDED' build/xcodebuild.log
+
+      - name: Error summary
+        if: failure()
+        run: grep -E ' error: ' build/xcodebuild.log | sort -u | head -n 80 || true
+
+      - name: Unit tests (iOS Simulator)
+        if: ${{ inputs.run_tests }}
+        run: |
+          set -o pipefail
+          dest=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for k,v in d.items() if "iOS" in k for x in v if x["name"].startswith("iPhone")))')
+          xcodebuild test \
+            -project AIMeter.xcodeproj \
+            -scheme AIMeter \
+            -destination "id=$dest" \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO \
+            | tail -n 60
