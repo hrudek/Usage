@@ -124,7 +124,7 @@ struct PrivacyView: View {
                 // proof that the inference scope is never asked for.
                 ScopeChip(name: "user:profile")
             }
-            Text("When you sign in through Usage it requests only the profile scope (what the usage and profile endpoints need) and never the inference scope, so a token issued to Usage can't send prompts or spend usage on your behalf even in theory. Either way it only ever calls two read-only endpoints: your usage windows and your profile (to show the plan). The source is open if you want to verify.")
+            Text("When you sign in through Usage it requests only the user:profile scope (what the usage and profile endpoints need) and never asks for the inference scope. It never calls an inference endpoint: it only ever calls two read-only endpoints, your usage windows and your profile (to show the plan). The source is open if you want to verify.")
                 .font(Theme.caption)
                 .foregroundStyle(Theme.inkSecondary)
         }

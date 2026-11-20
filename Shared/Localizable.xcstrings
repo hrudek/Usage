@@ -13177,48 +13177,48 @@
         }
       }
     },
-    "When you sign in through Usage it requests only the profile scope (what the usage and profile endpoints need) and never the inference scope, so a token issued to Usage can't send prompts or spend usage on your behalf even in theory. Either way it only ever calls two read-only endpoints: your usage windows and your profile (to show the plan). The source is open if you want to verify." : {
+    "When you sign in through Usage it requests only the user:profile scope (what the usage and profile endpoints need) and never asks for the inference scope. It never calls an inference endpoint: it only ever calls two read-only endpoints, your usage windows and your profile (to show the plan). The source is open if you want to verify." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du dich über Usage anmeldest, fordert es nur den Profil-Bereich an (was die Nutzungs- und Profil-Endpunkte brauchen) und nie den Inferenz-Bereich, sodass ein an Usage ausgestelltes Token nicht einmal theoretisch Prompts senden oder Nutzung in deinem Namen verbrauchen kann. So oder so ruft es nur zwei Nur-Lese-Endpunkte auf: deine Nutzungsfenster und dein Profil (um den Plan anzuzeigen). Der Quellcode ist offen, falls du es prüfen möchtest."
+            "value" : "Wenn du dich über Usage anmeldest, fordert es nur den Bereich user:profile an (was die Nutzungs- und Profil-Endpunkte brauchen) und nie den Inferenz-Bereich. Es ruft nie einen Inferenz-Endpunkt auf, sondern nur zwei Nur-Lese-Endpunkte: deine Nutzungsfenster und dein Profil (um den Plan anzuzeigen). Der Quellcode ist offen, falls du es prüfen möchtest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al iniciar sesión desde Usage solo se solicita el permiso de perfil (el que necesitan los endpoints de uso y de perfil) y nunca el de inferencia, así que un token emitido a Usage no puede enviar prompts ni gastar uso en tu nombre, ni siquiera en teoría. En cualquier caso, solo llama a dos endpoints de solo lectura: tus ventanas de uso y tu perfil (para mostrar el plan). El código es abierto si quieres comprobarlo."
+            "value" : "Al iniciar sesión desde Usage solo se solicita el permiso user:profile (el que necesitan los endpoints de uso y de perfil) y nunca el de inferencia. Nunca llama a un endpoint de inferencia: solo llama a dos endpoints de solo lectura, tus ventanas de uso y tu perfil (para mostrar el plan). El código es abierto si quieres comprobarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand vous vous connectez via Usage, il ne demande que la portée profil (ce dont les points d'accès d'usage et de profil ont besoin) et jamais la portée inférence, de sorte qu'un jeton délivré à Usage ne peut, même en théorie, envoyer des prompts ni consommer de l'usage en votre nom. Dans tous les cas, il n'appelle que deux points d'accès en lecture seule : vos fenêtres d'usage et votre profil (pour afficher le forfait). Le code est ouvert si vous voulez vérifier."
+            "value" : "Quand vous vous connectez via Usage, il ne demande que la portée user:profile (ce dont les points d'accès d'usage et de profil ont besoin) et jamais la portée inférence. Il n'appelle jamais de point d'accès d'inférence, seulement deux points d'accès en lecture seule : vos fenêtres d'usage et votre profil (pour afficher le forfait). Le code est ouvert si vous voulez vérifier."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usageからサインインすると、要求するのはプロファイルスコープ（使用量とプロファイルのエンドポイントに必要なもの）だけで、推論スコープは決して要求しません。そのためUsageに発行されたトークンは、理論上もプロンプトを送ったり使用量を消費したりできません。いずれの場合も呼び出すのは読み取り専用の2つのエンドポイント（使用ウインドウとプラン表示のためのプロファイル）だけです。確認したい方のためにソースは公開されています。"
+            "value" : "Usageからサインインすると、要求するのはuser:profileスコープ（使用量とプロファイルのエンドポイントに必要なもの）だけで、推論スコープは要求しません。推論のエンドポイントは決して呼び出さず、呼び出すのは読み取り専用の2つのエンドポイント（使用ウインドウとプラン表示のためのプロファイル）だけです。確認したい方のためにソースは公開されています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usage를 통해 로그인하면 사용량 및 프로필 엔드포인트에 필요한 프로필 범위만 요청하고 추론 범위는 절대 요청하지 않으므로, Usage에 발급된 토큰은 이론상으로도 프롬프트를 보내거나 사용량을 소비할 수 없습니다. 어느 경우든 읽기 전용 엔드포인트 두 개(사용 기간과 요금제 표시용 프로필)만 호출합니다. 확인하고 싶다면 소스가 공개되어 있습니다."
+            "value" : "Usage를 통해 로그인하면 사용량 및 프로필 엔드포인트에 필요한 user:profile 범위만 요청하고 추론 범위는 요청하지 않습니다. 추론 엔드포인트는 절대 호출하지 않으며, 읽기 전용 엔드포인트 두 개(사용 기간과 요금제 표시용 프로필)만 호출합니다. 확인하고 싶다면 소스가 공개되어 있습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ao entrar pelo Usage, ele pede só o escopo de perfil (o que os endpoints de uso e perfil precisam) e nunca o escopo de inferência, então um token emitido para o Usage não pode enviar prompts nem gastar uso em seu nome, nem em teoria. De qualquer forma, ele só chama dois endpoints somente leitura: suas janelas de uso e seu perfil (para mostrar o plano). O código é aberto se quiser conferir."
+            "value" : "Ao entrar pelo Usage, ele pede só o escopo user:profile (o que os endpoints de uso e perfil precisam) e nunca o escopo de inferência. Ele nunca chama um endpoint de inferência, só dois endpoints somente leitura: suas janelas de uso e seu perfil (para mostrar o plano). O código é aberto se quiser conferir."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过 Usage 登录时，它只请求用量和资料接口所需的资料范围，绝不请求推理范围，因此颁发给 Usage 的令牌即使在理论上也无法替你发送提示词或消耗用量。无论哪种方式，它只调用两个只读接口：你的用量周期和你的资料（用于显示套餐）。如需核实，源代码是公开的。"
+            "value" : "通过 Usage 登录时，它只请求用量和资料接口所需的 user:profile 范围，从不请求推理范围。它从不调用推理接口，只调用两个只读接口：你的用量周期和你的资料（用于显示套餐）。如需核实，源代码是公开的。"
           }
         }
       }
