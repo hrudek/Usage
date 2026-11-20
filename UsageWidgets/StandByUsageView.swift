@@ -44,8 +44,6 @@ struct StandByUsageView: View {
                 Text(windowName)
                     .foregroundStyle(Theme.ink)
                 if let resetsAt = window?.resetsAt {
-                    Image(systemName: "arrow.circlepath")
-                        .foregroundStyle(Theme.inkSecondary)
                     ResetLineText(resetsAt: resetsAt, style: prefs.resetStyle, now: now, bare: true)
                         .foregroundStyle(Theme.inkSecondary)
                 } else if let moneySubtitle {

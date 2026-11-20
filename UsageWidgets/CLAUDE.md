@@ -26,8 +26,15 @@ the display preferences. `UsageWidgetsBundle` lists, in gallery order:
   in Control Center, on the Lock Screen or the Action button; a tap runs
   `RefreshAccountIntent`. It never fetches on its own.
 
+Every home screen widget is one button (`refreshesOnTap`, plain style,
+labelled "Refresh"): a tap anywhere refreshes it instead of opening the
+app, so there is no refresh button and no `widgetURL`. The provider mark
+sits in the header's top-right corner (`WidgetMetrics.markSize`), and a
+reset countdown has no icon before it.
+
 Every home screen widget's container background is `WidgetBackdrop`:
-the app's `Theme.backdrop` gradient in full color, nothing in the
+the app's backdrop gradient (fixed sRGB colors, #2B2D42 to #0D0E14 in
+dark, top-leading to bottom-trailing) in full color, nothing in the
 accented and vibrant rendering modes, where the system draws its own.
 
 ## Timeline and fetching
@@ -45,9 +52,10 @@ accented and vibrant rendering modes, where the system draws its own.
   account share an in-flight stamp in the App Group so only one fetches.
   The result is saved to `SnapshotStore` and both histories
   (`UsageRecorder`).
-- `RefreshAccountIntent` (the widgets' refresh button and the control)
+- `RefreshAccountIntent` (a tap on a home screen widget, and the control)
   fetches now, at most once every 5 s per account, then reloads the
-  widget kinds.
+  widget kinds. `RefreshAllAccountsIntent` does it for every account (the
+  all-accounts widget).
 - Every widget provider is built with `allowsRefresh: false`: the
   extension reads the Keychain item and never rotates a token. With an
   expired access token the fetch fails and the widget keeps the stored

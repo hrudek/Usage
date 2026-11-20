@@ -18,9 +18,14 @@ struct ProviderIdentityView: View {
     var icon: AccountIcon? = nil
     /// A smaller pill for a header with little height.
     var compactPill = false
+    /// False where the mark is drawn elsewhere (the widgets put it in the
+    /// header's top-right corner).
+    var showsMark = true
 
     var body: some View {
-        ProviderMark(size: iconSize, cornerRadius: iconCornerRadius, icon: icon)
+        if showsMark {
+            ProviderMark(size: iconSize, cornerRadius: iconCornerRadius, icon: icon)
+        }
         Text(name)
             .font(font)
             .foregroundStyle(nameColor)

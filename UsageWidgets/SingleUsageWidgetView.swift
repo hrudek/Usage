@@ -27,8 +27,10 @@ struct SingleUsageWidgetView: View {
                 )
             } else if entry.style == .ring {
                 RingUsageView(entry: entry)
+                    .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
             } else {
                 bars
+                    .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
             }
         }
         .containerBackground(for: .widget) {
@@ -39,7 +41,7 @@ struct SingleUsageWidgetView: View {
     private var bars: some View {
         let prefs = entry.prefs
         return VStack(alignment: .leading, spacing: 0) {
-            SingleUsageHeader(entry: entry, trailing: nil)
+            SingleUsageHeader(entry: entry)
             Spacer(minLength: 8)
             VStack(alignment: .leading, spacing: 0) {
                 Text(entry.windowName)
@@ -84,10 +86,7 @@ struct SingleUsageWidgetView: View {
     @ViewBuilder
     private var resetLine: some View {
         if let resetsAt = entry.window?.resetsAt {
-            HStack(spacing: 3) {
-                Image(systemName: "arrow.circlepath")
-                ResetLineText(resetsAt: resetsAt, style: entry.prefs.resetStyle, now: entry.date)
-            }
+            ResetLineText(resetsAt: resetsAt, style: entry.prefs.resetStyle, now: entry.date)
             .font(.system(size: 10, weight: .medium))
             .foregroundStyle(Theme.inkSecondary)
             .lineLimit(1)
@@ -116,7 +115,6 @@ extension SingleUsageEntry {
 /// (the bar style names it over its figure instead).
 private struct SingleUsageHeader: View {
     let entry: SingleUsageEntry
-    let trailing: String?
 
     var body: some View {
         HStack(spacing: 5) {
@@ -127,15 +125,11 @@ private struct SingleUsageHeader: View {
                 font: .system(size: 12, weight: .semibold),
                 nameColor: Theme.ink,
                 planName: nil,
-                icon: entry.accountIcon
+                icon: entry.accountIcon,
+                showsMark: false
             )
             Spacer(minLength: 4)
-            if let trailing {
-                Text(trailing)
-                    .font(.system(size: 11))
-                    .foregroundStyle(Theme.inkSecondary)
-                    .lineLimit(1)
-            }
+            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: entry.accountIcon)
         }
     }
 }
@@ -153,8 +147,12 @@ private struct RingUsageView: View {
     var body: some View {
         let prefs = entry.prefs
         VStack(alignment: .leading, spacing: 0) {
-            SingleUsageHeader(entry: entry, trailing: entry.windowName)
-            Spacer(minLength: 12)
+            SingleUsageHeader(entry: entry)
+            Text(entry.windowName)
+                .font(.system(size: 11))
+                .foregroundStyle(Theme.inkSecondary)
+                .lineLimit(1)
+            Spacer(minLength: 8)
             ZStack {
                 Circle()
                     .stroke(Theme.track, lineWidth: Self.strokeWidth)
@@ -201,10 +199,7 @@ private struct RingUsageView: View {
     @ViewBuilder
     private var caption: some View {
         if let resetsAt = entry.window?.resetsAt {
-            HStack(spacing: 2) {
-                Image(systemName: "arrow.circlepath")
-                ResetLineText(resetsAt: resetsAt, style: entry.prefs.resetStyle, now: entry.date, bare: true)
-            }
+            ResetLineText(resetsAt: resetsAt, style: entry.prefs.resetStyle, now: entry.date, bare: true)
         } else if let amount = entry.prefs.creditsAmountSubtitle(for: entry.kind, snapshot: entry.snapshot) {
             Text(amount)
         }

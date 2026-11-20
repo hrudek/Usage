@@ -98,10 +98,7 @@ private struct WindowColumn: View {
     @ViewBuilder
     private var subtitle: some View {
         if let resetsAt = window?.resetsAt {
-            HStack(spacing: 3) {
-                Image(systemName: "arrow.circlepath")
-                ResetLineText(resetsAt: resetsAt, style: prefs.resetStyle, now: now)
-            }
+            ResetLineText(resetsAt: resetsAt, style: prefs.resetStyle, now: now)
         } else if let moneySubtitle {
             HStack(spacing: 3) {
                 Image(systemName: "dollarsign.circle")
