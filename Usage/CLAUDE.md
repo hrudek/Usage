@@ -36,7 +36,10 @@ environment; every sheet gets both again from its presenter
   others as compact rows, then an error, "Sign in again",
   or a stale hint. Header buttons: Settings and Refresh. Hold and drag to
   reorder (`DashboardView+Reorder`), withheld while "Order by urgency" is
-  on. Two columns on iPad. With no account, a prompt to connect.
+  on. Two columns at a regular width (iPad, an unfolded iPhone Duo on its
+  side), whatever the height: held sideways (`verticalSizeClass` compact)
+  only drops the sparklines and the status bar. With no account, a prompt
+  to connect.
 - **Provider Detail** (`ProviderDetailView`, `ProviderDetailCards`,
   `HistoryCard`): rate limits with pace captions, History (24 h, 7 days,
   30 days, 90 days), Forecast (projected run-outs, after a 20 h pace
@@ -53,7 +56,11 @@ environment; every sheet gets both again from its presenter
   the account list with "Add account" and "Order by urgency", then
   Appearance (theme, used or remaining, reset style, usage colors, usage
   rows), Widgets (the Lock Screen window, how to add a widget), Refresh &
-  data (background cadence, Privacy & data).
+  data (background cadence, Privacy & data) (`SettingsGroup`). At a
+  compact width a sheet whose rows push their screens; at a regular width
+  (`SettingsSplitView`, full screen) a `NavigationSplitView` with that
+  list as the sidebar and the chosen account's page or group's sections
+  as the detail.
 - **Privacy & data** (`PrivacyView`): what is stored where, how each
   family's sign-in works, what the connection can access.
 - **Connect sheet** (`ConnectAccountSheet`): pick the service, then

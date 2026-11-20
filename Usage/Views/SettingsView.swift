@@ -11,33 +11,20 @@ import UsageKit
 /// above again (Mike, 2026-10-22). Built from the section views in
 /// `SettingsSections.swift`.
 struct SettingsView: View {
-    @Environment(UsageModel.self) private var model
+    var selection: Binding<SettingsSelection>?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                AccountListSettings()
+                AccountListSettings(selection: selection)
                 SettingsGap()
                 Card {
                     VStack(alignment: .leading, spacing: Theme.rowSpacing) {
-                        SettingsGroupLink(title: String(localized: "Appearance"), symbol: "paintbrush") {
-                            AppearanceSettings()
-                            if UsageRowsSettings.isOffered(model) {
-                                SettingsGap()
-                                UsageRowsSettings()
+                        ForEach(SettingsGroup.allCases, id: \.self) { group in
+                            if group != SettingsGroup.allCases.first {
+                                Divider().overlay(Theme.track)
                             }
-                        }
-                        Divider().overlay(Theme.track)
-                        SettingsGroupLink(title: String(localized: "Widgets"), symbol: "square.grid.2x2") {
-                            GlanceMetricSettings()
-                            SettingsGap()
-                            WidgetHowToSettings()
-                        }
-                        Divider().overlay(Theme.track)
-                        SettingsGroupLink(title: String(localized: "Refresh & data"), symbol: "arrow.clockwise") {
-                            BackgroundRefreshSettings()
-                            SettingsGap()
-                            PrivacyLinkSettings()
+                            groupRow(group)
                         }
                     }
                 }
@@ -48,46 +35,105 @@ struct SettingsView: View {
         .appBackground()
         .navigationTitle("Settings")
     }
+
+    @ViewBuilder
+    private func groupRow(_ group: SettingsGroup) -> some View {
+        if let selection {
+            Button {
+                selection.wrappedValue = .group(group)
+            } label: {
+                SettingsGroupRow(group: group, chevron: false)
+                    .settingsSelected(selection.wrappedValue == .group(group))
+            }
+            .buttonStyle(.plain)
+        } else {
+            NavigationLink {
+                SettingsGroupPage(group: group)
+            } label: {
+                SettingsGroupRow(group: group, chevron: true)
+            }
+            .buttonStyle(.plain)
+        }
+    }
 }
 
-/// One group's row on the iOS Settings screen: its symbol on the wash,
-/// its name, a chevron, opening a screen of its sections.
-private struct SettingsGroupLink<Content: View>: View {
-    let title: String
-    let symbol: String
-    @ViewBuilder let content: () -> Content
+enum SettingsGroup: Hashable, CaseIterable {
+    case appearance, widgets, refresh
+
+    var title: String {
+        switch self {
+        case .appearance: String(localized: "Appearance")
+        case .widgets: String(localized: "Widgets")
+        case .refresh: String(localized: "Refresh & data")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .appearance: "paintbrush"
+        case .widgets: "square.grid.2x2"
+        case .refresh: "arrow.clockwise"
+        }
+    }
+}
+
+struct SettingsGroupPage: View {
+    let group: SettingsGroup
+
+    @Environment(UsageModel.self) private var model
 
     var body: some View {
-        NavigationLink {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    content()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                switch group {
+                case .appearance:
+                    AppearanceSettings()
+                    if UsageRowsSettings.isOffered(model) {
+                        SettingsGap()
+                        UsageRowsSettings()
+                    }
+                case .widgets:
+                    GlanceMetricSettings()
+                    SettingsGap()
+                    WidgetHowToSettings()
+                case .refresh:
+                    BackgroundRefreshSettings()
+                    SettingsGap()
+                    PrivacyLinkSettings()
                 }
-                .padding(20)
-                .readableWidth()
             }
-            .appBackground()
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: symbol)
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Theme.accent)
-                    .frame(width: 28, height: 28)
-                    .background(Theme.accentWash, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                Text(verbatim: title)
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(Theme.ink)
-                Spacer()
+            .padding(20)
+            .readableWidth()
+        }
+        .appBackground()
+        .navigationTitle(group.title)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct SettingsGroupRow: View {
+    let group: SettingsGroup
+    let chevron: Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: group.symbol)
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Theme.accent)
+                .frame(width: 28, height: 28)
+                .background(Theme.accentWash, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            Text(verbatim: group.title)
+                .font(.body.weight(.medium))
+                .foregroundStyle(Theme.ink)
+            Spacer()
+            if chevron {
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Theme.inkSecondary)
                     .accessibilityHidden(true)
             }
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .contentShape(Rectangle())
     }
 }
 

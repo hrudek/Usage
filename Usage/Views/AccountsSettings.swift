@@ -8,6 +8,8 @@ import UsageKit
 /// the account's page and "Add account" opens the Connect sheet over
 /// Settings.
 struct AccountListSettings: View {
+    var selection: Binding<SettingsSelection>?
+
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
     @State private var connecting = false
@@ -20,12 +22,22 @@ struct AccountListSettings: View {
                     if usage.id != model.accounts.first?.id {
                         Divider().overlay(Theme.track)
                     }
-                    NavigationLink {
-                        AccountSettingsPage(accountID: usage.id)
-                    } label: {
-                        AccountListRow(usage: usage, chevron: true)
+                    if let selection {
+                        Button {
+                            selection.wrappedValue = .account(usage.id)
+                        } label: {
+                            AccountListRow(usage: usage)
+                                .settingsSelected(selection.wrappedValue == .account(usage.id))
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        NavigationLink {
+                            AccountSettingsPage(accountID: usage.id)
+                        } label: {
+                            AccountListRow(usage: usage, chevron: true)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
                 if model.accounts.isEmpty {
                     Text("No account connected.")

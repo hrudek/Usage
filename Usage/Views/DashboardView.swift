@@ -5,6 +5,7 @@ struct DashboardView: View {
     @Environment(UsageModel.self) var model
     @Environment(PreferencesModel.self) private var prefs
     @State private var showingSettings = false
+    @State private var settingsInColumns = false
     @State private var showingConnect = false
     /// The account a "Sign in again" asked to repair.
     @State private var reconnecting: ConnectedAccount?
@@ -114,7 +115,7 @@ struct DashboardView: View {
         .modifier(DashboardSideBar(
             isVertical: $barIsVertical,
             isRefreshing: model.isRefreshing,
-            settings: { showingSettings = true },
+            settings: openSettings,
             refresh: {
                 refreshRequests += 1
                 Task { await model.refreshAll() }
@@ -124,11 +125,15 @@ struct DashboardView: View {
         // `-UsageShowSettings YES` opens Settings at launch, to check or
         // capture it without a tap.
         .onAppear {
-            if UserDefaults.standard.bool(forKey: "UsageShowSettings") { showingSettings = true }
+            if UserDefaults.standard.bool(forKey: "UsageShowSettings") { openSettings() }
         }
         #endif
-        .sheet(isPresented: $showingSettings) {
+        .sheet(isPresented: presentsSettings(inColumns: false)) {
             SettingsSheet()
+                .withAppModels(model, prefs)
+        }
+        .fullScreenCover(isPresented: presentsSettings(inColumns: true)) {
+            SettingsSplitView()
                 .withAppModels(model, prefs)
         }
         .sheet(isPresented: $showingConnect) {
@@ -138,6 +143,19 @@ struct DashboardView: View {
         .sheet(item: $reconnecting) { account in
             ConnectAccountSheet(reconnecting: account)
                 .withAppModels(model, prefs)
+        }
+    }
+
+    private func openSettings() {
+        settingsInColumns = sizeClass == .regular
+        showingSettings = true
+    }
+
+    private func presentsSettings(inColumns: Bool) -> Binding<Bool> {
+        Binding {
+            showingSettings && settingsInColumns == inColumns
+        } set: {
+            showingSettings = $0
         }
     }
 
@@ -153,10 +171,8 @@ struct DashboardView: View {
         // buttons instead of running under them (a ZStack until 4.3.1).
         HStack(spacing: 12) {
             if !barIsVertical {
-                RoundIconButton(systemName: "gearshape") {
-                    showingSettings = true
-                }
-                .accessibilityLabel(Text("Settings"))
+                RoundIconButton(systemName: "gearshape", action: openSettings)
+                    .accessibilityLabel(Text("Settings"))
             }
             Spacer(minLength: 0)
             // No app title (Mike, 2026-10-21: the cards are the screen);
