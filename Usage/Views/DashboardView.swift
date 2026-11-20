@@ -6,8 +6,6 @@ struct DashboardView: View {
     @Environment(PreferencesModel.self) private var prefs
     @Environment(DashboardActions.self) private var actions
     @Environment(\.accountSelection) private var selection
-    /// The account a "Sign in again" asked to repair.
-    @State private var reconnecting: ConnectedAccount?
     /// The section being dragged, how far it has moved, and which section
     /// it would drop onto — see `accountSection(_:)` in
     /// `DashboardView+Reorder.swift` for why the reorder carries this state
@@ -103,6 +101,7 @@ struct DashboardView: View {
         }
         .navigationDestination(for: String.self) { accountID in
             ProviderDetailView(accountID: accountID)
+                .onAppear { actions.selectedAccountID = accountID }
         }
         .navigationDestination(for: AccountSettingsRoute.self) { route in
             AccountSettingsPage(accountID: route.accountID, dismissesOnDisconnect: false)
@@ -119,10 +118,6 @@ struct DashboardView: View {
             addAccount: { actions.addAccount() }
         ))
         .toolbar(barIsVertical ? .visible : .hidden, for: .navigationBar)
-        .sheet(item: $reconnecting) { account in
-            ConnectAccountSheet(reconnecting: account)
-                .withAppModels(model, prefs)
-        }
     }
 
     private func openSettings() {
