@@ -131,7 +131,8 @@ public struct AccountRegistryStore: @unchecked Sendable {
         guard let data = defaults.data(forKey: Self.key) else { return [] }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        return (try? decoder.decode([ConnectedAccount].self, from: data)) ?? []
+        guard let entries = try? decoder.decode([Entry].self, from: data) else { return [] }
+        return Self.uniqued(entries.compactMap(\.account))
     }
 
     public func account(for accountID: String) -> ConnectedAccount? {
@@ -197,8 +198,26 @@ public struct AccountRegistryStore: @unchecked Sendable {
     /// this to persist a drag-reorder, since this list's order *is* the
     /// display order every surface enumerates (dashboard, menu bar popover,
     /// all-accounts widget, and the widget account pickers).
+    /// A second entry with an id already in the list is dropped.
     public func replaceAll(_ accounts: [ConnectedAccount]) {
-        save(accounts)
+        save(Self.uniqued(accounts))
+    }
+
+    /// The accounts in order, each accountID kept once (its first entry).
+    static func uniqued(_ accounts: [ConnectedAccount]) -> [ConnectedAccount] {
+        var seen = Set<String>()
+        return accounts.filter { seen.insert($0.accountID).inserted }
+    }
+
+    /// One stored entry, decoded on its own so an entry this build can't
+    /// read (an unknown icon, a damaged field) drops only itself and not
+    /// every account with it.
+    private struct Entry: Decodable {
+        let account: ConnectedAccount?
+
+        init(from decoder: Decoder) throws {
+            account = try? ConnectedAccount(from: decoder)
+        }
     }
 
     private func save(_ accounts: [ConnectedAccount]) {

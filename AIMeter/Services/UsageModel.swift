@@ -126,9 +126,9 @@ final class UsageModel {
     func loadAccounts() {
         let previousServices = services
         let connected = registry?.accounts() ?? []
-        services = Dictionary(uniqueKeysWithValues: connected.map { account in
+        services = Dictionary(connected.map { account in
             (account.accountID, previousServices[account.accountID] ?? RefreshService(account: account))
-        })
+        }, uniquingKeysWith: { first, _ in first })
         accounts = connected.map { AccountUsage(account: $0, snapshot: services[$0.accountID]?.lastSnapshot()) }
         reloadTimelines()
         applyAccountOrder()
