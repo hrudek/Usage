@@ -13,7 +13,10 @@ endpoints.
 ## Building
 
 - CI: `.github/workflows/ios-build.yml` builds the app unsigned for the
-  iOS Simulator on every pull request and every push to `main`.
+  iOS Simulator on pull requests that change build-relevant files
+  (`Usage/`, `UsageWidgets/`, `WidgetsShared/`, `Shared/`, `Packages/`,
+  `Usage.xcodeproj/`, `UsageTests/`, `.github/ci/`); `testflight.yml`
+  signs and uploads on pushes to `main` that change the app sources.
 - Xcode 26 or later: copy `Config.local.xcconfig.example` to
   `Config.local.xcconfig`, set your own Team ID (`DEVELOPMENT_TEAM`), open
   `Usage.xcodeproj` and run the `Usage` scheme. Both targets need the App
