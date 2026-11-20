@@ -61,10 +61,8 @@ struct UsageWidgetView: View {
 
 // MARK: - System families
 
-/// Account name, with a staleness hint under it. Widget fonts are fixed
-/// sizes on purpose: text styles scale with the device's Dynamic Type and
-/// overflow the fixed widget height on real hardware. Internal:
-/// `MediumUsageView` (its own file) uses the same header over its columns.
+/// Widget fonts are fixed sizes: text styles scale with the device's
+/// Dynamic Type and overflow the fixed widget height on real hardware.
 struct WidgetHeader: View {
     let snapshot: UsageSnapshot
     /// The rendered timeline entry's own date — not `Date()` — so the
@@ -104,8 +102,6 @@ struct WidgetHeader: View {
     }
 }
 
-/// The provider mark in the top-right corner beside a title block exactly
-/// as tall as the mark.
 struct WidgetMarkBand<Leading: View>: View {
     let icon: AccountIcon?
     let leading: Leading
@@ -127,8 +123,6 @@ struct WidgetMarkBand<Leading: View>: View {
     }
 }
 
-/// A window's name over a widget's figure (`WidgetHero`, the single-limit
-/// widget), drawn at the bottom of a `WidgetMarkBand`.
 struct WidgetWindowTitle: View {
     let name: String
 
@@ -177,9 +171,6 @@ struct SystemUsageView: View {
     }
 }
 
-/// A widget's protagonist (the small family, and each account of the
-/// all-accounts widget): the figure with its reset on the same line, and a
-/// thicker bar. The window's name sits above it in the `WidgetMarkBand`.
 struct WidgetHero: View {
     let window: UsageWindow?
     let prefs: Preferences

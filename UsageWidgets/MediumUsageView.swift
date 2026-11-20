@@ -2,13 +2,6 @@ import SwiftUI
 import WidgetKit
 import UsageKit
 
-/// Medium family: the account's windows side by side, each a column with
-/// a big percentage over its bar — the layout the extra width is for,
-/// instead of the small widget's rows stretched wide. Two columns when
-/// the account reports (or the third-row fallback yields) two slots,
-/// three when it has a per-model window or credits; the value font
-/// steps down for three so "100% left" still fits a column. The mark
-/// takes a column of its own on the right.
 struct MediumUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences
@@ -44,13 +37,6 @@ struct MediumUsageView: View {
     }
 }
 
-/// One window as a column: name, the big figure ("left" after it in
-/// remaining mode, `DisplayMode.widgetSuffix`), the bar, and a subtitle:
-/// the reset line, the optional credits amount, or "Not available" for a slot the account doesn't report.
-/// Every column shows its own reset line: the grouped-reset rule
-/// (`WindowSlots.showsReset`) is for stacked rows, where one line can sit
-/// under a group; side by side, a column with nothing under its bar
-/// would just look unfinished.
 private struct WindowColumn: View {
     let kind: UsageWindow.Kind
     let window: UsageWindow?

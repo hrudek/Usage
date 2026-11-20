@@ -2,15 +2,6 @@ import SwiftUI
 import WidgetKit
 import UsageKit
 
-/// The all-accounts widget's condensed layout (Edit Widget → Layout), as
-/// picked on 2026-10-21 from three drawings (variant C): six accounts, one
-/// line each with the account's protagonist (the window
-/// `AccountCardLayout` puts first, as the cards do: its thick bar and its
-/// figure), and under the name every window with its figure in small
-/// text, the protagonist first ("Session 42% · Week 61% · Top model
-/// 18%"). The soonest session reset of them all, a live countdown, sits
-/// under the title beside the mark. What a line gives up for the room is
-/// each window's reset and the iOS refresh button.
 struct CondensedAccountsView: View {
     let entry: AllAccountsEntry
     static let maxRows = 6

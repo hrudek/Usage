@@ -2,14 +2,12 @@ import SwiftUI
 import AppIntents
 
 enum WidgetMetrics {
-    /// The provider mark in a widget's top-right corner.
     static let markSize: CGFloat = 48
     static let markRadius: CGFloat = 11
 }
 
 extension DisplayMode {
-    /// The word after a widget's figure: "left" in remaining mode, none in
-    /// used mode, where a bare percentage already reads as used.
+    /// "left" in remaining mode, nil in used mode.
     var widgetSuffix: String? {
         self == .remaining ? suffix : nil
     }

@@ -60,11 +60,6 @@ struct AllAccountsWidgetView: View {
     }
 }
 
-/// One account's header (the name over its protagonist's name, the mark
-/// beside them) followed by the app's card composition (4.0): its session
-/// as the protagonist and the others as compact lines, `WidgetHero` and
-/// `WidgetCompactRows`, the small widget's own pieces, decided by the same
-/// `AccountCardLayout`.
 private struct AccountRow: View {
     let row: AllAccountsEntry.Row
     let prefs: Preferences

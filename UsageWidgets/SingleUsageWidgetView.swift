@@ -2,12 +2,6 @@ import SwiftUI
 import WidgetKit
 import UsageKit
 
-/// Single-limit widget body (4.0): the app card's protagonist alone in
-/// the square — the account, the picked window's name, its figure large
-/// with "%" (and "left" in remaining mode), a thick bar and its reset — so it reads like
-/// the Dashboard's card and the small Usage Limits widget. Or, with the
-/// ring style picked in Edit Widget, the figure in a ring
-/// (`RingUsageView`).
 struct SingleUsageWidgetView: View {
     let entry: SingleUsageEntry
     /// False in StandBy (and on an iPad's Lock Screen): either style draws
@@ -106,7 +100,6 @@ extension SingleUsageEntry {
     var windowName: String { window?.shortTitle ?? kind.shortName }
 }
 
-/// The account's name over the window's name, with the mark beside them.
 private struct SingleUsageHeader<WindowTitle: View>: View {
     let entry: SingleUsageEntry
     @ViewBuilder let windowTitle: WindowTitle
@@ -131,12 +124,6 @@ private struct SingleUsageHeader<WindowTitle: View>: View {
     }
 }
 
-/// The ring style: the header, the window's name, then the window as a ring
-/// in its level's color with only its figure and its reset in the centre
-/// (the bare live countdown under a day, `ResetLineText(bare:)`), clear
-/// of the stroke, and 4 pt of air under the header band (Mike's review,
-/// 2026-10-21: no "used", and room around the ring). The track is the
-/// bars' and the stroke 9 pt.
 private struct RingUsageView: View {
     let entry: SingleUsageEntry
     private static let strokeWidth: CGFloat = 9
