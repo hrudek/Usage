@@ -45,7 +45,7 @@ struct UsageControl: ControlWidget {
 
         func currentValue(configuration: UsageControlConfigurationIntent) async throws -> ControlFigure {
             let account = WidgetAccountFallback.resolve(configured: configuration.account?.accountID, name: configuration.account?.accountName)
-            let snapshot = SnapshotStore(suiteName: AppConfig.appGroupID)?.snapshot(for: account.accountID)
+            let snapshot = SnapshotStore(suiteName: AppConfig.appGroupID)?.snapshot(for: account.accountID)?.forWidgets(of: account.accountID)
             return ControlFigure(accountID: account.accountID, name: account.accountName, snapshot: snapshot, prefs: Preferences.load())
         }
     }

@@ -106,7 +106,7 @@ struct AccountSettingsCards: View {
             if usage?.account.providerID == ClaudeProvider.providerID {
                 SectionHeader(title: String(localized: "Widgets"))
                 WidgetModelWindowCard(accountID: accountID)
-                SectionFootnote(text: String(localized: "Shows a model's own limit, such as Fable, on this account's widgets. When off, that row shows what \"Usage rows\" sets for plans without one. The app always shows it."))
+                SectionFootnote(text: String(localized: "Shows a model's own limit, such as Fable, on this account's widgets and control. When off, they treat it as missing: its row shows what \"Usage rows\" sets for plans without one. The app always shows it."))
                 SettingsGap()
             }
 

@@ -36,10 +36,9 @@ struct WidgetModelWindowPreference {
 }
 
 extension UsageSnapshot {
-    /// The snapshot as `accountID`'s widgets draw it: without its
-    /// per-model windows when that account hides them there. The slot
-    /// then follows "Usage rows", as for a plan with no per-model limit.
-    /// Display only, never saved.
+    /// The snapshot as `accountID`'s widgets and control draw it: without
+    /// its per-model windows when that account hides them there, so every
+    /// surface treats them as missing. Display only, never saved.
     func forWidgets(
         of accountID: String,
         defaults: UserDefaults = UserDefaults(suiteName: AppConfig.appGroupID) ?? .standard

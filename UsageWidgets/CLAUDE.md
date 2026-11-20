@@ -48,13 +48,14 @@ reaches the edges; `widgetMargins()` puts them back as padding inside it
 A Claude account can hide its per-model window (Fable) from widgets on
 its settings page (`WidgetModelWindowPreference`, App Group key
 `widget.showsModelWindow.<accountID>`, stored only while off). The
-`UsageLimits` and `UsageAllAccounts` views, and the latter's urgency
-order, draw `shownSnapshot` (`UsageSnapshot.forWidgets(of:)`), the
-snapshot without its per-model windows; the third slot then follows
-"Usage rows" as for a plan with none. Display only: the stored snapshot,
-the stale check and the reload schedule keep every window. The single
-limit widget and the control show the window the user picked, so they
-ignore it.
+`UsageLimits` and `UsageAllAccounts` views (and the latter's urgency
+order), the single limit widget's window and the control all read the
+snapshot through `UsageSnapshot.forWidgets(of:)`, which drops its
+per-model windows, so every surface behaves as for a plan with none:
+the third slot follows "Usage rows", a single limit widget set to that
+window shows it empty, and the gauge and control fall back from it as
+`glanceMetric` does. Display only: the stored snapshot, the stale check
+and the reload schedule keep every window.
 
 Every home screen widget's container background is `WidgetBackdrop`:
 the app's backdrop gradient (fixed sRGB colors, #2B2D42 to #0D0E14 in

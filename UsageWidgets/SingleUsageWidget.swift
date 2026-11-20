@@ -16,7 +16,7 @@ struct SingleUsageEntry: TimelineEntry {
         // Credits is synthesized from spend, never part of the real
         // windows array — same source WindowSlots uses for the dashboard.
         if kind == .credits { return snapshot?.creditsWindow }
-        return snapshot?.windows.first { $0.kind == kind }
+        return snapshot?.forWidgets(of: accountID).windows.first { $0.kind == kind }
     }
 }
 
