@@ -51,7 +51,7 @@ struct CondensedAccountsView: View {
 
     private func line(_ row: AllAccountsEntry.Row) -> some View {
         let prefs = entry.prefs
-        let layout = AccountCardLayout(snapshot: row.snapshot, modelSlotFallback: prefs.modelSlotFallback)
+        let layout = AccountCardLayout(snapshot: row.shownSnapshot, modelSlotFallback: prefs.modelSlotFallback)
         let hero = layout.hero.window
         let figures = ([layout.hero] + layout.others)
             .map { "\($0.window?.shortTitle ?? $0.kind.shortName) \(Self.percent($0.window, prefs))" }

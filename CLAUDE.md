@@ -136,7 +136,8 @@ the model a `ProviderLogin` (`.claude` or `.codex`), which
   series: raw for 48 h, hourly maxima to 30 days, daily maxima to 90 days.
 - `UsageRecorder` writes both histories together; disconnecting clears
   the account's credentials, snapshot, histories, pending and delivered
-  notifications, and its preference keys.
+  notifications, and its preference keys (notification toggles and
+  `WidgetModelWindowPreference`).
 
 ## Notifications (local only, per account, off by default)
 

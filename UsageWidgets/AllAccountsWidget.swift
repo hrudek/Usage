@@ -7,6 +7,9 @@ struct AllAccountsEntry: TimelineEntry {
         let account: ConnectedAccount
         let snapshot: UsageSnapshot?
         var id: String { account.accountID }
+        /// What the views draw and the urgency order reads
+        /// (`UsageSnapshot.forWidgets(of:)`).
+        var shownSnapshot: UsageSnapshot? { snapshot?.forWidgets(of: account.accountID) }
     }
     let date: Date
     let rows: [Row]
@@ -18,7 +21,7 @@ struct AllAccountsEntry: TimelineEntry {
     /// a self-fetch moved a figure.
     func ordered() -> AllAccountsEntry {
         guard prefs.ordersByUrgency else { return self }
-        return AllAccountsEntry(date: date, rows: AccountOrder.byUrgency(rows) { $0.snapshot }, prefs: prefs, layout: layout)
+        return AllAccountsEntry(date: date, rows: AccountOrder.byUrgency(rows) { $0.shownSnapshot }, prefs: prefs, layout: layout)
     }
 }
 

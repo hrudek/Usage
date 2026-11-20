@@ -10,6 +10,10 @@ struct UsageEntry: TimelineEntry {
     let prefs: Preferences
     /// The account's chosen glyph, read from the registry with the name.
     var accountIcon: AccountIcon? = nil
+
+    /// What the views draw: the account's per-model window left out when
+    /// it is hidden on widgets (`WidgetModelWindowPreference`).
+    var shownSnapshot: UsageSnapshot? { snapshot?.forWidgets(of: accountID) }
 }
 
 /// Serves the last snapshot from the App Group, for whichever account the

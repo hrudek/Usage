@@ -248,5 +248,6 @@ struct RefreshService {
         let accountID = account.accountID
         Task { await NotificationScheduler.removeAll(accountID: accountID) }
         NotificationPreferences(accountID: accountID).clear()
+        WidgetModelWindowPreference(accountID: accountID).clear()
     }
 }

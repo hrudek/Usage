@@ -939,6 +939,100 @@
         }
       }
     },
+    "Per-model limit in widgets" : {
+      "comment" : "Account settings (Claude): toggle that shows or hides the per-model limit row (e.g. Fable) on this account's widgets.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modell-Limit in Widgets"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Límite por modelo en widgets"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite par modèle dans les widgets"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウィジェットにモデル別の上限"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위젯에 모델별 한도"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite por modelo nos widgets"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小组件中的按模型额度"
+          }
+        }
+      }
+    },
+    "Shows a model's own limit, such as Fable, on this account's widgets. When off, that row shows what \"Usage rows\" sets for plans without one. The app always shows it." : {
+      "comment" : "Account settings (Claude): footnote under the per-model limit widget toggle. \"Usage rows\" is the Settings section of that name.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt das eigene Limit eines Modells, etwa Fable, in den Widgets dieses Accounts. Wenn aus, zeigt diese Zeile, was „Nutzungszeilen“ für Pläne ohne eigenes Limit festlegt. Die App zeigt es immer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra el límite propio de un modelo, como Fable, en los widgets de esta cuenta. Si está desactivado, esa fila muestra lo que \"Filas de uso\" define para los planes sin él. La app siempre lo muestra."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche la limite propre à un modèle, comme Fable, dans les widgets de ce compte. Désactivé, cette ligne affiche ce que « Lignes d'usage » définit pour les forfaits sans limite par modèle. L'app l'affiche toujours."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fableなど、モデル別の上限をこのアカウントのウィジェットに表示します。オフにすると、その行には「使用量の行」でモデル別の上限がないプラン向けに設定した内容が表示されます。アプリでは常に表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fable 같은 모델별 한도를 이 계정의 위젯에 표시합니다. 끄면 그 행에는 \"사용량 행\"에서 모델별 한도가 없는 요금제에 설정한 내용이 표시됩니다. 앱에서는 항상 표시됩니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra o limite próprio de um modelo, como Fable, nos widgets desta conta. Desligado, essa linha mostra o que \"Linhas de uso\" define para planos sem ele. O app sempre o mostra."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在此账户的小组件中显示某个模型自己的额度，例如 Fable。关闭后，该行显示\"用量行\"为没有按模型额度的套餐所设的内容。App 中始终显示。"
+          }
+        }
+      }
+    },
     "Usage can't see your billing, so the day is the one you set. The reminder comes that many days before, every month." : {
       "localizations" : {
         "de" : {

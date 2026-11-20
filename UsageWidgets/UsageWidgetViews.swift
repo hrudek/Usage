@@ -16,7 +16,7 @@ struct UsageWidgetView: View {
 
     var body: some View {
         Group {
-            if let snapshot = entry.snapshot {
+            if let snapshot = entry.shownSnapshot {
                 switch family {
                 case .accessoryCircular:
                     CircularUsageView(snapshot: snapshot, prefs: entry.prefs)

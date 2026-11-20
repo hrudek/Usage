@@ -103,6 +103,13 @@ struct AccountSettingsCards: View {
             SectionFootnote(text: String(localized: "Shown on the dashboard, in widgets, and in notification titles."))
             SettingsGap()
 
+            if usage?.account.providerID == ClaudeProvider.providerID {
+                SectionHeader(title: String(localized: "Widgets"))
+                WidgetModelWindowCard(accountID: accountID)
+                SectionFootnote(text: String(localized: "Shows a model's own limit, such as Fable, on this account's widgets. When off, that row shows what \"Usage rows\" sets for plans without one. The app always shows it."))
+                SettingsGap()
+            }
+
             SectionHeader(title: String(localized: "Reset alerts"))
             NotificationTogglesCard(accountID: accountID)
             SectionFootnote(text: String(localized: "A notification when each limit refills."))
@@ -141,6 +148,33 @@ struct AccountSettingsCards: View {
                 .withAppModels(model, prefs)
         }
         .renameAccountAlert(for: accountID, isPresented: $showingRename, name: $renameDraft)
+    }
+}
+
+/// The switch for `WidgetModelWindowPreference`; a change redraws the
+/// widgets.
+private struct WidgetModelWindowCard: View {
+    let accountID: String
+    @State private var isShown: Bool
+
+    init(accountID: String) {
+        self.accountID = accountID
+        _isShown = State(initialValue: WidgetModelWindowPreference(accountID: accountID).isShown)
+    }
+
+    var body: some View {
+        Card {
+            Toggle(isOn: $isShown) {
+                Text("Per-model limit in widgets")
+                    .font(Theme.rowTitle)
+                    .foregroundStyle(Theme.ink)
+            }
+            .tint(Theme.accent)
+        }
+        .onChange(of: isShown) { _, shown in
+            WidgetModelWindowPreference(accountID: accountID).isShown = shown
+            WidgetReload.all()
+        }
     }
 }
 

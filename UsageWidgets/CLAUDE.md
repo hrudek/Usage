@@ -45,6 +45,17 @@ the system content margins off (`contentMarginsDisabled`) so the button
 reaches the edges; `widgetMargins()` puts them back as padding inside it
 (and on the accessory and StandBy views), so the layout is unchanged.
 
+A Claude account can hide its per-model window (Fable) from widgets on
+its settings page (`WidgetModelWindowPreference`, App Group key
+`widget.showsModelWindow.<accountID>`, stored only while off). The
+`UsageLimits` and `UsageAllAccounts` views, and the latter's urgency
+order, draw `shownSnapshot` (`UsageSnapshot.forWidgets(of:)`), the
+snapshot without its per-model windows; the third slot then follows
+"Usage rows" as for a plan with none. Display only: the stored snapshot,
+the stale check and the reload schedule keep every window. The single
+limit widget and the control show the window the user picked, so they
+ignore it.
+
 Every home screen widget's container background is `WidgetBackdrop`:
 the app's backdrop gradient (fixed sRGB colors, #2B2D42 to #0D0E14 in
 dark, top-leading to bottom-trailing) in full color, nothing in the

@@ -48,7 +48,9 @@ environment; every sheet gets both again from its presenter
 - **Account icon** (`AccountIconPicker`): the default sparkle, the
   bundled marks (Claude, Claude Code, OpenAI; `ProviderMark.assetName`),
   curated SF Symbols, or any SF Symbol by name.
-- **Account settings** (`AccountSettingsPage`): name, icon, reset alerts,
+- **Account settings** (`AccountSettingsPage`): name, icon, for Claude
+  accounts "Per-model limit in widgets" (`WidgetModelWindowPreference`,
+  on by default; a change reloads widgets), reset alerts,
   smart notifications (near limit with up to three levels, limit reached,
   early reset, run-out, ahead of pace, sign-in), renewal reminder,
   disconnect (with confirmation).

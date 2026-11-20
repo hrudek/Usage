@@ -66,7 +66,8 @@ private struct AccountRow: View {
     let now: Date
 
     var body: some View {
-        let layout = row.snapshot.map { AccountCardLayout(snapshot: $0, modelSlotFallback: prefs.modelSlotFallback) }
+        let snapshot = row.shownSnapshot
+        let layout = snapshot.map { AccountCardLayout(snapshot: $0, modelSlotFallback: prefs.modelSlotFallback) }
         VStack(alignment: .leading, spacing: 4) {
             WidgetMarkBand(icon: row.account.icon) {
                 HStack(spacing: 5) {
@@ -90,7 +91,7 @@ private struct AccountRow: View {
                         .foregroundStyle(Theme.inkSecondary)
                 }
             }
-            if let snapshot = row.snapshot, let layout {
+            if let snapshot, let layout {
                 WidgetHero(
                     window: layout.hero.window,
                     prefs: prefs,
