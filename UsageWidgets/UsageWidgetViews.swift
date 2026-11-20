@@ -61,12 +61,6 @@ struct UsageWidgetView: View {
 
 // MARK: - System families
 
-/// Small: the app's account card in a small square: the header, the
-/// session as the protagonist (its name, the figure large with the reset
-/// beside it as a bare live countdown, a thick bar), then up to two other
-/// windows as compact lines (name, bar, figure). The same
-/// `AccountCardLayout` decides which leads, so the widget and the
-/// Dashboard always agree. The medium family is `MediumUsageView`.
 struct SystemUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences
@@ -129,9 +123,6 @@ struct WidgetHero: View {
     }
 }
 
-/// A widget card's other windows, one line each: name, bar, figure, in
-/// shared columns so the bars start and end together. The figure keeps
-/// its full width; the bar gives way.
 struct WidgetCompactRows: View {
     let slots: [AccountCardLayout.Slot]
     let prefs: Preferences

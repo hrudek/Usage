@@ -18,6 +18,8 @@ struct UsageControl: ControlWidget {
                 Label {
                     Text(value.title)
                     Text(value.figure)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                 } icon: {
                     Image(systemName: "gauge.with.needle", variableValue: value.fraction)
                 }
@@ -28,6 +30,8 @@ struct UsageControl: ControlWidget {
                     Label {
                         Text(value.title)
                         Text(value.figure)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
                     } icon: {
                         Image(systemName: "gauge.with.needle", variableValue: value.fraction)
                     }

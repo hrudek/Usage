@@ -9,9 +9,6 @@ enum WidgetMetrics {
     static let dividerGap: CGFloat = 6
 }
 
-/// A widget card's head: the title (the plan pill beside it while both
-/// fit), an optional line under it, the provider mark in the top-right
-/// corner, and a hairline under all of it.
 struct WidgetCardHeader<Subtitle: View>: View {
     let title: Text
     var planName: String? = nil
@@ -70,8 +67,6 @@ extension WidgetCardHeader where Subtitle == WidgetStaleHint {
     }
 }
 
-/// "updated X ago" for a snapshot past `AppConfig.staleAfter`, nothing
-/// otherwise.
 struct WidgetStaleHint: View {
     let snapshot: UsageSnapshot
 
@@ -108,8 +103,6 @@ struct WidgetWindowTitle: View {
     }
 }
 
-/// A window's figure, "42%" or "--", whole: it shrinks before it would
-/// truncate and takes its width before its neighbors.
 struct WidgetFigure: View {
     let window: UsageWindow?
     let mode: DisplayMode

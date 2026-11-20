@@ -78,6 +78,8 @@ struct InlineUsageView: View {
             slot.window.map { "\($0.shortTitle) \(Int($0.displayedPct(prefs.displayMode)))%" }
         }
         Text(parts.joined(separator: " · "))
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
     }
 }
 

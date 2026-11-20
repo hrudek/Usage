@@ -42,7 +42,6 @@ struct ProviderIdentityView: View {
 struct PlanPill: View {
     let name: String
     var compact = false
-    /// A fixed size for the widgets, which do not follow Dynamic Type.
     var font: Font? = nil
 
     var body: some View {
