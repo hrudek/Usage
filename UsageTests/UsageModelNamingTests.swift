@@ -4,8 +4,7 @@ import UsageKit
 
 /// `UsageModel` against a scratch registry: naming and ordering, the
 /// parts of the model that never touch the network. `platformServices:
-/// false` skips migration (it probes the real Keychain), the macOS
-/// scheduler, and the notification sweep.
+/// false` skips the platform services and the notification sweep.
 final class UsageModelNamingTests: XCTestCase {
     private var scratch: ScratchDefaults!
     private var registry: AccountRegistryStore!
