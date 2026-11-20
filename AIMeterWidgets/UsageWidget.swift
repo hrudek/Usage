@@ -48,7 +48,7 @@ struct UsageTimelineProvider: AppIntentTimelineProvider {
         let next = WidgetSchedule.nextReload(
             after: current.date, interval: interval, resets: Self.resets(of: current.snapshot)
         )
-        return Timeline(entries: [current] + peakTransitionEntry(after: current, before: next), policy: .after(next))
+        return Timeline(entries: [current], policy: .after(next))
     }
 
     /// The resets the next reload may come forward for: on iOS, where
@@ -57,18 +57,6 @@ struct UsageTimelineProvider: AppIntentTimelineProvider {
     /// reload at the reset would redraw the same figure.
     static func resets(of snapshot: UsageSnapshot?) -> [Date] {
         snapshot?.windows.compactMap(\.resetsAt) ?? []
-    }
-
-    /// If Claude's peak-hours schedule flips before the next scheduled
-    /// reload, an extra entry dated exactly at that transition makes
-    /// WidgetKit switch the header's peak badge on its own at the right
-    /// wall-clock moment — no extra refresh or network call, since peak
-    /// state is a pure function of the entry's own `date`.
-    private func peakTransitionEntry(after entry: UsageEntry, before next: Date) -> [UsageEntry] {
-        guard let schedule = ClaudePeakSchedule.current,
-              let transition = PeakCalculator.nextTransition(after: entry.date, schedule: schedule),
-              transition < next else { return [] }
-        return [UsageEntry(date: transition, snapshot: entry.snapshot, accountID: entry.accountID, accountName: entry.accountName, prefs: entry.prefs, accountIcon: entry.accountIcon)]
     }
 
     private func entry(for configuration: UsageAccountConfigurationIntent) -> UsageEntry {

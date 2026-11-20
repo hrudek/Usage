@@ -4,10 +4,8 @@ import UsageKit
 /// This account's "smart" notification toggles — one per `SmartAlert`,
 /// all gating permission through `UsageModel` and firing on detection at
 /// fetch time (near-limit / limit-reached / early-reset / sign-in) or
-/// scheduled ahead (run-out). Peak-hours alerts are a separate toggle in
-/// Settings, not here — it's one Claude-wide policy
-/// (`UsageModel.peakPreferences`) shared by every account, not tied to
-/// this one. Near-limit reveals its levels when on: up to three sliders.
+/// scheduled ahead (run-out). Near-limit reveals its levels when on: up to
+/// three sliders.
 struct SmartNotificationTogglesCard: View {
     let accountID: String
     @Environment(UsageModel.self) private var model

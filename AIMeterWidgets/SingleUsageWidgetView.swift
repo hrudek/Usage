@@ -130,12 +130,6 @@ private struct SingleUsageHeader: View {
                 icon: entry.accountIcon
             )
             Spacer(minLength: 4)
-            // Scoped to .session: that's the window the documented peak
-            // policy actually affects, so a Weekly/Credits/model pick
-            // never shows a badge that would misattribute it.
-            if entry.kind == .session, ClaudePeakStatus.forProvider(entry.snapshot?.providerID, at: entry.date).isPeak {
-                PeakBadge(size: 9)
-            }
             if let trailing {
                 Text(trailing)
                     .font(.system(size: 11))

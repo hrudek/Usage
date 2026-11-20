@@ -84,9 +84,6 @@ struct WidgetHeader: View {
                 icon: accountIcon
             )
             Spacer(minLength: 0)
-            if ClaudePeakStatus.forProvider(snapshot.providerID, at: date).isPeak {
-                PeakBadge(size: 9)
-            }
             if snapshot.isStale {
                 HStack(spacing: 2) {
                     Image(systemName: "clock.arrow.circlepath")

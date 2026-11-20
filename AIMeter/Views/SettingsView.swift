@@ -27,10 +27,6 @@ struct SettingsView: View {
                 }
                 AccountListSettings()
                 SettingsGap()
-                if PeakNotificationsSettings.isOffered {
-                    PeakNotificationsSettings()
-                    SettingsGap()
-                }
                 Card {
                     VStack(alignment: .leading, spacing: Theme.rowSpacing) {
                         SettingsGroupLink(title: String(localized: "Appearance"), symbol: "paintbrush") {
@@ -49,8 +45,6 @@ struct SettingsView: View {
                         Divider().overlay(Theme.track)
                         SettingsGroupLink(title: String(localized: "Refresh & data"), symbol: "arrow.clockwise") {
                             BackgroundRefreshSettings()
-                            SettingsGap()
-                            ServiceStatusSettings()
                             SettingsGap()
                             PrivacyLinkSettings()
                         }

@@ -133,76 +133,7 @@ struct AppearanceSettings: View {
     }
 }
 
-/// The one Peak-hours alerts toggle. Lists show it only while a peak
-/// schedule is in force — none is today (the policy is retired, see
-/// `ClaudePeakSchedule`), so the toggle would arm alerts for a window
-/// that never comes.
-struct PeakNotificationsSettings: View {
-    @Environment(UsageModel.self) private var model
 
-    static var isOffered: Bool { ClaudePeakSchedule.current != nil }
-
-    var body: some View {
-        SectionHeader(title: String(localized: "Notifications"))
-        Card {
-            Toggle(isOn: Binding(
-                get: { model.peakNotificationsEnabled },
-                set: model.setPeakNotificationsEnabled
-            )) {
-                Text("Peak-hours alerts")
-                    .font(Theme.rowTitle)
-                    .foregroundStyle(Theme.ink)
-            }
-            .tint(Theme.accent)
-        }
-        .task {
-            await model.refreshNotificationAuthorization()
-        }
-        SectionFootnote(text: String(localized: "Notify when Claude's documented weekday peak window starts or ends. This is one Claude-wide policy, not a per-account setting. Every connected account's rate-limit alerts still have their own toggles on that account's own screen."))
-    }
-}
-
-/// "Check service status", mirrored into the model as it changes.
-struct ServiceStatusSettings: View {
-    @Environment(UsageModel.self) private var model
-    @Environment(PreferencesModel.self) private var prefs
-
-    var body: some View {
-        @Bindable var prefs = prefs
-
-        SectionHeader(title: String(localized: "Service status"))
-        Card {
-            VStack(alignment: .leading, spacing: Theme.rowSpacing) {
-                Toggle(isOn: $prefs.checksServiceStatus) {
-                    Text("Check service status")
-                        .font(Theme.rowTitle)
-                        .foregroundStyle(Theme.ink)
-                }
-                .tint(Theme.accent)
-                if prefs.checksServiceStatus {
-                    Toggle(isOn: Binding(
-                        get: { model.incidentNotificationsEnabled },
-                        set: model.setIncidentNotificationsEnabled
-                    )) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Notify about incidents")
-                                .font(Theme.rowTitle)
-                                .foregroundStyle(Theme.ink)
-                            Text("Once per incident of a service you use, taken back when it's over.")
-                                .font(Theme.caption)
-                                .foregroundStyle(Theme.inkSecondary)
-                        }
-                    }
-                    .tint(Theme.accent)
-                }
-            }
-        }
-        .onChange(of: prefs.checksServiceStatus) { _, newValue in
-            model.setChecksServiceStatus(newValue)
-        }
-        SectionFootnote(text: String(localized: "Reads the provider's public status page whenever AIMeter refreshes, so an outage shows as an incident instead of an account error. Nothing about you is sent."))
-    }
-}
 
 /// The refresh cadence, rescheduling the platform's background work as it
 /// changes.

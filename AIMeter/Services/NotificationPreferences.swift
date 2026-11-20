@@ -8,9 +8,7 @@ import UsageKit
 /// warnings, early-reset alerts, near-limit, limit-reached) are global
 /// across windows but scoped to one `accountID` — each connected account
 /// has its own independent set, so muting a secondary account never
-/// touches another's. `peakEnabled` is the deliberate exception: it's one
-/// Claude-wide policy, not tied to any specific account, so its key stays
-/// unscoped regardless of which account's `NotificationPreferences` reads it.
+/// touches another's.
 struct NotificationPreferences {
     let accountID: String
     private let defaults: UserDefaults
@@ -160,31 +158,9 @@ struct NotificationPreferences {
         nonmutating set { defaults.set(newValue, forKey: scopedKey("notify.reauth.delivered")) }
     }
 
-    /// "Peak hours started/ended" alerts, scheduled from Claude's fixed
-    /// weekday schedule rather than anything fetched. Deliberately global —
-    /// see the type doc above.
-    var peakEnabled: Bool {
-        get { defaults.bool(forKey: "notify.peak") }
-        nonmutating set { defaults.set(newValue, forKey: "notify.peak") }
-    }
 
-    /// "Notify about incidents": a notification when a connected service's
-    /// status page reports one. Global like `peakEnabled`: an incident is
-    /// the service's, not an account's. Off by default.
-    var incidentAlertsEnabled: Bool {
-        get { defaults.bool(forKey: "notify.incidents") }
-        nonmutating set { defaults.set(newValue, forKey: "notify.incidents") }
-    }
 
-    /// The incident already announced for a provider family (its title, or
-    /// the page's summary), so the next check of the same one stays quiet.
-    func announcedIncident(for providerID: String) -> String? {
-        defaults.string(forKey: "notify.incident.announced.\(providerID)")
-    }
 
-    func setAnnouncedIncident(_ incident: String?, for providerID: String) {
-        defaults.set(incident, forKey: "notify.incident.announced.\(providerID)")
-    }
 
     /// `UserDefaults.bool(forKey:)` reports `false` for a key nobody has
     /// written, which would silently flip any preference whose default is

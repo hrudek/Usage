@@ -117,34 +117,4 @@ nonisolated enum ProviderCatalog {
         }
     }
 
-    /// Where this family publishes its service health, if anywhere. Every
-    /// family this build knows has a Statuspage (`StatuspageSource`); a
-    /// provider without one would get nil, and the app would show nothing
-    /// for it — there is nothing to show, and a guess is worse than
-    /// silence.
-    static func statusSource(for providerID: String, transport: (any HTTPTransport)? = nil) -> (any ServiceStatusSource)? {
-        switch providerID {
-        case ClaudeProvider.providerID:
-            transport.map { ClaudeStatusSource(transport: $0) } ?? ClaudeStatusSource()
-        case CodexProvider.providerID:
-            statuspage(CodexProvider.statusSummaryEndpoint, CodexProvider.statusPageURL, transport)
-        default:
-            nil
-        }
-    }
-
-    private static func statuspage(_ summary: URL, _ page: URL, _ transport: (any HTTPTransport)?) -> StatuspageSource {
-        transport.map { StatuspageSource(summaryEndpoint: summary, pageURL: page, transport: $0) }
-            ?? StatuspageSource(summaryEndpoint: summary, pageURL: page)
-    }
-
-    /// The human status page, for a banner whose incident carries no link
-    /// of its own.
-    static func statusPageURL(for providerID: String) -> URL? {
-        switch providerID {
-        case ClaudeProvider.providerID: ClaudeStatusSource.pageURL
-        case CodexProvider.providerID: CodexProvider.statusPageURL
-        default: nil
-        }
-    }
 }

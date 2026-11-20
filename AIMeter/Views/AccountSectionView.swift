@@ -87,7 +87,7 @@ struct AccountSectionView: View {
         }
     }
 
-    /// The error, the reconnect prompt, the incident line, and "Updated X
+    /// The error, the reconnect prompt, and "Updated X
     /// ago" once the card's figures are stale; nothing at all on a normal
     /// day, since the Dashboard's header says when it last refreshed.
     @ViewBuilder
@@ -100,7 +100,6 @@ struct AccountSectionView: View {
                     error: usage.lastError,
                     reauthenticate: usage.needsReauthentication ? { showingReconnect = true } : nil,
                     offline: usage.isOffline,
-                    serviceIncident: model.incidentNote(for: usage),
                     updated: .whenStale
                 )
             }

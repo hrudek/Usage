@@ -79,7 +79,6 @@ final class NotificationPreferencesTests: XCTestCase {
         a.setEnabled(true, for: .session)
         a.reauthAlertDelivered = true
         b.setEnabled(true, .nearLimit)
-        a.peakEnabled = true
 
         a.clear()
 
@@ -88,6 +87,5 @@ final class NotificationPreferencesTests: XCTestCase {
         XCTAssertFalse(a.reauthAlertDelivered)
         XCTAssertTrue(a.isEnabled(.reauth), "back to the default, not forced off")
         XCTAssertTrue(b.isEnabled(.nearLimit), "the other account is untouched")
-        XCTAssertTrue(b.peakEnabled, "the global peak toggle has no account suffix and survives")
     }
 }

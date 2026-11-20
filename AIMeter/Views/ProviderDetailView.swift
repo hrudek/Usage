@@ -36,13 +36,9 @@ struct ProviderDetailView: View {
                             snapshot: usage?.snapshot,
                             error: usage?.lastError,
                             reauthenticate: usage?.needsReauthentication == true ? { showingReconnect = true } : nil,
-                            offline: usage?.isOffline == true,
-                            serviceIncident: usage.flatMap(model.incidentNote(for:))
+                            offline: usage?.isOffline == true
                         )
                     }
-                }
-                if let usage, let note = model.serviceStatusFootnote(for: usage.account.providerID) {
-                    SectionFootnote(text: note)
                 }
 
                 if let snapshot = usage?.snapshot, !snapshot.windows.isEmpty {
@@ -50,16 +46,6 @@ struct ProviderDetailView: View {
                         .padding(.top, Theme.sectionSpacing - 10)
                     HistoryCard(accountID: accountID, snapshot: snapshot)
                     SectionFootnote(text: String(localized: "Percent of the limit used, sampled whenever AIMeter or a widget refreshes and kept on this device for 90 days. Dashed lines mark resets; the red line is the 85% mark."))
-                }
-
-                // Only while a peak schedule is in force — none is today
-                // (the policy is retired, see `ClaudePeakSchedule`).
-                if let schedule = ClaudePeakSchedule.current {
-                    SectionHeader(title: String(localized: "Peak hours"))
-                        .padding(.top, Theme.sectionSpacing - 10)
-                    let peakStatus = ClaudePeakStatus(schedule: schedule)
-                    PeakHoursCard(status: peakStatus)
-                    SectionFootnote(text: "\(peakStatus.scheduleDescription) \(peakStatus.lastVerifiedLabel)")
                 }
 
                 if let snapshot = usage?.snapshot, !snapshot.windows.isEmpty {

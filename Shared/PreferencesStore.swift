@@ -111,12 +111,6 @@ struct Preferences: Sendable {
     /// stays terracotta whatever the figure. On by default, so it loads through the presence check.
     var usageColors: Bool = true
 
-    /// Whether refreshes also read the provider's public status page, so
-    /// an outage shows as an incident instead of an account error. On by
-    /// default — it is an anonymous GET of a public page, disclosed in
-    /// Privacy & data — which means it must load through the presence
-    /// check.
-    var checksServiceStatus: Bool = true
     /// The account closest to a limit first, everywhere accounts are
     /// listed (`AccountOrder`); off, the registry's order, the user's own.
     var ordersByUrgency: Bool = false
@@ -132,7 +126,6 @@ struct Preferences: Sendable {
         static let glanceMetric = "pref.glanceMetric"
         static let showCreditsAmount = "pref.showCreditsAmount"
         static let usageColors = "pref.usageColors"
-        static let checksServiceStatus = "pref.checksServiceStatus"
         static let ordersByUrgency = "pref.ordersByUrgency"
         static let lastScheduledAt = "pref.lastScheduledAt"
     }
@@ -163,7 +156,6 @@ struct Preferences: Sendable {
         }
         prefs.showCreditsAmount = defaults.bool(forKey: Keys.showCreditsAmount)
         prefs.usageColors = bool(defaults, Keys.usageColors, default: true)
-        prefs.checksServiceStatus = bool(defaults, Keys.checksServiceStatus, default: true)
         prefs.ordersByUrgency = defaults.bool(forKey: Keys.ordersByUrgency)
         if let timestamp = defaults.object(forKey: Keys.lastScheduledAt) as? Date {
             prefs.lastScheduledAt = timestamp

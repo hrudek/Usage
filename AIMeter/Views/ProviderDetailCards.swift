@@ -1,31 +1,6 @@
 import SwiftUI
 import UsageKit
 
-/// Anthropic's documented weekday peak-usage window, computed on-device
-/// from a fixed schedule (see `ClaudePeakSchedule`) — there's no server
-/// signal to key off instead (`docs/design/peak-hours-investigation.md`).
-struct PeakHoursCard: View {
-    let status: ClaudePeakStatus
-
-    var body: some View {
-        Card {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Image(systemName: status.isPeak ? "bolt.fill" : "bolt.slash")
-                    .foregroundStyle(status.isPeak ? Theme.danger : Theme.inkSecondary)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(status.title)
-                        .font(Theme.rowTitle)
-                        .foregroundStyle(Theme.ink)
-                    Text(status.subtitle)
-                        .font(Theme.caption)
-                        .foregroundStyle(Theme.inkSecondary)
-                }
-                Spacer(minLength: 0)
-            }
-        }
-        .accessibilityElement(children: .combine)
-    }
-}
 
 /// Per-window run-out forecast from the average pace so far — a warning
 /// row for each window projected to hit its limit before it resets, or a

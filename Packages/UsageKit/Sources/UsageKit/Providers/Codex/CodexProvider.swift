@@ -13,9 +13,6 @@ public struct CodexProvider: UsageProvider {
     /// place the literal lives.
     public static let providerID = "codex"
     public static let providerDisplayName = "Codex"
-    /// OpenAI's public status page, a Statuspage like Claude's.
-    public static let statusSummaryEndpoint = URL(string: "https://status.openai.com/api/v2/summary.json")!
-    public static let statusPageURL = URL(string: "https://status.openai.com")!
 
     public let id = CodexProvider.providerID
     public let displayName = CodexProvider.providerDisplayName

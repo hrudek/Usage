@@ -80,12 +80,6 @@ final class UsageModelNamingTests: XCTestCase {
         XCTAssertFalse(model.moveAccount("acc-third", onto: "acc-third"))
     }
 
-    func testPrimaryAccountFallsBackToTheFirst() {
-        let model = makeModel()
-        XCTAssertEqual(model.primaryAccountUsage(preferredID: "acc-home")?.id, "acc-home")
-        XCTAssertEqual(model.primaryAccountUsage(preferredID: "gone")?.id, "acc-work")
-        XCTAssertEqual(model.primaryAccountUsage(preferredID: nil)?.id, "acc-work")
-    }
 
     func testDemoModeSwapsInTheNeutralAccount() {
         let model = makeModel()

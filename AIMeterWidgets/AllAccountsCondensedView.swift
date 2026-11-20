@@ -57,11 +57,6 @@ struct CondensedAccountsView: View {
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(Theme.ink)
             Spacer(minLength: 0)
-            // Claude's policy: badge only when a Claude account is shown.
-            let hasClaude = entry.rows.contains { $0.account.providerID == ClaudeProvider.providerID }
-            if ClaudePeakStatus.forProvider(hasClaude ? ClaudeProvider.providerID : nil, at: entry.date).isPeak {
-                PeakBadge(size: 9)
-            }
         }
     }
 

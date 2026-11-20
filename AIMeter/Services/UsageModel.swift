@@ -71,34 +71,15 @@ final class UsageModel {
     /// own files should touch either.
     var services: [String: RefreshService] = [:]
     let registry: AccountRegistryStore?
-    /// Last known service health per provider family — see
-    /// `UsageModel+ServiceStatus.swift`. Keyed by `providerID`, never by
-    /// account: an outage belongs to the service.
-    var serviceStatus: [String: ServiceStatus] = [:]
-    /// Whether refreshes also check the status page
-    /// (`Preferences.checksServiceStatus`, mirrored here by Settings so the
-    /// model never reads the App Group behind the tests' back).
-    var checksServiceStatus = true
     /// "Order by urgency" (`Preferences.ordersByUrgency`, mirrored here by
-    /// Settings like the status check): `accounts` is sorted by
+    /// Settings so the model never reads the App Group behind the tests' back): `accounts` is sorted by
     /// `AccountOrder` after every load and sweep, the registry's order
     /// left as the user set it (see `UsageModel+Naming.swift`).
     var ordersByUrgency = false
-    @ObservationIgnored var serviceStatusCheckedAt: [String: Date] = [:]
-    @ObservationIgnored var serviceStatusSources: [String: any ServiceStatusSource] = [:]
-    /// nil in unit tests (no App Group); the last fetched status survives a
-    /// relaunch through it so the popover isn't blank until the first check.
-    let serviceStatusStore: ServiceStatusStore?
     /// The chart's samples per account, keyed by `Kind.storageKey` — see
     /// `UsageModel+History.swift`. nil store in unit tests.
     var timelines: [String: [String: [TimelineSample]]] = [:]
     let timelineStore: UsageTimelineStore?
-    /// `peakEnabled` and the incident alerts are the fields on
-    /// `NotificationPreferences` that ignore `accountID` (peak hours is a
-    /// Claude-wide policy, an incident a service's, neither tied to any one
-    /// account) — "global" is a documented placeholder, never used as a
-    /// real key.
-    let peakPreferences = NotificationPreferences(accountID: "global")
 
     /// True when the user denied notification permission in the system
     /// settings — one OS-level toggle, not per account, so the toggles
@@ -135,21 +116,14 @@ final class UsageModel {
     /// notification sweep — just the registry handed in.
     init(registry: AccountRegistryStore?, platformServices: Bool) {
         self.registry = registry
-        serviceStatusStore = platformServices ? ServiceStatusStore(suiteName: AppConfig.appGroupID) : nil
         timelineStore = platformServices ? UsageTimelineStore(appGroupID: AppConfig.appGroupID) : nil
         if platformServices {
             AccountMigration.run(registry: registry)
-            checksServiceStatus = Preferences.load().checksServiceStatus
             ordersByUrgency = Preferences.load().ordersByUrgency
         }
         loadAccounts()
-        loadStoredServiceStatus()
         guard platformServices else { return }
         AppEnvironment.shared = self
-        // Peak-hours alerts come from a fixed weekday schedule, not a
-        // fetched snapshot, so they only need scheduling once here (and
-        // whenever the toggle changes) — not on every refresh.
-        Task { await NotificationScheduler.reschedulePeakNotifications(preferences: peakPreferences) }
         #if DEBUG
         // `-AIMeterDemo YES`: the demo from launch, for captures and for
         // the Watch simulator, which the demo then reaches (`WatchBridge`).
@@ -199,14 +173,12 @@ final class UsageModel {
 
     func refreshAll() async {
         guard !isDemoMode else { return }
-        async let status: Void = refreshServiceStatus()
         let fetched = await withTaskGroup(of: Bool.self) { group in
             for account in accounts.map(\.account) {
                 group.addTask { await self.fetch(accountID: account.accountID) }
             }
             return await group.reduce(false) { $0 || $1 }
         }
-        await status
         if fetched { WidgetReload.all() }
         applyAccountOrder()
     }
@@ -222,11 +194,9 @@ final class UsageModel {
     }
 
     func refresh(accountID: String) async {
-        async let status: Void = refreshServiceStatus()
         if await fetch(accountID: accountID) {
             WidgetReload.all()
         }
-        await status
         applyAccountOrder()
     }
 
@@ -322,7 +292,6 @@ final class UsageModel {
         guard !isDemoMode else { return }
         // A widget may have recorded samples while the app was away.
         reloadTimelines()
-        async let status: Void = refreshServiceStatus()
         let fetched = await withTaskGroup(of: Bool.self) { group in
             for entry in accounts {
                 let isFresh = entry.snapshot.map { Date().timeIntervalSince($0.fetchedAt) < maxAge } ?? false
@@ -331,7 +300,6 @@ final class UsageModel {
             }
             return await group.reduce(false) { $0 || $1 }
         }
-        await status
         if fetched { WidgetReload.all() }
         applyAccountOrder()
     }
@@ -358,14 +326,4 @@ final class UsageModel {
         return PaceCalculator.isReady(observingSince: services[accountID]?.paceObservingSince())
     }
 
-    /// Resolves the macOS menu bar's single status item to one account:
-    /// the user's chosen primary when it's still connected, else the first
-    /// connected account. `MenuBarExtra` has no per-instance configuration
-    /// the way widgets do, so this "primary" concept only exists here.
-    func primaryAccountUsage(preferredID: String?) -> AccountUsage? {
-        if let preferredID, let match = usage(for: preferredID) {
-            return match
-        }
-        return accounts.first
-    }
 }

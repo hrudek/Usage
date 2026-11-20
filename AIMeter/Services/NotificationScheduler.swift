@@ -13,7 +13,6 @@ import UsageKit
 /// - `earlyreset.` — immediate alerts when a window refilled early.
 /// - `reauth.` — an immediate alert when the account's stored sign-in
 ///   stopped working, deduped so it fires once per breakage.
-/// - `peak.` — see `NotificationScheduler+Peak.swift`.
 /// The toggles themselves are `NotificationPreferences`
 /// (`NotificationPreferences.swift`).
 enum NotificationScheduler {
@@ -23,7 +22,6 @@ enum NotificationScheduler {
     private static let nearLimitPrefix = "nearlimit."
     private static let limitReachedPrefix = "limitreached."
     private static let aheadOfPacePrefix = "ahead."
-    static let peakPrefix = "peak."
     private static let reauthPrefix = "reauth."
 
     static func requestAuthorization() async -> Bool {

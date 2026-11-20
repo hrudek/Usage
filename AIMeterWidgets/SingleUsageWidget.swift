@@ -66,25 +66,7 @@ struct SingleUsageTimelineProvider: AppIntentTimelineProvider {
         let next = WidgetSchedule.nextReload(
             after: current.date, interval: interval, resets: UsageTimelineProvider.resets(of: current.snapshot)
         )
-        var entries = [current]
-        // Same trick as the main widget: an extra entry dated exactly at
-        // the next peak transition lets WidgetKit flip the header's badge
-        // on its own, with no extra refresh or network call.
-        if let schedule = ClaudePeakSchedule.current,
-           let transition = PeakCalculator.nextTransition(after: current.date, schedule: schedule),
-           transition < next {
-            entries.append(SingleUsageEntry(
-                date: transition,
-                snapshot: current.snapshot,
-                accountID: current.accountID,
-                kind: current.kind,
-                accountName: current.accountName,
-                prefs: current.prefs,
-                accountIcon: current.accountIcon,
-                style: current.style
-            ))
-        }
-        return Timeline(entries: entries, policy: .after(next))
+        return Timeline(entries: [current], policy: .after(next))
     }
 
     private func entry(for configuration: SingleUsageConfigurationIntent) -> SingleUsageEntry {

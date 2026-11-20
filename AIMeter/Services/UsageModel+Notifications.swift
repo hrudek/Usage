@@ -138,24 +138,7 @@ extension UsageModel {
         notificationsRevision += 1
     }
 
-    // MARK: Peak-hours alerts (global — see `peakPreferences` above)
-
-    var peakNotificationsEnabled: Bool {
-        _ = notificationsRevision
-        return peakPreferences.peakEnabled
-    }
-
-    func setPeakNotificationsEnabled(_ enabled: Bool) {
-        Task { @MainActor in
-            guard await authorizeIfEnabling(enabled) else { return }
-            peakPreferences.peakEnabled = enabled
-            notificationsRevision += 1
-            await NotificationScheduler.reschedulePeakNotifications(preferences: peakPreferences)
-        }
-    }
-
-    /// Shared permission gate for enabling a notification toggle (internal,
-    /// not private, for the incident toggle in `UsageModel+ServiceStatus`): a denied
+    /// Shared permission gate for enabling a notification toggle: a denied
     /// system permission snaps the toggle back off and surfaces the blocked
     /// state. Returns whether the caller should proceed to persist.
     func authorizeIfEnabling(_ enabled: Bool) async -> Bool {

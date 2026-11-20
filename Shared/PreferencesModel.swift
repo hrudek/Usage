@@ -58,10 +58,6 @@ final class PreferencesModel {
         get { stored.usageColors }
         set { guard stored.usageColors != newValue else { return }; stored.usageColors = newValue; persist(newValue, Preferences.Keys.usageColors, reloadsWidgets: true) }
     }
-    var checksServiceStatus: Bool {
-        get { stored.checksServiceStatus }
-        set { guard stored.checksServiceStatus != newValue else { return }; stored.checksServiceStatus = newValue; persist(newValue, Preferences.Keys.checksServiceStatus, reloadsWidgets: false) }
-    }
     var ordersByUrgency: Bool {
         get { stored.ordersByUrgency }
         set { guard stored.ordersByUrgency != newValue else { return }; stored.ordersByUrgency = newValue; persist(newValue, Preferences.Keys.ordersByUrgency, reloadsWidgets: true) }
