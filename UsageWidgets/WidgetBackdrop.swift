@@ -1,8 +1,8 @@
 import SwiftUI
 import WidgetKit
 
-/// A home screen widget's container background: the app's backdrop
-/// gradient in full color. In the accented and vibrant modes the system
+/// A home screen widget's container background: the widgets' own,
+/// darker gradient in full color. In the accented and vibrant modes the system
 /// draws its own background, so nothing is drawn there.
 ///
 /// The gradient uses plain sRGB colors for the widget's color scheme
