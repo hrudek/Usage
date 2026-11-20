@@ -11,7 +11,7 @@ struct ProviderDetailView: View {
     let accountID: String
 
     @Environment(UsageModel.self) private var model
-    @Environment(DashboardActions.self) private var actions
+    @Environment(AccountPresenter.self) private var presenter
 
     private var usage: UsageModel.AccountUsage? {
         model.usage(for: accountID)
@@ -34,7 +34,7 @@ struct ProviderDetailView: View {
                         UsageStatusFooter(
                             snapshot: usage?.snapshot,
                             error: usage?.lastError,
-                            reauthenticate: usage?.needsReauthentication == true ? { actions.reconnecting = usage?.account } : nil,
+                            reauthenticate: usage?.needsReauthentication == true ? { presenter.reconnecting = usage?.account } : nil,
                             offline: usage?.isOffline == true
                         )
                     }

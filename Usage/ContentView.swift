@@ -32,9 +32,13 @@ struct ContentView: View {
         }
         .environment(actions)
         .modifier(DashboardPresentations(actions: actions))
+        .presentsAccountSheets()
         .onChange(of: model.accounts.map(\.account.accountID)) { old, new in
             if !Set(old).isSubset(of: Set(new)), !path.isEmpty {
                 path = NavigationPath()
+            }
+            if let selected = actions.selectedAccountID, !new.contains(selected) {
+                actions.selectedAccountID = nil
             }
         }
         .onChange(of: path) {
@@ -99,7 +103,7 @@ struct ContentView: View {
 
     private func openSelectedAccountInStack() {
         path = NavigationPath()
-        if let accountID = actions.selectedAccountID, model.usage(for: accountID) != nil {
+        if let accountID = actions.selectedAccountID {
             path.append(accountID)
         }
     }

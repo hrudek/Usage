@@ -3,7 +3,6 @@ import UsageKit
 
 struct DashboardView: View {
     @Environment(UsageModel.self) var model
-    @Environment(PreferencesModel.self) private var prefs
     @Environment(DashboardActions.self) private var actions
     @Environment(\.accountSelection) private var selection
     /// The section being dragged, how far it has moved, and which section
