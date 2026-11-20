@@ -30,9 +30,9 @@ jobs:
       - name: Detect build-relevant changes
         id: diff
         run: |
-          files=$(git diff --name-only --no-renames HEAD^1 HEAD)
-          echo "$files"
-          if echo "$files" | grep -qE '^(Usage|UsageWidgets|WidgetsShared|Shared|Packages|Usage\.xcodeproj|UsageTests)/|^\.github/ci/|^\.github/workflows/ios-build\.yml$'; then
+          git diff --name-only --no-renames -z HEAD^1 HEAD > "$RUNNER_TEMP/changed.txt"
+          tr '\0' '\n' < "$RUNNER_TEMP/changed.txt"
+          if grep -qzE '^(Usage|UsageWidgets|WidgetsShared|Shared|Packages|Usage\.xcodeproj|UsageTests)/|^\.github/ci/|^\.github/workflows/ios-build\.yml$' "$RUNNER_TEMP/changed.txt"; then
             echo "build=true" >> "$GITHUB_OUTPUT"
           else
             echo "build=false" >> "$GITHUB_OUTPUT"
