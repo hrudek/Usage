@@ -118,11 +118,9 @@ struct UsageRowsSettings: View {
     @Environment(PreferencesModel.self) private var prefs
 
     /// The third row's fallback reaches every account with a session or a
-    /// week, Claude's and Codex's (Codex reports spend too), never one of
-    /// Copilot's quotas: the section shows unless every account is
-    /// Copilot's (and with none yet, or in the demo).
+    /// week, Claude's and Codex's (Codex reports spend too).
     static func applies(toFamilies providerIDs: [String], demo: Bool) -> Bool {
-        demo || providerIDs.isEmpty || providerIDs.contains { $0 != CopilotProvider.providerID }
+        true
     }
 
     static func isOffered(_ model: UsageModel) -> Bool {

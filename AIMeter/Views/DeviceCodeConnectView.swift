@@ -318,36 +318,3 @@ struct CodexConnectView: View {
         return nil
     }
 }
-
-/// GitHub Copilot: GitHub's device flow, asking for no scope (the quota
-/// endpoint needs none and its answer carries the user id).
-struct CopilotConnectView: View {
-    var reconnecting: ConnectedAccount?
-
-    var body: some View {
-        DeviceCodeConnectView(
-            providerID: CopilotProvider.providerID,
-            title: reconnecting == nil ? String(localized: "Connect your GitHub Copilot account") : String(localized: "Sign in again"),
-            explainer: reconnecting == nil
-                ? String(localized: "AIMeter shows you a one-time code. Open GitHub's device page, sign in and enter the code; the account connects as soon as you approve. Copilot Free, Pro and Pro+ all work.")
-                : String(localized: "GitHub no longer accepts this account's saved sign-in. Sign in again with the code to restore it. Its history, alerts and widgets all stay as they are."),
-            openLabel: String(localized: "Open GitHub's device page"),
-            note: nil,
-            footnote: String(localized: "AIMeter is an independent app, not affiliated with GitHub. It asks GitHub for no scope at all, reads your Copilot quotas and nothing else, and your sign-in token stays on this device."),
-            reconnecting: reconnecting,
-            start: {
-                let auth = CopilotDeviceAuth()
-                let code = try await auth.requestCode()
-                return DeviceCodePrompt(
-                    userCode: code.userCode, verificationURL: code.verificationURL,
-                    interval: code.interval, expiresAt: code.expiresAt
-                ) {
-                    switch try await auth.poll(code) {
-                    case .pending: return nil
-                    case .authorized(let credentials): return .copilot(credentials)
-                    }
-                }
-            }
-        )
-    }
-}

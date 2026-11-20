@@ -120,8 +120,6 @@ struct PrivacyView: View {
         switch family {
         case CodexProvider.providerID:
             String(localized: "Codex: AIMeter shows you a one-time code that you enter on ChatGPT's own device page in your browser, the same device code sign-in the Codex CLI offers.")
-        case CopilotProvider.providerID:
-            String(localized: "GitHub Copilot: the same kind of one-time code, entered on GitHub's device page in your browser. AIMeter asks GitHub for no scope at all.")
         default:
             String(localized: "Claude: you sign in on Claude's own page in your browser, never in an embedded web view, so AIMeter can't see your password. You only paste back the code Claude shows after you approve.")
         }
@@ -139,11 +137,6 @@ struct PrivacyView: View {
         switch family {
         case CodexProvider.providerID:
             Text("The sign-in is ChatGPT's own device code login, with the access the Codex CLI gets; AIMeter calls one read-only endpoint with it, your Codex limits (the same figures the CLI's /status shows), and nothing else.")
-                .font(Theme.caption)
-                .foregroundStyle(Theme.inkSecondary)
-        case CopilotProvider.providerID:
-            // `CopilotDeviceAuth.scope` is empty: no chip to show.
-            Text("AIMeter asks GitHub for no scope at all, so the token reaches nothing private of yours. It reads GitHub's Copilot quota endpoint (the one Copilot's editor plug-ins read), whose answer includes your user id, used to tell the account apart on your other devices. It can't read your code or your repositories.")
                 .font(Theme.caption)
                 .foregroundStyle(Theme.inkSecondary)
         default:

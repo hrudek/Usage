@@ -18,7 +18,7 @@ nonisolated enum ProviderCatalog {
 
     /// Every family this build can connect, in the order the Connect
     /// sheet's picker lists them.
-    static let providerIDs = [ClaudeProvider.providerID, CodexProvider.providerID, CopilotProvider.providerID]
+    static let providerIDs = [ClaudeProvider.providerID, CodexProvider.providerID]
 
     /// The families Settings and Privacy & data talk about: those the
     /// connected accounts belong to, in the picker's order, so someone
@@ -36,7 +36,6 @@ nonisolated enum ProviderCatalog {
         switch providerID {
         case ClaudeProvider.providerID: ClaudeProvider.providerDisplayName
         case CodexProvider.providerID: CodexProvider.providerDisplayName
-        case CopilotProvider.providerID: CopilotProvider.providerDisplayName
         default: providerID.capitalized
         }
     }
@@ -48,7 +47,6 @@ nonisolated enum ProviderCatalog {
         switch providerID {
         case ClaudeProvider.providerID: "sparkle"
         case CodexProvider.providerID: "terminal"
-        case CopilotProvider.providerID: "chevron.left.forwardslash.chevron.right"
         default: ProviderMark.defaultSymbol
         }
     }
@@ -104,12 +102,6 @@ nonisolated enum ProviderCatalog {
             let provider = transport.map { CodexProvider(credentialSource: source, transport: $0) }
                 ?? CodexProvider(credentialSource: source)
             return (provider, source)
-        case CopilotProvider.providerID:
-            let key = CopilotKeychainCredentialSource.storageKey(for: account.accountID)
-            let source = CopilotKeychainCredentialSource(store: keychain, key: key)
-            let provider = transport.map { CopilotProvider(credentialSource: source, transport: $0) }
-                ?? CopilotProvider(credentialSource: source)
-            return (provider, source)
         default:
             // Only this app writes the registry, so an unknown family means
             // a build older than the one that wrote it. Fail loudly in
@@ -136,8 +128,6 @@ nonisolated enum ProviderCatalog {
             transport.map { ClaudeStatusSource(transport: $0) } ?? ClaudeStatusSource()
         case CodexProvider.providerID:
             statuspage(CodexProvider.statusSummaryEndpoint, CodexProvider.statusPageURL, transport)
-        case CopilotProvider.providerID:
-            statuspage(CopilotProvider.statusSummaryEndpoint, CopilotProvider.statusPageURL, transport)
         default:
             nil
         }
@@ -154,7 +144,6 @@ nonisolated enum ProviderCatalog {
         switch providerID {
         case ClaudeProvider.providerID: ClaudeStatusSource.pageURL
         case CodexProvider.providerID: CodexProvider.statusPageURL
-        case CopilotProvider.providerID: CopilotProvider.statusPageURL
         default: nil
         }
     }

@@ -21,8 +21,6 @@ struct ConnectAccountSheet: View {
             ConnectClaudeSheet(reconnecting: reconnecting)
         case CodexProvider.providerID:
             CodexConnectView(reconnecting: reconnecting)
-        case CopilotProvider.providerID:
-            CopilotConnectView(reconnecting: reconnecting)
         default:
             picker
         }
@@ -102,7 +100,6 @@ struct ConnectAccountSheet: View {
         switch providerID {
         case ClaudeProvider.providerID: String(localized: "Sign in on Claude's page and paste the code it shows.")
         case CodexProvider.providerID: String(localized: "Sign in with ChatGPT using a one-time code.")
-        case CopilotProvider.providerID: String(localized: "Sign in with GitHub using a one-time code.")
         default: ""
         }
     }

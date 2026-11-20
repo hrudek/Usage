@@ -9,13 +9,11 @@ import UsageKit
 enum ProviderLogin {
     case claude(ClaudeCredentials)
     case codex(CodexCredentials)
-    case copilot(CopilotCredentials)
 
     var providerID: String {
         switch self {
         case .claude: ClaudeProvider.providerID
         case .codex: CodexProvider.providerID
-        case .copilot: CopilotProvider.providerID
         }
     }
 }

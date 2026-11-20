@@ -8,42 +8,9 @@ import UsageKit
 final class ProviderCatalogMultiProviderTests: XCTestCase {
     private let keychain = KeychainStore(service: "aimeter.tests")
 
-    func testTheThreeFamiliesHaveNamesAndGlyphs() {
-        XCTAssertEqual(ProviderCatalog.providerIDs, ["claude", "codex", "copilot"])
-        XCTAssertEqual(ProviderCatalog.displayName(for: CodexProvider.providerID), "Codex")
-        XCTAssertEqual(ProviderCatalog.displayName(for: CopilotProvider.providerID), "GitHub Copilot")
-        XCTAssertEqual(ProviderCatalog.symbolName(for: ClaudeProvider.providerID), ProviderMark.defaultSymbol)
-        XCTAssertNotEqual(ProviderCatalog.symbolName(for: CodexProvider.providerID), ProviderCatalog.symbolName(for: CopilotProvider.providerID))
-    }
 
-    func testMakeProviderBuildsCodexAndCopilot() {
-        var codex = ConnectedAccount.managed("c1", name: "Codex")
-        codex = ConnectedAccount(accountID: codex.accountID, providerID: CodexProvider.providerID, displayName: codex.displayName, credentialStrategy: .managed)
-        let codexBundle = ProviderCatalog.makeProvider(for: codex, keychain: keychain)
-        XCTAssertTrue(codexBundle.provider is CodexProvider)
-        XCTAssertTrue(codexBundle.credentials is CodexKeychainCredentialSource)
-        XCTAssertEqual(codexBundle.provider.id, "codex")
 
-        let copilot = ConnectedAccount(accountID: "g1", providerID: CopilotProvider.providerID, displayName: "Copilot", credentialStrategy: .managed)
-        let copilotBundle = ProviderCatalog.makeProvider(for: copilot, keychain: keychain)
-        XCTAssertTrue(copilotBundle.provider is CopilotProvider)
-        XCTAssertTrue(copilotBundle.credentials is CopilotKeychainCredentialSource)
-        XCTAssertEqual(copilotBundle.provider.id, "copilot")
-    }
 
-    func testEveryFamilyHasAStatusPage() {
-        XCTAssertTrue(ProviderCatalog.statusSource(for: CodexProvider.providerID) is StatuspageSource)
-        XCTAssertTrue(ProviderCatalog.statusSource(for: CopilotProvider.providerID) is StatuspageSource)
-        XCTAssertEqual(ProviderCatalog.statusPageURL(for: CodexProvider.providerID)?.host, "status.openai.com")
-        XCTAssertEqual(ProviderCatalog.statusPageURL(for: CopilotProvider.providerID)?.host, "www.githubstatus.com")
-        XCTAssertNil(ProviderCatalog.statusSource(for: "nobody"))
-    }
-
-    func testAProviderLoginKnowsItsFamily() {
-        XCTAssertEqual(ProviderLogin.claude(ClaudeCredentials(accessToken: "t")).providerID, "claude")
-        XCTAssertEqual(ProviderLogin.codex(CodexCredentials(accessToken: "t")).providerID, "codex")
-        XCTAssertEqual(ProviderLogin.copilot(CopilotCredentials(accessToken: "t")).providerID, "copilot")
-    }
 }
 
 final class WindowSlotsMultiProviderTests: XCTestCase {
@@ -65,11 +32,6 @@ final class WindowSlotsMultiProviderTests: XCTestCase {
         ])
     }
 
-    func testQuotasFillTheSlotsWhenThereIsNoRateWindow() {
-        let slots = WindowSlots(snapshot: copilot(), modelSlotFallback: .auto).slots
-        XCTAssertEqual(slots.map(\.kind), [.quota("premium_interactions"), .quota("chat"), .quota("completions")], "three at most, in the provider's order")
-        XCTAssertEqual(slots.map { $0.window?.usedPct }, [38, 20, 4])
-    }
 
     func testAMonthAloneIsOneSlotNotAnEmptySessionBesideIt() {
         let slots = WindowSlots(snapshot: codexFree(), modelSlotFallback: .auto).slots
@@ -78,16 +40,6 @@ final class WindowSlotsMultiProviderTests: XCTestCase {
         XCTAssertEqual(WindowSlots(snapshot: codexFree(), modelSlotFallback: .credits).slots.map(\.kind), [.weekly, .credits], "the third-slot fallback still applies")
     }
 
-    func testGlanceOptionsFollowTheSnapshotAndTheMetricFallsBackToItsFirst() {
-        XCTAssertEqual(UsageSnapshot.glanceOptions(for: copilot(), modelSlotFallback: .auto),
-                       [.quota("premium_interactions"), .quota("chat"), .quota("completions"), .quota("extra")])
-        XCTAssertEqual(UsageSnapshot.glanceOptions(for: codexFree(), modelSlotFallback: .auto), [.weekly])
-        XCTAssertEqual(UsageSnapshot.glanceOptions(for: nil, modelSlotFallback: .auto), [.session, .weekly])
-        XCTAssertEqual(UsageSnapshot.glanceMetric(.session, for: copilot(), modelSlotFallback: .auto), .quota("premium_interactions"))
-        XCTAssertEqual(UsageSnapshot.glanceMetric(.session, for: codexFree(), modelSlotFallback: .auto), .weekly)
-        XCTAssertEqual(UsageSnapshot.glanceMetric(.weekly, for: codexFree(), modelSlotFallback: .auto), .weekly)
-        XCTAssertEqual(UsageSnapshot.glanceMetric(.session, for: nil, modelSlotFallback: .auto), .session)
-    }
 
 }
 

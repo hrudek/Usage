@@ -6,8 +6,6 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
-        .macOS(.v14),
-        .watchOS(.v10),
     ],
     products: [
         .library(name: "UsageKit", targets: ["UsageKit"]),
@@ -15,7 +13,7 @@ let package = Package(
     targets: [
         .target(
             name: "UsageKit",
-            exclude: ["Providers/Claude/CLAUDE.md", "Providers/Codex/CLAUDE.md", "Providers/Copilot/CLAUDE.md"],
+            exclude: ["Providers/Claude/CLAUDE.md", "Providers/Codex/CLAUDE.md"],
             resources: [.process("Resources")]
         ),
         .testTarget(

@@ -269,9 +269,6 @@ struct RefreshService {
         case .codex(let credentials):
             guard let source = credentialSource as? any CodexCredentialSource else { throw mismatch(login) }
             try await source.save(credentials)
-        case .copilot(let credentials):
-            guard let source = credentialSource as? any CopilotCredentialSource else { throw mismatch(login) }
-            try await source.save(credentials)
         }
     }
 
