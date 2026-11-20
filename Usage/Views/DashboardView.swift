@@ -35,8 +35,6 @@ struct DashboardView: View {
     /// Refresh and no way to an account's detail, and rotating lost where
     /// the user was.
     @Environment(\.verticalSizeClass) private var verticalSizeClass
-    /// iPhone Duo's side bar holds Settings, Refresh and Add account in
-    /// place of the header's buttons (`DashboardSideBar`).
     @State private var barIsVertical = false
 
     /// An iPhone held sideways (`verticalSizeClass` compact).
