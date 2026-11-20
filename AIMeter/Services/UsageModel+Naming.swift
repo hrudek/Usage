@@ -160,11 +160,6 @@ extension UsageModel {
     func propagateName(accountID: String) {
         guard let usage = usage(for: accountID) else { return }
         WidgetReload.all()
-        LiveActivityManager.restart(
-            accountID: accountID, accountName: usage.account.displayName, accountIcon: usage.account.icon,
-            providerID: usage.account.providerID, snapshot: usage.snapshot,
-            enabled: LiveActivityPreferences(accountID: accountID).enabled
-        )
         let label = accountLabel(for: accountID)
         Task { await services[accountID]?.rescheduleNotifications(accountLabel: label) }
     }

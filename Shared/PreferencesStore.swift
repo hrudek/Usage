@@ -93,16 +93,10 @@ struct Preferences: Sendable {
     var displayMode: DisplayMode = .used
     var resetStyle: ResetStyle = .relative
     var refreshCadence: RefreshCadence = .minutes30
-    /// Dark by default on the Mac since 2.0 — the notch island is black
-    /// and the app sits beside it; iOS keeps following the system. An
-    /// install that ever chose a theme has the key written and keeps it;
-    /// one that never did falls into this default, which is the one
-    /// upgrade-visible change besides the island itself.
     var appearance: AppearanceMode = .system
     var modelSlotFallback: ModelSlotFallback = .auto
     /// Which single window the compact "at a glance" surfaces show: the
-    /// macOS menu bar label and iOS's Lock Screen circular gauge (both
-    /// have room for exactly one number). Stored as a plain `UsageWindow.Kind`
+    /// Lock Screen circular gauge (room for exactly one number). Stored as a plain `UsageWindow.Kind`
     /// rather than a fixed enum so it scales to whatever the account
     /// actually reports — a per-model window (e.g. Fable on Max) or
     /// Credits, not just Session/Weekly.
@@ -113,136 +107,15 @@ struct Preferences: Sendable {
     /// actually showing.
     var showCreditsAmount: Bool = false
     /// Bars turn yellow above 70 % used and red above 85 % (`UsageLevel`);
-    /// off, every bar — widgets, Live Activity and notch island included —
-    /// stays terracotta whatever the figure, and the menu bar's own tint
-    /// isn't offered. On by default, so it loads through the presence check.
+    /// off, every bar — widgets included —
+    /// stays terracotta whatever the figure. On by default, so it loads through the presence check.
     var usageColors: Bool = true
-    /// Which connected account the macOS status item's gauge tracks.
-    /// `MenuBarExtra` has no per-instance configuration the way widgets do
-    /// (there's exactly one status item), so this is the one place a
-    /// "primary" account has to be picked explicitly. nil (or an account
-    /// that's since been disconnected) falls back to the first connected
-    /// account — see `MacChromeSettings`/`AIMeterApp`.
-    var primaryAccountID: String?
-
-    // MARK: macOS chrome
-    //
-    // How the app presents itself on the Mac, independent of any provider's
-    // data — which is why these live here and surface in app-wide Settings
-    // rather than in Claude's Provider Detail alongside `glanceMetric`.
-    // All three default to the behavior shipped before they existed, so an
-    // upgrade never changes what an existing install looks like.
-
-    /// Pre-`menuBarStyle` installs' one choice — gauge with or without the
-    /// number. Only read at load time now, to derive `menuBarStyle` for an
-    /// install that never picked a style; never written again (same
-    /// "old keys stay inert" rule as the migrated notification keys).
-    var menuBarShowsPercentage: Bool = true
-    /// How the status item draws the primary account's usage. Defaults to
-    /// what shipped first (gauge + number); see `MenuBarStyle.migrated`.
-    var menuBarStyle: MenuBarStyle = .gaugeWithPercent
-    /// The windows the `multi` style lists, in order (1–3, filtered at
-    /// render time to the ones the primary account actually reports —
-    /// same live-options rule as `glanceMetric`).
-    var menuBarMetrics: [UsageWindow.Kind] = [.session, .weekly]
-    /// Draws the label in the window's `UsageLevel` color once it would be
-    /// yellow (above 70 % used) or red (above 85 % or provider-flagged critical)
-    /// on the dashboard. Off by default: the menu bar stays monochrome
-    /// unless asked. The key keeps its first name.
-    var menuBarTintsAtDanger: Bool = false
-    /// Appends the primary window's reset countdown ("· 1h 20m").
-    var menuBarShowsResetCountdown: Bool = false
-    /// Prefixes the primary account's nickname — only meaningful with
-    /// two or more accounts, and only offered then.
-    var menuBarShowsAccountName: Bool = false
-    /// Whether the menu bar status item is present at all. Hiding it and the
-    /// Dock icon together leaves no visible UI — relaunching the app is the
-    /// way back in (see `AppDelegate.applicationShouldHandleReopen`).
-    var statusItemVisible: Bool = true
-    /// Drops the Dock icon and Cmd-Tab entry (`.accessory` activation
-    /// policy), turning AIMeter into a menu-bar-only utility. The app keeps
-    /// running and refreshing either way.
-    var hideDockIcon: Bool = false
-    /// The daily check for a newer Mac release (`AppUpdater`). On by
-    /// default, so it loads through the presence check.
-    var checksForUpdates: Bool = true
-    /// The icon picked in Settings, which on the Mac only the Dock can
-    /// show (`AppIconChoice`), so it is put back at every launch. iOS
-    /// keeps no key: the system's `alternateIconName` is the state there,
-    /// the way Open at Login has none on the Mac.
-    var appIcon: AppIconChoice = .sunset
-
-    // MARK: Notch island (macOS)
-    //
-    // The black panel fused to the notch (or, on a screen without one, a
-    // notch or a pill the island draws itself) — see "Notch island" under
-    // the presentation rules. Keys and loading live in
-    // `PreferencesStore+NotchIsland.swift`. On
-    // by default on a Mac with a notch, the one deliberate exception to
-    // "defaults never change an existing install", decided once by the
-    // migration gated on `notchIslandMigrated`. The status item stays
-    // until the user opens the island for the first time
-    // (`notchIslandDiscovered`); the Settings toggle couples the two
-    // immediately (`PreferencesModel.setNotchIsland(enabled:)`).
-
-    /// Whether the island is shown at all. The struct's default is off;
-    /// `AccountMigration.migrateNotchIslandIfNeeded` writes the real
-    /// default once, at the first launch of 2.0: on for a Mac with a
-    /// notch, off for one without (a drawn island is opt-in there — a
-    /// shape on the menu bar of an iMac is not a quiet upgrade).
-    var notchIslandEnabled: Bool = false
-    /// Which wings open beside the notch on the peek (and head the
-    /// expanded island): both, left or right. Collapsed, the island is
-    /// always the notch alone, so no menu title or status item is ever
-    /// covered until the cursor asks. A drawn shape (no notch) has no
-    /// sides and ignores this.
-    var notchIslandLayout: NotchIslandLayout = .bothSides
-    /// The windows the collapsed wings list, in order (1–3, filtered at
-    /// render time to what the primary account reports — the same
-    /// live-options rule as `menuBarMetrics`).
-    var notchIslandMetrics: [UsageWindow.Kind] = [.session, .weekly]
-    /// Whether hovering opens the expanded island; off, only a click does.
-    var notchIslandExpandsOnHover: Bool = true
-    /// The one-time upgrade step that decided `notchIslandEnabled` from
-    /// the hardware has run — written by `AccountMigration`, never cleared.
-    var notchIslandMigrated: Bool = false
-    /// The first-run reveal (the island peeks by itself once, with a
-    /// caption) has been shown.
-    var notchIslandRevealed: Bool = false
-    /// The user has opened the island at least once. Until then the
-    /// menu bar icon stays, whatever the coupling: an upgrade must not
-    /// take the icon away before the user has found its replacement.
-    var notchIslandDiscovered: Bool = false
-    /// How long the cursor rests on the island before it peeks, in
-    /// seconds (`NotchIslandInteraction.dwellRange`; boring.notch's
-    /// "hover delay"). Every screen.
-    var notchIslandHoverDelay: Double = NotchIslandInteraction.defaultDwellSeconds
-    /// The island is left out of screenshots and screen recordings
-    /// (`NSWindow.sharingType = .none`). Every screen.
-    var notchIslandHiddenFromCapture: Bool = false
-    /// Screen without a notch: how the island is drawn there — a notch
-    /// fused to the top edge, or a pill floating in the menu bar.
-    var notchIslandForm: NotchIslandForm = .notch
-    /// Screen without a notch: whether the island follows the menu bar's
-    /// height or `notchIslandCustomHeight`.
-    var notchIslandHeightMode: NotchIslandHeightMode = .menuBar
-    /// Screen without a notch: the custom height, in points (clamped to
-    /// `NotchIslandGeometry.heightRange` on load and on write).
-    var notchIslandCustomHeight: Double = 36
-    /// Screen without a notch: the collapsed island stays out of sight
-    /// until the cursor comes to its place at the top edge.
-    var notchIslandHidesUntilHover: Bool = false
-    /// Screen without a notch: the collapsed island steps aside while a
-    /// full-screen app has the screen — there is no menu bar to sit in
-    /// then, and it would cover the app. On by default, so it loads
-    /// through the presence check.
-    var notchIslandHidesInFullScreen: Bool = true
 
     /// Whether refreshes also read the provider's public status page, so
     /// an outage shows as an incident instead of an account error. On by
     /// default — it is an anonymous GET of a public page, disclosed in
     /// Privacy & data — which means it must load through the presence
-    /// check like the macOS chrome bools above.
+    /// check.
     var checksServiceStatus: Bool = true
     /// Whether the display preferences and every account's history go
     /// through the user's iCloud to their other devices (`CloudSync`).
@@ -253,57 +126,6 @@ struct Preferences: Sendable {
     /// The account closest to a limit first, everywhere accounts are
     /// listed (`AccountOrder`); off, the registry's order, the user's own.
     var ordersByUrgency: Bool = false
-    // MARK: Discreet mode (macOS)
-    //
-    // While on, the accounts in `discreetAccountIDs` leave the menu bar
-    // and the notch island, and Claude Code's sessions leave the island:
-    // what a colleague's glance at the screen at work would otherwise
-    // see. The Dashboard and the widgets keep showing everything.
-    var discreetMode: Bool = false
-    var discreetAccountIDs: Set<String> = []
-    // MARK: Claude Code usage (macOS)
-    //
-    // Off by default and opt-in: the CLI's logs are another app's files.
-    /// Whether AIMeter reads `~/.claude/projects` for token counts.
-    var claudeCodeUsageEnabled: Bool = false
-    /// The Dashboard's invitation was dismissed ("Not now") — a
-    /// tombstone, same shape as `autoDetectDeclined`.
-    var claudeCodeUsageDismissed: Bool = false
-    /// One "Claude Code today: …" line under the popover's accounts.
-    var menuBarShowsClaudeCodeLine: Bool = false
-    // MARK: Claude Code sessions (macOS)
-    //
-    // Keys and loading: `PreferencesStore+ClaudeSessions.swift`.
-    /// The island shows Claude Code's sessions: a mark beside the notch
-    /// while one works, and the sessions in the expanded island. On by
-    /// default (it reads only whether each session is working), so it
-    /// loads through the presence check.
-    var claudeSessionsEnabled: Bool = true
-    /// A pixel pet for each session beside the notch, rather than a
-    /// spinner and a count. On by default, so presence-checked.
-    var claudeSessionsPets: Bool = true
-    /// The session's name beside its pet while the island is collapsed,
-    /// the way Vibe Island's compact island reads. Off by default, so the
-    /// collapsed island stays short; the peek shows the name either way.
-    var claudeSessionsShowsName: Bool = false
-    /// Shrink the island before it covers the open app's menus, which
-    /// takes the Accessibility permission (the status items on the right
-    /// are always spared). Off by default.
-    var claudeSessionsAvoidsMenus: Bool = false
-    /// The Accessibility permission has worked for AIMeter at least once,
-    /// so a copy macOS doesn't trust can tell a permission held by a copy
-    /// signed another way from one never given (`AccessibilityState`).
-    var claudeSessionsAccessibilityConfirmed: Bool = false
-    /// A notification when a session needs the user: it asked for
-    /// permission, which only the hooks tell. A turn ending is not
-    /// announced. Off by default.
-    var claudeSessionsNotify: Bool = false
-    /// "Answer from the island": approve or deny a session's permission
-    /// prompt and stop a session from the island, through the hooks'
-    /// answering mode (`ClaudeCodeHooks.Mode.answering`). Off by default.
-    var claudeSessionsAnswers: Bool = false
-    /// The island's invitation to install the hooks was dismissed.
-    var claudeSessionsHooksDismissed: Bool = false
 
     var lastScheduledAt: Date?
 
@@ -316,27 +138,10 @@ struct Preferences: Sendable {
         static let glanceMetric = "pref.glanceMetric"
         static let showCreditsAmount = "pref.showCreditsAmount"
         static let usageColors = "pref.usageColors"
-        static let primaryAccountID = "pref.primaryAccountID"
-        static let menuBarShowsPercentage = "pref.menuBarShowsPercentage"
-        static let menuBarStyle = "pref.menuBarStyle"
-        static let menuBarMetrics = "pref.menuBarMetrics"
-        static let menuBarTintsAtDanger = "pref.menuBarTintsAtDanger"
-        static let menuBarShowsResetCountdown = "pref.menuBarShowsResetCountdown"
-        static let menuBarShowsAccountName = "pref.menuBarShowsAccountName"
-        static let statusItemVisible = "pref.statusItemVisible"
-        static let hideDockIcon = "pref.hideDockIcon"
-        static let checksForUpdates = "pref.checksForUpdates"
-        static let appIcon = "pref.appIcon"
         static let checksServiceStatus = "pref.checksServiceStatus"
         static let cloudSync = "pref.cloudSync"
         static let ordersByUrgency = "pref.ordersByUrgency"
-        static let discreetMode = "pref.discreetMode"
-        static let discreetAccountIDs = "pref.discreetAccountIDs"
-        static let claudeCodeUsageEnabled = "pref.claudeCodeUsageEnabled"
-        static let claudeCodeUsageDismissed = "pref.claudeCodeUsageDismissed"
-        static let menuBarShowsClaudeCodeLine = "pref.menuBarShowsClaudeCodeLine"
         static let lastScheduledAt = "pref.lastScheduledAt"
-        static let autoDetectDeclined = "pref.autoDetectDeclined"
     }
 
     static var groupDefaults: UserDefaults {
@@ -365,37 +170,9 @@ struct Preferences: Sendable {
         }
         prefs.showCreditsAmount = defaults.bool(forKey: Keys.showCreditsAmount)
         prefs.usageColors = bool(defaults, Keys.usageColors, default: true)
-        prefs.primaryAccountID = defaults.string(forKey: Keys.primaryAccountID)
-        prefs.menuBarShowsPercentage = bool(defaults, Keys.menuBarShowsPercentage, default: true)
-        if let raw = defaults.string(forKey: Keys.menuBarStyle), let value = MenuBarStyle(rawValue: raw) {
-            prefs.menuBarStyle = value
-        } else {
-            // No style ever chosen: keep exactly what the old toggle showed.
-            prefs.menuBarStyle = MenuBarStyle.migrated(showsPercentage: prefs.menuBarShowsPercentage)
-        }
-        if let raw = defaults.stringArray(forKey: Keys.menuBarMetrics) {
-            let kinds = raw.compactMap(UsageWindow.Kind.init(storageKey:))
-            if !kinds.isEmpty { prefs.menuBarMetrics = kinds }
-        }
-        prefs.menuBarTintsAtDanger = defaults.bool(forKey: Keys.menuBarTintsAtDanger)
-        prefs.menuBarShowsResetCountdown = defaults.bool(forKey: Keys.menuBarShowsResetCountdown)
-        prefs.menuBarShowsAccountName = defaults.bool(forKey: Keys.menuBarShowsAccountName)
-        prefs.statusItemVisible = bool(defaults, Keys.statusItemVisible, default: true)
-        prefs.hideDockIcon = bool(defaults, Keys.hideDockIcon, default: false)
-        prefs.checksForUpdates = bool(defaults, Keys.checksForUpdates, default: true)
-        if let raw = defaults.string(forKey: Keys.appIcon), let value = AppIconChoice(rawValue: raw) {
-            prefs.appIcon = value
-        }
-        prefs.loadNotchIsland(from: defaults)
         prefs.checksServiceStatus = bool(defaults, Keys.checksServiceStatus, default: true)
         prefs.cloudSync = defaults.bool(forKey: Keys.cloudSync)
         prefs.ordersByUrgency = defaults.bool(forKey: Keys.ordersByUrgency)
-        prefs.discreetMode = defaults.bool(forKey: Keys.discreetMode)
-        prefs.discreetAccountIDs = Set(defaults.stringArray(forKey: Keys.discreetAccountIDs) ?? [])
-        prefs.claudeCodeUsageEnabled = defaults.bool(forKey: Keys.claudeCodeUsageEnabled)
-        prefs.claudeCodeUsageDismissed = defaults.bool(forKey: Keys.claudeCodeUsageDismissed)
-        prefs.menuBarShowsClaudeCodeLine = defaults.bool(forKey: Keys.menuBarShowsClaudeCodeLine)
-        prefs.loadClaudeSessions(from: defaults)
         if let timestamp = defaults.object(forKey: Keys.lastScheduledAt) as? Date {
             prefs.lastScheduledAt = timestamp
         }
@@ -415,16 +192,4 @@ struct Preferences: Sendable {
         groupDefaults.set(date, forKey: Keys.lastScheduledAt)
     }
 
-    /// macOS only in meaning: the user explicitly disconnected the account
-    /// that mirrors Claude Code's own login. Without this tombstone
-    /// `UsageModel.loadAccounts()` would speculatively re-mirror that login
-    /// on the very next launch (the CLI's Keychain item is still there —
-    /// disconnecting only clears the app's fallback copy), so the account
-    /// the user just removed would quietly come back. Cleared by the
-    /// "Use Claude Code's login instead" affordance on the disconnected
-    /// Dashboard card.
-    static var autoDetectDeclined: Bool {
-        get { groupDefaults.bool(forKey: Keys.autoDetectDeclined) }
-        set { groupDefaults.set(newValue, forKey: Keys.autoDetectDeclined) }
-    }
 }

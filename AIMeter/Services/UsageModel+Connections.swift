@@ -106,13 +106,6 @@ extension UsageModel {
         guard let service = services[accountID] else { return false }
         do {
             try service.disconnect()
-            if service.account.credentialStrategy == .autoDetected, service.account.providerID == ClaudeProvider.providerID {
-                // See `Preferences.autoDetectDeclined`: without this the
-                // CLI login comes right back on the next launch. Only
-                // Claude's is ever mirrored speculatively; Codex's is
-                // connected on purpose and stays gone when removed.
-                Preferences.autoDetectDeclined = true
-            }
             if let identity = service.account.syncIdentity ?? registry?.account(for: accountID)?.syncIdentity {
                 cloud?.removeHistory(identity: identity)
             }
@@ -164,18 +157,8 @@ extension UsageModel {
         guard isDemoMode else { return }
         isDemoMode = false
         connectionError = nil
-        endDemoLiveActivities()
         loadAccounts()
     }
 
-    /// A Live Activity turned on in the demo counts down fabricated
-    /// figures, so it ends with the demo and its switches go with it; one
-    /// a demo left running when the app was quit ends at the next launch.
-    func endDemoLiveActivities() {
-        for (account, _) in DemoUsageData.accounts() {
-            LiveActivityManager.end(accountID: account.accountID)
-            LiveActivityPreferences(accountID: account.accountID).clear()
-        }
-    }
 
 }

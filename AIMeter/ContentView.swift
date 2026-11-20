@@ -9,17 +9,6 @@ struct ContentView: View {
     /// The Dashboard's navigation, held here so the Mac's popover can open
     /// an account's detail in it (`AppChrome.openAccount`).
     @State private var path = NavigationPath()
-    /// The full tour at the first launch (see `Tour`), and again from
-    /// Settings (`.tourShowRequest`).
-    @State private var showsTour = Tour.dueAtLaunch()
-    /// The tour's last step asked to connect: the Dashboard's Connect sheet
-    /// opens once the tour is gone (`.tourConnectRequest`).
-    @State private var connectsAfterTour = false
-    /// This version's notes, once after the App Store installs it (the
-    /// Mac shows them in its update window instead); never over a first
-    /// launch's tour, which shows what is new as well.
-    @State private var whatsNew = Tour.dueAtLaunch() ? nil : WhatsNew.dueAtLaunch()
-
     var body: some View {
         dashboard
         .onChange(of: scenePhase) { _, phase in
@@ -39,29 +28,6 @@ struct ContentView: View {
                     // (throttled) so app and widgets update right away.
                     await model.refreshAllIfStale()
                 }
-            }
-        }
-        .sheet(item: $whatsNew, onDismiss: { WhatsNew.lastSeen = AppVersion.current }) { release in
-            WhatsNewSheet(release: release) { whatsNew = nil }
-                .withAppModels(model, prefs)
-                // Its features' cards show with the notes: offered.
-                .onAppear { Tour.markOffered(release.items.compactMap(\.tourFeature)) }
-        }
-        .fullScreenCover(isPresented: $showsTour, onDismiss: {
-            guard connectsAfterTour else { return }
-            connectsAfterTour = false
-            NotificationCenter.default.post(name: .tourConnectRequest, object: nil)
-        }) {
-            TourCover { connect in
-                Tour.finish()
-                connectsAfterTour = connect
-                showsTour = false
-            }
-            .withAppModels(model, prefs)
-        }
-        .task {
-            for await _ in NotificationCenter.default.notifications(named: .tourShowRequest) {
-                showsTour = true
             }
         }
         .task {

@@ -21,7 +21,7 @@ final class PreferencesModel {
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var widgetReload: Task<Void, Never>?
     /// Called with the widgets' reload, once per burst: the app's model
-    /// hands it to the Watch bridge; the widgets and the Watch never set it.
+    /// hands it to iCloud sync; the widgets never set it.
     static var onWidgetVisibleChange: (() -> Void)?
 
     init(defaults: UserDefaults = Preferences.groupDefaults) {
@@ -61,114 +61,6 @@ final class PreferencesModel {
         get { stored.usageColors }
         set { guard stored.usageColors != newValue else { return }; stored.usageColors = newValue; persist(newValue, Preferences.Keys.usageColors, reloadsWidgets: true) }
     }
-    var primaryAccountID: String? {
-        get { stored.primaryAccountID }
-        set { guard stored.primaryAccountID != newValue else { return }; stored.primaryAccountID = newValue; persist(newValue, Preferences.Keys.primaryAccountID, reloadsWidgets: false) }
-    }
-    var menuBarStyle: MenuBarStyle {
-        get { stored.menuBarStyle }
-        set { guard stored.menuBarStyle != newValue else { return }; stored.menuBarStyle = newValue; persist(newValue.rawValue, Preferences.Keys.menuBarStyle, reloadsWidgets: false) }
-    }
-    var menuBarMetrics: [UsageWindow.Kind] {
-        get { stored.menuBarMetrics }
-        set { guard stored.menuBarMetrics != newValue else { return }; stored.menuBarMetrics = newValue; persist(newValue.map(\.storageKey), Preferences.Keys.menuBarMetrics, reloadsWidgets: false) }
-    }
-    var menuBarTintsAtDanger: Bool {
-        get { stored.menuBarTintsAtDanger }
-        set { guard stored.menuBarTintsAtDanger != newValue else { return }; stored.menuBarTintsAtDanger = newValue; persist(newValue, Preferences.Keys.menuBarTintsAtDanger, reloadsWidgets: false) }
-    }
-    var menuBarShowsResetCountdown: Bool {
-        get { stored.menuBarShowsResetCountdown }
-        set { guard stored.menuBarShowsResetCountdown != newValue else { return }; stored.menuBarShowsResetCountdown = newValue; persist(newValue, Preferences.Keys.menuBarShowsResetCountdown, reloadsWidgets: false) }
-    }
-    var menuBarShowsAccountName: Bool {
-        get { stored.menuBarShowsAccountName }
-        set { guard stored.menuBarShowsAccountName != newValue else { return }; stored.menuBarShowsAccountName = newValue; persist(newValue, Preferences.Keys.menuBarShowsAccountName, reloadsWidgets: false) }
-    }
-    var statusItemVisible: Bool {
-        get { stored.statusItemVisible }
-        set { guard stored.statusItemVisible != newValue else { return }; stored.statusItemVisible = newValue; persist(newValue, Preferences.Keys.statusItemVisible, reloadsWidgets: false) }
-    }
-    var hideDockIcon: Bool {
-        get { stored.hideDockIcon }
-        set { guard stored.hideDockIcon != newValue else { return }; stored.hideDockIcon = newValue; persist(newValue, Preferences.Keys.hideDockIcon, reloadsWidgets: false) }
-    }
-    var notchIslandEnabled: Bool {
-        get { stored.notchIslandEnabled }
-        set { guard stored.notchIslandEnabled != newValue else { return }; stored.notchIslandEnabled = newValue; persist(newValue, Preferences.Keys.notchIslandEnabled, reloadsWidgets: false) }
-    }
-    var notchIslandLayout: NotchIslandLayout {
-        get { stored.notchIslandLayout }
-        set { guard stored.notchIslandLayout != newValue else { return }; stored.notchIslandLayout = newValue; persist(newValue.rawValue, Preferences.Keys.notchIslandLayout, reloadsWidgets: false) }
-    }
-    var notchIslandMetrics: [UsageWindow.Kind] {
-        get { stored.notchIslandMetrics }
-        set { guard stored.notchIslandMetrics != newValue else { return }; stored.notchIslandMetrics = newValue; persist(newValue.map(\.storageKey), Preferences.Keys.notchIslandMetrics, reloadsWidgets: false) }
-    }
-    var notchIslandExpandsOnHover: Bool {
-        get { stored.notchIslandExpandsOnHover }
-        set { guard stored.notchIslandExpandsOnHover != newValue else { return }; stored.notchIslandExpandsOnHover = newValue; persist(newValue, Preferences.Keys.notchIslandExpandsOnHover, reloadsWidgets: false) }
-    }
-    var notchIslandMigrated: Bool {
-        get { stored.notchIslandMigrated }
-        set { guard stored.notchIslandMigrated != newValue else { return }; stored.notchIslandMigrated = newValue; persist(newValue, Preferences.Keys.notchIslandMigrated, reloadsWidgets: false) }
-    }
-    var notchIslandRevealed: Bool {
-        get { stored.notchIslandRevealed }
-        set { guard stored.notchIslandRevealed != newValue else { return }; stored.notchIslandRevealed = newValue; persist(newValue, Preferences.Keys.notchIslandRevealed, reloadsWidgets: false) }
-    }
-    var notchIslandDiscovered: Bool {
-        get { stored.notchIslandDiscovered }
-        set { guard stored.notchIslandDiscovered != newValue else { return }; stored.notchIslandDiscovered = newValue; persist(newValue, Preferences.Keys.notchIslandDiscovered, reloadsWidgets: false) }
-    }
-    var notchIslandHoverDelay: Double {
-        get { stored.notchIslandHoverDelay }
-        set {
-            let value = NotchIslandInteraction.clampedDwell(seconds: newValue)
-            guard stored.notchIslandHoverDelay != value else { return }
-            stored.notchIslandHoverDelay = value
-            persist(value, Preferences.Keys.notchIslandHoverDelay, reloadsWidgets: false)
-        }
-    }
-    var notchIslandHiddenFromCapture: Bool {
-        get { stored.notchIslandHiddenFromCapture }
-        set { guard stored.notchIslandHiddenFromCapture != newValue else { return }; stored.notchIslandHiddenFromCapture = newValue; persist(newValue, Preferences.Keys.notchIslandHiddenFromCapture, reloadsWidgets: false) }
-    }
-    var notchIslandForm: NotchIslandForm {
-        get { stored.notchIslandForm }
-        set { guard stored.notchIslandForm != newValue else { return }; stored.notchIslandForm = newValue; persist(newValue.rawValue, Preferences.Keys.notchIslandForm, reloadsWidgets: false) }
-    }
-    var notchIslandHeightMode: NotchIslandHeightMode {
-        get { stored.notchIslandHeightMode }
-        set { guard stored.notchIslandHeightMode != newValue else { return }; stored.notchIslandHeightMode = newValue; persist(newValue.rawValue, Preferences.Keys.notchIslandHeightMode, reloadsWidgets: false) }
-    }
-    var notchIslandCustomHeight: Double {
-        get { stored.notchIslandCustomHeight }
-        set {
-            let value = Double(NotchIslandGeometry.clampedHeight(CGFloat(newValue)))
-            guard stored.notchIslandCustomHeight != value else { return }
-            stored.notchIslandCustomHeight = value
-            persist(value, Preferences.Keys.notchIslandCustomHeight, reloadsWidgets: false)
-        }
-    }
-    var notchIslandHidesUntilHover: Bool {
-        get { stored.notchIslandHidesUntilHover }
-        set { guard stored.notchIslandHidesUntilHover != newValue else { return }; stored.notchIslandHidesUntilHover = newValue; persist(newValue, Preferences.Keys.notchIslandHidesUntilHover, reloadsWidgets: false) }
-    }
-    var notchIslandHidesInFullScreen: Bool {
-        get { stored.notchIslandHidesInFullScreen }
-        set { guard stored.notchIslandHidesInFullScreen != newValue else { return }; stored.notchIslandHidesInFullScreen = newValue; persist(newValue, Preferences.Keys.notchIslandHidesInFullScreen, reloadsWidgets: false) }
-    }
-    /// The geometry options a screen without a notch is laid out with.
-    var notchIslandOptions: NotchIslandGeometry.Options { stored.notchIslandOptions }
-    var checksForUpdates: Bool {
-        get { stored.checksForUpdates }
-        set { guard stored.checksForUpdates != newValue else { return }; stored.checksForUpdates = newValue; persist(newValue, Preferences.Keys.checksForUpdates, reloadsWidgets: false) }
-    }
-    var appIcon: AppIconChoice {
-        get { stored.appIcon }
-        set { guard stored.appIcon != newValue else { return }; stored.appIcon = newValue; persist(newValue.rawValue, Preferences.Keys.appIcon, reloadsWidgets: false) }
-    }
     var checksServiceStatus: Bool {
         get { stored.checksServiceStatus }
         set { guard stored.checksServiceStatus != newValue else { return }; stored.checksServiceStatus = newValue; persist(newValue, Preferences.Keys.checksServiceStatus, reloadsWidgets: false) }
@@ -181,64 +73,6 @@ final class PreferencesModel {
         get { stored.ordersByUrgency }
         set { guard stored.ordersByUrgency != newValue else { return }; stored.ordersByUrgency = newValue; persist(newValue, Preferences.Keys.ordersByUrgency, reloadsWidgets: true) }
     }
-    var discreetMode: Bool {
-        get { stored.discreetMode }
-        set { guard stored.discreetMode != newValue else { return }; stored.discreetMode = newValue; persist(newValue, Preferences.Keys.discreetMode, reloadsWidgets: false) }
-    }
-    var discreetAccountIDs: Set<String> {
-        get { stored.discreetAccountIDs }
-        set { guard stored.discreetAccountIDs != newValue else { return }; stored.discreetAccountIDs = newValue; persist(Array(newValue).sorted(), Preferences.Keys.discreetAccountIDs, reloadsWidgets: false) }
-    }
-    /// Marks an account for discreet mode, or clears it.
-    func setDiscreet(_ hidden: Bool, accountID: String) {
-        var ids = discreetAccountIDs
-        if hidden { ids.insert(accountID) } else { ids.remove(accountID) }
-        discreetAccountIDs = ids
-    }
-    var claudeCodeUsageEnabled: Bool {
-        get { stored.claudeCodeUsageEnabled }
-        set { guard stored.claudeCodeUsageEnabled != newValue else { return }; stored.claudeCodeUsageEnabled = newValue; persist(newValue, Preferences.Keys.claudeCodeUsageEnabled, reloadsWidgets: false) }
-    }
-    var claudeCodeUsageDismissed: Bool {
-        get { stored.claudeCodeUsageDismissed }
-        set { guard stored.claudeCodeUsageDismissed != newValue else { return }; stored.claudeCodeUsageDismissed = newValue; persist(newValue, Preferences.Keys.claudeCodeUsageDismissed, reloadsWidgets: false) }
-    }
-    var menuBarShowsClaudeCodeLine: Bool {
-        get { stored.menuBarShowsClaudeCodeLine }
-        set { guard stored.menuBarShowsClaudeCodeLine != newValue else { return }; stored.menuBarShowsClaudeCodeLine = newValue; persist(newValue, Preferences.Keys.menuBarShowsClaudeCodeLine, reloadsWidgets: false) }
-    }
-    var claudeSessionsEnabled: Bool {
-        get { stored.claudeSessionsEnabled }
-        set { guard stored.claudeSessionsEnabled != newValue else { return }; stored.claudeSessionsEnabled = newValue; persist(newValue, Preferences.Keys.claudeSessionsEnabled, reloadsWidgets: false) }
-    }
-    var claudeSessionsPets: Bool {
-        get { stored.claudeSessionsPets }
-        set { guard stored.claudeSessionsPets != newValue else { return }; stored.claudeSessionsPets = newValue; persist(newValue, Preferences.Keys.claudeSessionsPets, reloadsWidgets: false) }
-    }
-    var claudeSessionsShowsName: Bool {
-        get { stored.claudeSessionsShowsName }
-        set { guard stored.claudeSessionsShowsName != newValue else { return }; stored.claudeSessionsShowsName = newValue; persist(newValue, Preferences.Keys.claudeSessionsShowsName, reloadsWidgets: false) }
-    }
-    var claudeSessionsAvoidsMenus: Bool {
-        get { stored.claudeSessionsAvoidsMenus }
-        set { guard stored.claudeSessionsAvoidsMenus != newValue else { return }; stored.claudeSessionsAvoidsMenus = newValue; persist(newValue, Preferences.Keys.claudeSessionsAvoidsMenus, reloadsWidgets: false) }
-    }
-    var claudeSessionsAccessibilityConfirmed: Bool {
-        get { stored.claudeSessionsAccessibilityConfirmed }
-        set { guard stored.claudeSessionsAccessibilityConfirmed != newValue else { return }; stored.claudeSessionsAccessibilityConfirmed = newValue; persist(newValue, Preferences.Keys.claudeSessionsAccessibilityConfirmed, reloadsWidgets: false) }
-    }
-    var claudeSessionsNotify: Bool {
-        get { stored.claudeSessionsNotify }
-        set { guard stored.claudeSessionsNotify != newValue else { return }; stored.claudeSessionsNotify = newValue; persist(newValue, Preferences.Keys.claudeSessionsNotify, reloadsWidgets: false) }
-    }
-    var claudeSessionsAnswers: Bool {
-        get { stored.claudeSessionsAnswers }
-        set { guard stored.claudeSessionsAnswers != newValue else { return }; stored.claudeSessionsAnswers = newValue; persist(newValue, Preferences.Keys.claudeSessionsAnswers, reloadsWidgets: false) }
-    }
-    var claudeSessionsHooksDismissed: Bool {
-        get { stored.claudeSessionsHooksDismissed }
-        set { guard stored.claudeSessionsHooksDismissed != newValue else { return }; stored.claudeSessionsHooksDismissed = newValue; persist(newValue, Preferences.Keys.claudeSessionsHooksDismissed, reloadsWidgets: false) }
-    }
 
     var lastScheduledAt: Date? {
         defaults.object(forKey: Preferences.Keys.lastScheduledAt) as? Date
@@ -248,28 +82,11 @@ final class PreferencesModel {
         resetStyle = resetStyle == .relative ? .absolute : .relative
     }
 
-    /// The island and the status item are coupled: turning the island on
-    /// hides the menu bar icon, turning it off brings the icon back. "Hide
-    /// menu bar icon" still works on its own afterwards — the two can be
-    /// shown together if the user re-enables the icon by hand. Settings
-    /// drives the chrome itself through `AppChrome.setNotchIsland`. A
-    /// deliberate switch here counts as having discovered the island.
-    func setNotchIsland(enabled: Bool) {
-        notchIslandEnabled = enabled
-        statusItemVisible = !enabled
-        if enabled { notchIslandDiscovered = true }
-    }
 
     /// The user opened the island for the first time: the coupling the
     /// upgrade deferred applies now — the icon goes, its replacement has
     /// been found. Returns whether this call was that first time.
     @discardableResult
-    func markNotchIslandDiscovered() -> Bool {
-        guard !notchIslandDiscovered else { return false }
-        notchIslandDiscovered = true
-        statusItemVisible = false
-        return true
-    }
 
     /// The current values as a plain `Preferences`, for code paths written
     /// against the value type (widgets' rendering helpers).

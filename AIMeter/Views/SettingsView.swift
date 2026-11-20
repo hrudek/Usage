@@ -64,8 +64,6 @@ struct SettingsView: View {
                         }
                         Divider().overlay(Theme.track)
                         SettingsGroupLink(title: String(localized: "About"), symbol: "info.circle") {
-                            TourSettings()
-                            SettingsGap()
                             FeedbackSettings()
                             SettingsGap()
                             OpenSourceSettings()

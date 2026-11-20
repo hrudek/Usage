@@ -18,12 +18,6 @@ struct RefreshService {
     /// nothing in this type knows which provider it's refreshing.
     let provider: any UsageProvider
     let credentialSource: any CredentialStore
-    /// Whether a fetch may *start* a Live Activity (iOS). ActivityKit only
-    /// honours `Activity.request` from the foreground app, so the
-    /// `BGAppRefreshTask` path (`UsageModel.refreshAllInBackground`) turns
-    /// this off — updating one already running is fine from anywhere in
-    /// the app process.
-    var allowsLiveActivityStart = true
     private let store: SnapshotStore?
     private let historyStore: UsageHistoryStore?
 
@@ -133,12 +127,6 @@ struct RefreshService {
         UsageRecorder.record(snapshot, for: account.accountID)
         // No `reloadAllTimelines()` here: the caller reloads once per sweep
         // (see `UsageModel.fetch(accountID:)`), not once per account.
-        LiveActivityManager.sync(
-            accountID: account.accountID, accountName: account.displayName, accountIcon: account.icon,
-            providerID: account.providerID, snapshot: snapshot,
-            enabled: LiveActivityPreferences(accountID: account.accountID).enabled,
-            mayStart: allowsLiveActivityStart
-        )
 
         await NotificationScheduler.rescheduleResets(
             for: snapshot, accountID: account.accountID, accountLabel: accountLabel, preferences: prefs
@@ -307,7 +295,5 @@ struct RefreshService {
         let accountID = account.accountID
         Task { await NotificationScheduler.removeAll(accountID: accountID) }
         NotificationPreferences(accountID: accountID).clear()
-        LiveActivityManager.end(accountID: accountID)
-        LiveActivityPreferences(accountID: accountID).clear()
     }
 }

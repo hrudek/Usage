@@ -36,8 +36,4 @@ struct AIMeterApp: App {
     /// Identifies the dashboard scene so the macOS AppDelegate can reopen it
     /// by id after both icons have been hidden.
     static let dashboardWindowID = "dashboard"
-    /// The macOS update window (`UpdateWindow`).
-    static let updateWindowID = "update"
-    /// The macOS tour window (`TourWindow`).
-    static let tourWindowID = "tour"
 }

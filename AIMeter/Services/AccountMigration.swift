@@ -47,20 +47,6 @@ enum AccountMigration {
         }
     }
 
-    /// 2.0's notch island is on by default on a Mac with a notch — the
-    /// one deliberate exception to "defaults never change an existing
-    /// install" (see "Notch island prefs" in the repo-root CLAUDE.md) —
-    /// and off on one without, where the floating pill stays opt-in.
-    /// Decided here once, from the hardware, gated on its own key. The
-    /// status item is *not* touched: it stays until the user opens the
-    /// island for the first time (`PreferencesModel.markNotchIslandDiscovered`),
-    /// so an upgrade never removes the icon before its replacement has
-    /// been found.
-    static func migrateNotchIslandIfNeeded(defaults: UserDefaults, hasNotch: Bool) {
-        guard defaults.object(forKey: Preferences.Keys.notchIslandMigrated) == nil else { return }
-        defaults.set(hasNotch, forKey: Preferences.Keys.notchIslandEnabled)
-        defaults.set(true, forKey: Preferences.Keys.notchIslandMigrated)
-    }
 
     private static func copyIfNeeded(_ oldKey: String, to newKey: String, in defaults: UserDefaults) {
         guard defaults.object(forKey: newKey) == nil,

@@ -137,17 +137,9 @@ struct DashboardView: View {
             if UserDefaults.standard.bool(forKey: "AIMeterShowSettings") { showingSettings = true }
         }
         #endif
-        // "Show the tour" closes Settings first; the tour opens once the
-        // sheet is gone.
-        .sheet(isPresented: $showingSettings, onDismiss: Tour.deliverPendingShow) {
+        .sheet(isPresented: $showingSettings) {
             SettingsSheet()
                 .withAppModels(model, prefs)
-        }
-        // The tour's last step: connect, once the tour has closed.
-        .task {
-            for await _ in NotificationCenter.default.notifications(named: .tourConnectRequest) {
-                showingConnect = true
-            }
         }
         .sheet(isPresented: $showingConnect) {
             ConnectAccountSheet()

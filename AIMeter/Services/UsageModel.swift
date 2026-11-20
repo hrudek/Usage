@@ -149,7 +149,6 @@ final class UsageModel {
         loadStoredServiceStatus()
         guard platformServices else { return }
         AppEnvironment.shared = self
-        endDemoLiveActivities()
         // The other devices draw with the display preferences too.
         PreferencesModel.onWidgetVisibleChange = { [weak self] in
             self?.cloud?.pushPreferences(Preferences.load())
@@ -197,11 +196,7 @@ final class UsageModel {
         let fetched = await withTaskGroup(of: Bool.self) { group in
             for account in allAccounts {
                 group.addTask { @MainActor in
-                    var service = RefreshService(account: account)
-                    // ActivityKit refuses `Activity.request` from a
-                    // background task; updates to a running one still go
-                    // through.
-                    service.allowsLiveActivityStart = false
+                    let service = RefreshService(account: account)
                     return (try? await service.refresh(accountLabel: label(account))) != nil
                 }
             }

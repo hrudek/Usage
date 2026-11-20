@@ -89,28 +89,6 @@ final class WindowSlotsMultiProviderTests: XCTestCase {
         XCTAssertEqual(UsageSnapshot.glanceMetric(.session, for: nil, modelSlotFallback: .auto), .session)
     }
 
-    func testTheMenuBarAndTheIslandReadTheFirstWindowOfAnAccountWithoutTheChosenOne() {
-        let label = MenuBarLabelModel(
-            snapshot: copilot(), displayMode: .used, style: .gaugeWithPercent, metric: .session, metrics: [.session, .weekly],
-            modelSlotFallback: .auto, tintsAtDanger: false, showsCountdown: false, accountName: nil, now: now
-        )
-        XCTAssertEqual(label.text, "38%")
-        XCTAssertTrue(label.accessibilityLabel.contains("Premium"), label.accessibilityLabel)
-
-        let multi = MenuBarLabelModel(
-            snapshot: codexFree(), displayMode: .used, style: .multi, metric: .session, metrics: [.session],
-            modelSlotFallback: .auto, tintsAtDanger: false, showsCountdown: false, accountName: nil, now: now
-        )
-        XCTAssertEqual(multi.text, "W 12%")
-
-        let island = NotchIslandModel(
-            accounts: [.init(account: .init(accountID: "g1", providerID: "copilot", displayName: "Copilot", credentialStrategy: .managed), snapshot: copilot())],
-            primaryID: "g1", displayMode: .used, resetStyle: .relative, modelSlotFallback: .auto, showCreditsAmount: false,
-            usageColors: true, metrics: [.session, .weekly], glanceMetric: .session, layout: .bothSides, incident: nil, now: now
-        )
-        XCTAssertEqual(island.collapsed.left.map(\.label), ["Prem"])
-        XCTAssertEqual(island.collapsed.left.first?.percent, "38%")
-    }
 }
 
 final class WindowTitleTests: XCTestCase {
@@ -144,12 +122,4 @@ final class WindowTitleTests: XCTestCase {
         XCTAssertEqual(snapshot.title(for: .session), "5-hour session", "the kind's own when the account has no such window")
     }
 
-    func testTheMenuBarAbbreviatesQuotasApart() {
-        XCTAssertEqual(MenuBarLabelModel.abbreviation(.quota("premium_interactions")), "P")
-        XCTAssertEqual(MenuBarLabelModel.abbreviation(.quota("chat")), "Ch")
-        XCTAssertEqual(MenuBarLabelModel.abbreviation(.quota("completions")), "Co")
-        XCTAssertEqual(NotchIslandModel.label(for: .quota("completions"), duration: 30 * 86400, compact: true), "Comp")
-        XCTAssertEqual(NotchIslandModel.label(for: .quota("completions"), duration: 30 * 86400, compact: false), "Completions")
-        XCTAssertEqual(NotchIslandModel.label(for: .weekly, duration: 30 * 86400, compact: true), "30d")
-    }
 }

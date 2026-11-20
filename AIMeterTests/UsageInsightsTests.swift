@@ -59,32 +59,3 @@ final class UsageInsightsTests: XCTestCase {
     }
 }
 
-/// Which window a Live Activity follows.
-@MainActor
-final class LiveActivityWindowTests: XCTestCase {
-    private let now = Date(timeIntervalSince1970: 1_800_000_000)
-
-    func testTheSessionWhileTheAccountHasOneAndNothingWhileItIsIdle() {
-        let busy = UsageSnapshot.make(windows: [.make(.session, used: 20, resetsIn: 3_600, now: now), .make(.weekly, used: 90, resetsIn: 86_400, now: now)])
-        XCTAssertEqual(UsageInsights.liveActivityWindow(in: busy, now: now)?.kind, .session)
-
-        // An idle session ends the activity even with a busy week: the
-        // week is followed only by an account that has no session at all.
-        let idle = UsageSnapshot.make(windows: [.make(.session, used: 0), .make(.weekly, used: 90, resetsIn: 86_400, now: now)])
-        XCTAssertNil(UsageInsights.liveActivityWindow(in: idle, now: now))
-    }
-
-    /// Ultra, Codex Free, Copilot: the window closest to its limit.
-    func testWithNoSessionTheWindowClosestToItsLimit() {
-        let ultra = UsageSnapshot.make(windows: [
-            .make(.weekly, used: 9, resetsIn: 5 * 86_400, now: now),
-            .make(.modelSpecific("Fable"), used: 11, resetsIn: 5 * 86_400, now: now),
-        ])
-        XCTAssertEqual(UsageInsights.liveActivityWindow(in: ultra, now: now)?.kind, .modelSpecific("Fable"))
-
-        let unused = UsageSnapshot.make(windows: [.make(.weekly, used: 0, resetsIn: 86_400, now: now)])
-        XCTAssertNil(UsageInsights.liveActivityWindow(in: unused, now: now))
-        let past = UsageSnapshot.make(windows: [.make(.weekly, used: 40, resetsIn: -60, now: now)])
-        XCTAssertNil(UsageInsights.liveActivityWindow(in: past, now: now))
-    }
-}
