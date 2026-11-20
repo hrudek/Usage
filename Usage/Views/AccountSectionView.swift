@@ -41,15 +41,16 @@ struct AccountSectionView: View {
     @Environment(UsageModel.self) private var model
     @Environment(PreferencesModel.self) private var prefs
     @Environment(\.dynamicTypeSize) private var typeSize
-    @Environment(\.accountSelection) private var selection
+    @Environment(DashboardActions.self) private var actions
+    @Environment(\.selectsAccounts) private var selectsAccounts
 
     private var isSelected: Bool {
-        selection?.selectedID == usage.account.accountID
+        selectsAccounts && actions.shownAccountID(in: model) == usage.account.accountID
     }
 
     var body: some View {
         let layout = AccountCardLayout(snapshot: usage.snapshot, modelSlotFallback: prefs.modelSlotFallback)
-        VStack(alignment: .leading, spacing: 20) {
+        let card = VStack(alignment: .leading, spacing: 20) {
             header
             HeroWindowView(
                 kind: layout.hero.kind,
@@ -73,7 +74,26 @@ struct AccountSectionView: View {
         .padding(20)
         .frame(maxWidth: .infinity, maxHeight: inColumns ? .infinity : nil, alignment: .topLeading)
         .cardSurface()
-        .overlay { AccountDropHighlight(isTargeted: isSelected) }
+        if selectsAccounts {
+            selectable(card)
+        } else {
+            card
+        }
+    }
+
+    private func selectable(_ card: some View) -> some View {
+        card
+            .overlay { AccountDropHighlight(isTargeted: isSelected) }
+            .contentShape(.rect(cornerRadius: Theme.cardRadius))
+            .onTapGesture(perform: select)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+            .accessibilityAction { select() }
+            .accessibilityActions { accountMenu }
+    }
+
+    private func select() {
+        actions.selectedAccountID = usage.account.accountID
     }
 
     /// The error, the reconnect prompt, and "Updated X
@@ -111,15 +131,7 @@ struct AccountSectionView: View {
 
     @ViewBuilder
     private var headerLink: some View {
-        if let selection {
-            Button {
-                selection.select(usage.account.accountID)
-            } label: {
-                headerContent(showsChevron: false)
-            }
-            .buttonStyle(.plain)
-            .accessibilityAddTraits(isSelected ? .isSelected : [])
-        } else if linksToDetail {
+        if linksToDetail && !selectsAccounts {
             NavigationLink(value: usage.account.accountID) {
                 headerContent(showsChevron: true)
             }

@@ -85,17 +85,15 @@ struct ContentView: View {
 
     @ViewBuilder
     private func dashboard(_ layout: DashboardLayout, in size: CGSize) -> some View {
-        let accountIDs = model.accounts.map(\.account.accountID)
-        if layout.selectsAccounts,
-           let shown = DashboardLayout.shownAccount(selected: actions.selectedAccountID, in: accountIDs) {
+        if layout.selectsAccounts {
             Group {
                 if case .aboveAndBelow(let top, let gap) = layout {
-                    DashboardPanes(accountID: shown, top: top, gap: gap)
+                    DashboardPanes(top: top, gap: gap)
                 } else {
-                    DashboardSplitView(accountID: shown, sidebarWidth: DashboardLayout.sidebarWidth(in: size))
+                    DashboardSplitView(sidebarWidth: DashboardLayout.sidebarWidth(in: size))
                 }
             }
-            .environment(\.accountSelection, AccountSelection(selectedID: shown) { actions.selectedAccountID = $0 })
+            .environment(\.selectsAccounts, true)
         } else {
             stack
         }

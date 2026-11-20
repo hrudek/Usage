@@ -3,7 +3,6 @@ import SwiftUI
 /// The split view keeps its column boundary off the iPhone Duo's fold by
 /// itself.
 struct DashboardSplitView: View {
-    let accountID: String
     let sidebarWidth: CGFloat
 
     var body: some View {
@@ -14,14 +13,13 @@ struct DashboardSplitView: View {
                 )
                 .toolbar(removing: .sidebarToggle)
         } detail: {
-            AccountDetailStack(accountID: accountID, carriesActions: true)
+            AccountDetailStack(carriesActions: true)
         }
         .navigationSplitViewStyle(.balanced)
     }
 }
 
 struct DashboardPanes: View {
-    let accountID: String
     let top: CGFloat
     let gap: CGFloat
 
@@ -33,13 +31,12 @@ struct DashboardPanes: View {
             .frame(height: top)
             Color.clear
                 .frame(height: gap)
-            AccountDetailStack(accountID: accountID, carriesActions: false)
+            AccountDetailStack(carriesActions: false)
         }
     }
 }
 
 private struct AccountDetailStack: View {
-    let accountID: String
     let carriesActions: Bool
 
     @Environment(UsageModel.self) private var model
@@ -48,11 +45,14 @@ private struct AccountDetailStack: View {
     @State private var path = NavigationPath()
 
     var body: some View {
+        let accountID = actions.shownAccountID(in: model)
         NavigationStack(path: $path) {
-            detail
-                .navigationDestination(for: AccountSettingsRoute.self) { route in
-                    AccountSettingsPage(accountID: route.accountID, dismissesOnDisconnect: false)
-                }
+            if let accountID {
+                detail(accountID)
+                    .navigationDestination(for: AccountSettingsRoute.self) { route in
+                        AccountSettingsPage(accountID: route.accountID, dismissesOnDisconnect: false)
+                    }
+            }
         }
         .onChange(of: accountID) {
             path = NavigationPath()
@@ -60,7 +60,7 @@ private struct AccountDetailStack: View {
     }
 
     @ViewBuilder
-    private var detail: some View {
+    private func detail(_ accountID: String) -> some View {
         let page = ProviderDetailView(accountID: accountID).id(accountID)
         if carriesActions {
             @Bindable var actions = actions

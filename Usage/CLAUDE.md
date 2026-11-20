@@ -20,9 +20,11 @@ from the size class, its own size and the iPhone Duo's fold
 - `aboveAndBelow`: a fold across the display (the Duo partly open like a
   laptop). `DashboardPanes`: the cards above the fold, the detail below,
   nothing on the fold.
-Beside or below, a card's header selects its account (outlined in the
-accent) instead of pushing; the detail shows the selected account, or
-the first once that one is gone, and the "Open Account" intent selects.
+Beside or below, a tap anywhere on a card selects its account (outlined
+in the accent) instead of pushing, and the card is one VoiceOver element
+(selected trait, its menu as actions); the detail shows the selected
+account, or the first once that one is gone, and the "Open Account"
+intent selects.
 Only an account chosen explicitly (a card tapped beside or below, a
 detail opened in the stack, the intent) is the selection
 (`DashboardActions.selectedAccountID`); the first account shown by
