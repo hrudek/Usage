@@ -294,7 +294,7 @@ final class ClaudeProviderTests: XCTestCase {
         let source = StubCredentialSource(credentials: .valid, allowsRefresh: false)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
-        await assertThrows(UsageError.rateLimited(retryAfter: 30, body: "{}")) {
+        await assertThrows(UsageError.rateLimited(retryAfter: 30, body: nil)) {
             _ = try await provider.fetchUsage()
         }
     }

@@ -64,12 +64,9 @@ struct ClaudeOAuthClient: Sendable {
         statusCode == 400 || statusCode == 401
     }
 
-    /// Raw response text for error reporting, nil when there was none.
+    /// What an HTTP error shows of the response (`UsageError.displayBody`).
     static func body(_ data: Data) -> String? {
-        guard let text = String(data: data, encoding: .utf8)?
-            .trimmingCharacters(in: .whitespacesAndNewlines),
-              !text.isEmpty else { return nil }
-        return String(text.prefix(400))
+        UsageError.displayBody(data)
     }
 }
 

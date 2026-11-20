@@ -79,3 +79,30 @@ extension UsageError: LocalizedError {
         }
     }
 }
+
+public extension UsageError {
+    /// What an error may show of an endpoint's response body. A JSON body
+    /// gives only its `error` and `error_description` (Anthropic's error
+    /// object: its `type` and `message`), since a proxy or captive portal
+    /// can put anything in the rest; other text is cut to 400 characters.
+    /// Nil when there is nothing to show.
+    static func displayBody(_ data: Data) -> String? {
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            var parts: [String] = []
+            if let error = json["error"] as? String {
+                parts.append(error)
+            } else if let error = json["error"] as? [String: Any] {
+                parts += [error["type"], error["message"]].compactMap { $0 as? String }
+            }
+            if let description = json["error_description"] as? String {
+                parts.append(description)
+            }
+            let text = parts.joined(separator: ": ")
+            return text.isEmpty ? nil : String(text.prefix(400))
+        }
+        guard let text = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty else { return nil }
+        return String(text.prefix(400))
+    }
+}

@@ -36,16 +36,16 @@ final class ClaudeOAuthTests: XCTestCase {
     func testExchangeParsesCodeHashStateAndMapsCredentials() async throws {
         let transport = RecordingTransport(status: 200, body: """
         {"access_token": "sk-ant-oat01-abc", "refresh_token": "sk-ant-ort01-def",
-         "expires_in": 28800, "scope": "user:profile user:inference"}
+         "expires_in": 28800, "scope": "user:profile"}
         """)
         let session = ClaudeOAuth.startSession()
 
         let credentials = try await ClaudeOAuth(transport: transport)
-            .exchange(pastedCode: "  the-code#returned-state\n", session: session)
+            .exchange(pastedCode: "  the-code#\(session.state)\n", session: session)
 
         XCTAssertEqual(credentials.accessToken, "sk-ant-oat01-abc")
         XCTAssertEqual(credentials.refreshToken, "sk-ant-ort01-def")
-        XCTAssertEqual(credentials.scopes, ["user:profile", "user:inference"])
+        XCTAssertEqual(credentials.scopes, ["user:profile"])
         let expiry = try XCTUnwrap(credentials.expiresAt)
         XCTAssertEqual(expiry.timeIntervalSinceNow, 28800, accuracy: 60)
 
@@ -55,24 +55,25 @@ final class ClaudeOAuthTests: XCTestCase {
         )
         XCTAssertEqual(sent["grant_type"], "authorization_code")
         XCTAssertEqual(sent["code"], "the-code")
-        XCTAssertEqual(sent["state"], "returned-state")
+        XCTAssertEqual(sent["state"], session.state)
         XCTAssertEqual(sent["code_verifier"], session.codeVerifier)
         XCTAssertEqual(sent["client_id"], ClaudeOAuthClient.clientID)
     }
 
-    func testExchangeWithoutHashFallsBackToSessionState() async throws {
+    func testExchangeWithoutTheSessionsStateThrows() async {
         let transport = RecordingTransport(status: 200, body: """
         {"access_token": "at"}
         """)
         let session = ClaudeOAuth.startSession()
 
-        _ = try await ClaudeOAuth(transport: transport)
-            .exchange(pastedCode: "bare-code", session: session)
-
-        let body = try XCTUnwrap(transport.lastRequest?.httpBody)
-        let sent = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: String])
-        XCTAssertEqual(sent["code"], "bare-code")
-        XCTAssertEqual(sent["state"], session.state)
+        for pasted in ["bare-code", "the-code#other-state"] {
+            do {
+                _ = try await ClaudeOAuth(transport: transport).exchange(pastedCode: pasted, session: session)
+                XCTFail("expected invalidResponse for \(pasted)")
+            } catch {
+                XCTAssertNil(transport.lastRequest, "nothing sent for \(pasted)")
+            }
+        }
     }
 
     func testRejectedCodeThrowsNotAuthenticated() async {
@@ -81,7 +82,7 @@ final class ClaudeOAuthTests: XCTestCase {
 
         do {
             _ = try await ClaudeOAuth(transport: transport)
-                .exchange(pastedCode: "bad", session: session)
+                .exchange(pastedCode: "bad#\(session.state)", session: session)
             XCTFail("expected notAuthenticated")
         } catch let error as UsageError {
             XCTAssertEqual(error, .notAuthenticated)

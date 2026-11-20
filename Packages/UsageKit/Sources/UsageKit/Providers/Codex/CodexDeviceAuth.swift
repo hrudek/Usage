@@ -61,7 +61,8 @@ public struct CodexDeviceAuth: Sendable {
 
     /// One poll: the login once the user has approved, nil while they
     /// haven't (the server answers 403 or 404 until then). Call again
-    /// after `Code.interval`.
+    /// after `Code.interval`; a 429 or a `slow_down` error throws
+    /// `rateLimited`, which asks for a longer interval.
     public func poll(_ code: Code) async throws -> CodexCredentials? {
         var request = URLRequest(url: Self.tokenEndpoint)
         request.httpMethod = "POST"
@@ -74,7 +75,15 @@ public struct CodexDeviceAuth: Sendable {
             break
         case 403, 404:
             return nil
+        case 429:
+            throw UsageError.rateLimited(
+                retryAfter: response.value(forHTTPHeaderField: "Retry-After").flatMap(TimeInterval.init),
+                body: CodexOAuthClient.body(data)
+            )
         default:
+            if Self.errorCode(data) == "slow_down" {
+                throw UsageError.rateLimited(retryAfter: nil, body: "slow_down")
+            }
             throw UsageError.httpError(statusCode: response.statusCode, body: CodexOAuthClient.body(data))
         }
         let approved: ApprovedResponse
@@ -88,6 +97,13 @@ public struct CodexDeviceAuth: Sendable {
             codeVerifier: approved.codeVerifier,
             redirectURI: Self.redirectURI
         )
+    }
+
+    /// The `error` field of a JSON error body (a string, or an object's
+    /// `code`), whatever description comes with it.
+    private static func errorCode(_ data: Data) -> String? {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        return json["error"] as? String ?? (json["error"] as? [String: Any])?["code"] as? String
     }
 
     private struct UserCodeResponse: Decodable {

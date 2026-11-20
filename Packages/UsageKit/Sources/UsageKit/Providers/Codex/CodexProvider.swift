@@ -96,13 +96,9 @@ public struct CodexProvider: UsageProvider {
         "\(providerID):\(accountID)"
     }
 
-    /// Raw response body attached to HTTP errors so the UI can show what
-    /// the endpoint actually said; trimmed to keep error text bounded.
+    /// What an HTTP error shows of the response (`UsageError.displayBody`).
     private static func errorBody(_ data: Data) -> String? {
-        guard let text = String(data: data, encoding: .utf8)?
-            .trimmingCharacters(in: .whitespacesAndNewlines),
-              !text.isEmpty else { return nil }
-        return String(text.prefix(400))
+        UsageError.displayBody(data)
     }
 
     private func send(with credentials: CodexCredentials) async throws -> (Data, HTTPURLResponse) {

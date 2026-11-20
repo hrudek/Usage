@@ -62,6 +62,11 @@ public struct ClaudeOAuth: Sendable {
         guard let code = parts.first, !code.isEmpty else {
             throw UsageError.invalidResponse("invalid authentication code")
         }
+        // The callback page shows `code#state`; a state other than this
+        // session's means the code was not issued for this sign-in.
+        guard parts.count == 2, parts[1] == session.state else {
+            throw UsageError.invalidResponse("the code does not belong to this sign-in")
+        }
 
         var request = URLRequest(url: ClaudeOAuthClient.tokenEndpoint)
         request.httpMethod = "POST"
@@ -69,7 +74,7 @@ public struct ClaudeOAuth: Sendable {
         request.httpBody = try JSONEncoder().encode(ExchangeRequest(
             grantType: "authorization_code",
             code: code,
-            state: parts.count > 1 ? parts[1] : session.state,
+            state: session.state,
             clientId: ClaudeOAuthClient.clientID,
             redirectUri: Self.redirectURI,
             codeVerifier: session.codeVerifier
