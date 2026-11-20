@@ -24,7 +24,7 @@ struct RefreshAccountIntent: AppIntent {
 
     func perform() async throws -> some IntentResult {
         _ = await WidgetRefresher.refreshNow(accountID: accountID)
-        reloadWidgetsAndControl()
+        await reloadWidgetsAndControl()
         return .result()
     }
 }
@@ -44,7 +44,7 @@ struct RefreshAllAccountsIntent: AppIntent {
                 group.addTask { _ = await WidgetRefresher.refreshNow(accountID: account.accountID) }
             }
         }
-        reloadWidgetsAndControl()
+        await reloadWidgetsAndControl()
         return .result()
     }
 }

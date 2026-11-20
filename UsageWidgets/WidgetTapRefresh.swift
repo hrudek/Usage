@@ -1,5 +1,6 @@
 import SwiftUI
 import AppIntents
+import WidgetKit
 
 /// Puts back the system's content margins that every widget configuration
 /// turns off (`contentMarginsDisabled`), so a button can reach the edges.
