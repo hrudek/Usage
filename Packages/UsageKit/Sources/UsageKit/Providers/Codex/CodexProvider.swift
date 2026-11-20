@@ -20,6 +20,7 @@ public struct CodexProvider: UsageProvider {
     private let credentialSource: any CodexCredentialSource
     private let transport: any HTTPTransport
     private let userAgent: String
+    private let refresher: TokenRefresher
 
     /// How long a rejected refresh waits before its last look at the
     /// store (see `rotate`). Tests set it to zero.
@@ -28,15 +29,17 @@ public struct CodexProvider: UsageProvider {
     public init(
         credentialSource: any CodexCredentialSource,
         transport: any HTTPTransport = URLSessionTransport(),
-        userAgent: String = "AIMeter"
+        userAgent: String = "AIMeter",
+        refresher: TokenRefresher = .shared
     ) {
         self.credentialSource = credentialSource
         self.transport = transport
         self.userAgent = userAgent
+        self.refresher = refresher
     }
 
     public func fetchUsage() async throws -> UsageSnapshot {
-        var credentials = try await credentialSource.load()
+        var credentials = try await loadCredentials()
 
         if credentials.isExpired {
             credentials = try await refreshed(credentials)
@@ -114,35 +117,51 @@ public struct CodexProvider: UsageProvider {
         return try await transport.send(request)
     }
 
-    private func refreshed(_ credentials: CodexCredentials) async throws -> CodexCredentials {
-        guard credentialSource.allowsRefresh else {
-            // The Mac's mirror of the CLI's file can't refresh; the CLI
-            // rotates its own pair the next time it runs.
-            throw UsageError.tokenExpired
-        }
-        // OpenAI spends the refresh token the moment it accepts it, so the
-        // exchange and the save run in a task of their own, out of reach
-        // of the caller's cancellation (see `ClaudeProvider`).
-        let provider = self
-        return try await Task {
-            try await provider.rotate(credentials)
-        }.value
+    /// The login to fetch with; see `ClaudeProvider.loadCredentials`.
+    private func loadCredentials() async throws -> CodexCredentials {
+        let source = credentialSource
+        guard source.allowsRefresh else { return try await source.load() }
+        return try await refresher.credentials(
+            key: source.refreshKey,
+            load: { try await source.load() },
+            save: { try await source.save($0) }
+        )
     }
 
-    /// The same rotation race as Claude's: on iOS the widget refreshes the
-    /// same login against the same shared Keychain item, so a rejected
-    /// refresh is first checked against what the store holds now.
+    private func refreshed(_ credentials: CodexCredentials) async throws -> CodexCredentials {
+        guard credentialSource.allowsRefresh else {
+            // A reader that may not rotate (the widget extension) leaves
+            // the refresh to the app and keeps its last snapshot.
+            throw UsageError.tokenExpired
+        }
+        // OpenAI spends the refresh token the moment it accepts it and
+        // revokes the whole family when a spent one comes back, so one
+        // refresh per login at a time, in a task the caller's cancellation
+        // never reaches (see `ClaudeProvider`).
+        let provider = self
+        return try await refresher.refresh(key: credentialSource.refreshKey) {
+            try await provider.rotate(credentials)
+        }
+    }
+
+    /// The same rotation rules as Claude's: a pair rotated since this
+    /// fetch loaded is used as is, and a rejected refresh is checked
+    /// against what the store holds now.
     private func rotate(_ credentials: CodexCredentials) async throws -> CodexCredentials {
+        if let stored = try? await loadCredentials(),
+           stored.refreshToken != credentials.refreshToken, !stored.isExpired {
+            return stored
+        }
         let client = CodexOAuthClient(transport: transport)
         do {
             let updated = try await client.refresh(credentials)
-            try await credentialSource.save(updated)
+            await persist(updated, replacing: credentials)
             return updated
         } catch UsageError.notAuthenticated {
-            var latest = try await credentialSource.load()
+            var latest = try await loadCredentials()
             if latest.refreshToken == credentials.refreshToken {
                 try await Task.sleep(for: rejectionRecheckDelay)
-                latest = try await credentialSource.load()
+                latest = try await loadCredentials()
             }
             guard latest.refreshToken != credentials.refreshToken else {
                 throw UsageError.notAuthenticated
@@ -151,8 +170,15 @@ public struct CodexProvider: UsageProvider {
                 return latest
             }
             let updated = try await client.refresh(latest)
-            try await credentialSource.save(updated)
+            await persist(updated, replacing: latest)
             return updated
+        }
+    }
+
+    private func persist(_ updated: CodexCredentials, replacing old: CodexCredentials) async {
+        let source = credentialSource
+        await refresher.persist(updated, replacing: old.refreshToken, key: source.refreshKey) {
+            try await source.save($0)
         }
     }
 }

@@ -21,14 +21,22 @@ public struct ClaudeKeychainCredentialSource: ClaudeCredentialSource {
         accountID == legacyAccountID ? defaultKey : "claude.credentials.\(accountID)"
     }
 
-    public var allowsRefresh: Bool { true }
+    public let allowsRefresh: Bool
+    public var refreshKey: String { key }
 
     private let store: KeychainStore
     private let key: String
 
-    public init(store: KeychainStore, key: String = ClaudeKeychainCredentialSource.defaultKey) {
+    /// - Parameter allowsRefresh: false for a reader that must never
+    ///   rotate the login (the widget extension).
+    public init(
+        store: KeychainStore,
+        key: String = ClaudeKeychainCredentialSource.defaultKey,
+        allowsRefresh: Bool = true
+    ) {
         self.store = store
         self.key = key
+        self.allowsRefresh = allowsRefresh
     }
 
     public func load() async throws -> ClaudeCredentials {

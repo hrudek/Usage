@@ -28,6 +28,7 @@ public struct ClaudeProvider: UsageProvider {
     private let credentialSource: any ClaudeCredentialSource
     private let transport: any HTTPTransport
     private let userAgent: String
+    private let refresher: TokenRefresher
     private let profileCache = ProfileCache()
 
     /// How long a rejected refresh waits before its last look at the
@@ -37,18 +38,22 @@ public struct ClaudeProvider: UsageProvider {
     /// - Parameter userAgent: sent as `User-Agent`. Must look like a Claude
     ///   Code client (`claude-code/<version>`); other agents hit an
     ///   aggressively rate-limited bucket and get persistent 429s.
+    /// - Parameter refresher: where refreshes of one login wait for each
+    ///   other; every provider in the app shares `.shared`.
     public init(
         credentialSource: any ClaudeCredentialSource,
         transport: any HTTPTransport = URLSessionTransport(),
-        userAgent: String = "claude-code/2.1.212"
+        userAgent: String = "claude-code/2.1.212",
+        refresher: TokenRefresher = .shared
     ) {
         self.credentialSource = credentialSource
         self.transport = transport
         self.userAgent = userAgent
+        self.refresher = refresher
     }
 
     public func fetchUsage() async throws -> UsageSnapshot {
-        var credentials = try await credentialSource.load()
+        var credentials = try await loadCredentials()
 
         if credentials.isExpired {
             credentials = try await refreshed(credentials)
@@ -124,8 +129,8 @@ public struct ClaudeProvider: UsageProvider {
     /// `credentials` value this fetch started with, and that matters: only
     /// `subscriptionType`, `planCheckedAt` and `accountUUID` are ours to
     /// persist here, while the token fields may have been rotated in the
-    /// meantime by a concurrent fetch (on iOS the widget refreshes itself
-    /// alongside the app, against the same shared Keychain item). Saving
+    /// meantime by a concurrent fetch. The refresher runs the write once no
+    /// rotation of this login does, on what the store holds then. Saving
     /// the whole stale value would put a consumed refresh token back over
     /// the fresh one — and Anthropic rejects a consumed refresh token
     /// permanently, which bricks the account until the user signs in again.
@@ -148,13 +153,18 @@ public struct ClaudeProvider: UsageProvider {
         }
         let uuid = fetched.accountUUID ?? credentials.accountUUID
         profileCache.record(plan: plan, uuid: uuid)
-        // No re-read, no write: falling back to `credentials` would save
-        // exactly the stale pair this re-read exists to avoid.
-        if credentialSource.allowsRefresh, var latest = try? await credentialSource.load() {
-            latest.subscriptionType = plan
-            latest.planCheckedAt = Date()
-            latest.accountUUID = uuid
-            try? await credentialSource.save(latest)
+        if credentialSource.allowsRefresh {
+            let source = credentialSource
+            let checkedAt = Date()
+            await refresher.update(
+                key: source.refreshKey,
+                load: { try await source.load() },
+                save: { try await source.save($0) }
+            ) { latest in
+                latest.subscriptionType = plan
+                latest.planCheckedAt = checkedAt
+                latest.accountUUID = uuid
+            }
         }
         return (plan, uuid)
     }
@@ -189,48 +199,61 @@ public struct ClaudeProvider: UsageProvider {
         return request
     }
 
+    /// The login to fetch with. Where this source may rotate, it goes
+    /// through the refresher, which still has a rotated pair the store
+    /// refused to save.
+    private func loadCredentials() async throws -> ClaudeCredentials {
+        let source = credentialSource
+        guard source.allowsRefresh else { return try await source.load() }
+        return try await refresher.credentials(
+            key: source.refreshKey,
+            load: { try await source.load() },
+            save: { try await source.save($0) }
+        )
+    }
+
     private func refreshed(_ credentials: ClaudeCredentials) async throws -> ClaudeCredentials {
         guard credentialSource.allowsRefresh else {
-            // Read-only sources (macOS mirroring Claude Code) can't refresh;
-            // the next load may pick up a token Claude Code refreshed itself.
+            // A reader that may not rotate (the widget extension) leaves
+            // the refresh to the app and keeps its last snapshot.
             throw UsageError.tokenExpired
         }
         // Anthropic rotates the refresh token the moment it accepts it, so
-        // a refresh abandoned halfway (the view that started the sweep went
-        // away, a background task ran out of time) has already spent the
-        // stored token and throws its replacement away: the login is gone
-        // for good. The exchange and the save run in a task of their own,
-        // which the caller's cancellation never reaches.
+        // two refreshes of one login must never overlap: a second caller
+        // joins the one under way (`TokenRefresher`). The refresher runs
+        // the exchange and the save in a task of their own, so a cancelled
+        // sweep never throws away a pair Anthropic has already rotated.
         let provider = self
-        return try await Task {
+        return try await refresher.refresh(key: credentialSource.refreshKey) {
             try await provider.rotate(credentials)
-        }.value
+        }
     }
 
     private func rotate(_ credentials: ClaudeCredentials) async throws -> ClaudeCredentials {
+        // A refresh of this login that finished after `credentials` was
+        // loaded already spent their refresh token. Its pair is the one to
+        // use; sending the spent token again would only be rejected.
+        if let stored = try? await loadCredentials(),
+           stored.refreshToken != credentials.refreshToken, !stored.isExpired {
+            return stored
+        }
         let client = ClaudeOAuthClient(transport: transport)
         do {
             let updated = try await client.refresh(credentials)
-            try await credentialSource.save(updated)
+            await persist(updated, replacing: credentials)
             return updated
         } catch UsageError.notAuthenticated {
-            // Anthropic rotates the refresh token on every use, so a
-            // rejection doesn't only mean the login is dead: another
-            // process may have refreshed the same login while this fetch
-            // was in flight — on iOS the widget refreshes against the same
-            // shared Keychain item as the app, and both fire on foreground
-            // when the snapshot is stale. If the store now holds a
-            // different pair than the one that was just rejected, the
-            // loser of that race uses the winner's instead of declaring
-            // the account broken. The winner may not have saved yet (its
-            // request reached the endpoint first, but its answer and its
-            // write can land after this rejection), so an unchanged store
-            // gets one more look a moment later. Same token then means the
+            // A rejection doesn't only mean the login is dead: another
+            // device signed in with the same pair may have rotated it. If
+            // the store now holds a different pair than the one just
+            // rejected, use that instead of declaring the account broken.
+            // A save may still be landing, so an unchanged store gets one
+            // more look a moment later. Same token then means the
             // rejection is real.
-            var latest = try await credentialSource.load()
+            var latest = try await loadCredentials()
             if latest.refreshToken == credentials.refreshToken {
                 try await Task.sleep(for: rejectionRecheckDelay)
-                latest = try await credentialSource.load()
+                latest = try await loadCredentials()
             }
             guard latest.refreshToken != credentials.refreshToken else {
                 throw UsageError.notAuthenticated
@@ -239,8 +262,18 @@ public struct ClaudeProvider: UsageProvider {
                 return latest
             }
             let updated = try await client.refresh(latest)
-            try await credentialSource.save(updated)
+            await persist(updated, replacing: latest)
             return updated
+        }
+    }
+
+    /// Saves a rotated pair. The old refresh token is spent at this point,
+    /// so a store that refuses the new pair is retried, and the refresher
+    /// keeps the pair in memory if it still fails.
+    private func persist(_ updated: ClaudeCredentials, replacing old: ClaudeCredentials) async {
+        let source = credentialSource
+        await refresher.persist(updated, replacing: old.refreshToken, key: source.refreshKey) {
+            try await source.save($0)
         }
     }
 }

@@ -194,6 +194,7 @@ final class CodexProviderTests: XCTestCase {
 
         XCTAssertEqual(snapshot.windows.count, 1)
         XCTAssertEqual(transport.requests(to: CodexProvider.usageEndpoint).first?.value(forHTTPHeaderField: "Authorization"), "Bearer rotated-token")
+        XCTAssertTrue(transport.requests(to: CodexOAuthClient.tokenEndpoint).isEmpty, "the spent refresh token is never sent again")
         XCTAssertTrue(source.saved.isEmpty)
     }
 
@@ -332,6 +333,7 @@ private extension CodexCredentials {
 
 private final class StubCodexSource: CodexCredentialSource, @unchecked Sendable {
     let allowsRefresh: Bool
+    let refreshKey = UUID().uuidString
     private(set) var saved: [CodexCredentials] = []
     private(set) var invalidations = 0
     private var credentials: CodexCredentials

@@ -70,6 +70,8 @@ public struct ClaudeCredentials: Codable, Equatable, Sendable {
     }
 }
 
+extension ClaudeCredentials: RotatingCredentials {}
+
 private struct ClaudeCodeCredentialsFile: Decodable {
     let claudeAiOauth: ClaudeCodeOAuthPayload
 }
@@ -86,11 +88,13 @@ private struct ClaudeCodeOAuthPayload: Decodable {
 /// Where `ClaudeProvider` obtains credentials and persists rotated tokens.
 public protocol ClaudeCredentialSource: CredentialStore {
     /// Whether the provider may refresh the token and persist the rotated
-    /// credentials through this source. Sources that mirror Claude Code's
-    /// own credentials must return false: Claude Code owns that refresh
-    /// cycle, and rotating its refresh token out from under it would log
-    /// the user out of the CLI.
+    /// credentials through this source. False in the widget extension:
+    /// only the app rotates a login, so two processes never spend the same
+    /// refresh token.
     var allowsRefresh: Bool { get }
+    /// Names the stored login. Refreshes of one key run one at a time
+    /// (`TokenRefresher`).
+    var refreshKey: String { get }
     func load() async throws -> ClaudeCredentials
     func save(_ credentials: ClaudeCredentials) async throws
 }

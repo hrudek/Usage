@@ -64,7 +64,7 @@ final class ClaudeProviderTests: XCTestCase {
         XCTAssertEqual(usageRequests.last?.value(forHTTPHeaderField: "Authorization"), "Bearer new-token")
     }
 
-    func testRejectedRefreshUsesCredentialsRotatedElsewhere() async throws {
+    func testAPairRotatedSinceTheLoadIsUsedWithoutSpendingTheOldToken() async throws {
         let transport = StubTransport()
         transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
             (400, "{}"),
@@ -72,8 +72,8 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (200, Self.usageBody),
         ])
-        // The widget rotated the same login while this fetch was in
-        // flight: the store now holds a different, still-valid pair.
+        // Another refresh of the same login finished while this fetch was
+        // in flight: the store now holds a different, still-valid pair.
         let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
         source.rotatesTo = .rotatedElsewhere
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
@@ -83,8 +83,8 @@ final class ClaudeProviderTests: XCTestCase {
         XCTAssertEqual(snapshot.windows.count, 2)
         let usageRequest = try XCTUnwrap(transport.requests.first { $0.url == ClaudeProvider.usageEndpoint })
         XCTAssertEqual(usageRequest.value(forHTTPHeaderField: "Authorization"), "Bearer rotated-token")
-        XCTAssertEqual(transport.requests.filter { $0.url == ClaudeOAuthClient.tokenEndpoint }.count, 1)
-        // Nothing to write back: the winner's pair is already stored.
+        // The spent refresh token is never sent again.
+        XCTAssertFalse(transport.requests.contains { $0.url == ClaudeOAuthClient.tokenEndpoint })
         XCTAssertTrue(source.saved.isEmpty)
     }
 
@@ -115,9 +115,10 @@ final class ClaudeProviderTests: XCTestCase {
         ])
         let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
         // Still the rejected pair right after the rejection (the fetch's
-        // own load, then the first re-read); the winner's after that.
+        // own load, the look before refreshing, then the first re-read);
+        // the winner's after that.
         source.rotatesTo = .rotatedElsewhere
-        source.rotatesAfterLoad = 2
+        source.rotatesAfterLoad = 3
         var provider = ClaudeProvider(credentialSource: source, transport: transport)
         provider.rejectionRecheckDelay = .zero
 
@@ -196,6 +197,7 @@ final class ClaudeProviderTests: XCTestCase {
         XCTAssertEqual(source.invalidations, 1)
     }
 
+    /// The widget extension's path: an expired login is left to the app.
     func testExpiredTokenWithoutRefreshThrowsTokenExpired() async {
         let transport = StubTransport()
         let source = StubCredentialSource(credentials: .expired, allowsRefresh: false)
@@ -205,6 +207,7 @@ final class ClaudeProviderTests: XCTestCase {
             _ = try await provider.fetchUsage()
         }
         XCTAssertTrue(transport.requests.isEmpty)
+        XCTAssertTrue(source.saved.isEmpty)
     }
 
     func test401WithoutRefreshThrowsNotAuthenticated() async {
@@ -218,6 +221,69 @@ final class ClaudeProviderTests: XCTestCase {
         await assertThrows(UsageError.notAuthenticated) {
             _ = try await provider.fetchUsage()
         }
+        XCTAssertFalse(transport.requests.contains { $0.url == ClaudeOAuthClient.tokenEndpoint })
+        XCTAssertTrue(source.saved.isEmpty)
+    }
+
+    /// The app's sweep and its background task may fetch one expired
+    /// login at the same moment: one refresh goes out, the other waits
+    /// for it and uses its pair.
+    func testConcurrentFetchesOfAnExpiredLoginRefreshOnce() async throws {
+        let transport = StubTransport()
+        transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
+            (200, Self.refreshBody),
+            (400, #"{"error": "invalid_grant"}"#),
+        ])
+        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
+            (200, Self.usageBody),
+        ])
+        transport.delays[ClaudeOAuthClient.tokenEndpoint] = .milliseconds(100)
+        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let refresher = TokenRefresher()
+        let first = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
+        let second = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
+
+        async let a = first.fetchUsage()
+        async let b = second.fetchUsage()
+        _ = try await (a, b)
+
+        XCTAssertEqual(transport.requests.filter { $0.url == ClaudeOAuthClient.tokenEndpoint }.count, 1)
+        let usage = transport.requests.filter { $0.url == ClaudeProvider.usageEndpoint }
+        XCTAssertEqual(usage.count, 2)
+        XCTAssertTrue(usage.allSatisfy { $0.value(forHTTPHeaderField: "Authorization") == "Bearer new-token" })
+        XCTAssertEqual(source.saved.map(\.refreshToken), ["new-refresh"])
+    }
+
+    /// The old refresh token is spent once the endpoint answers, so a
+    /// store that refuses the new pair must not lose it: the next fetch
+    /// uses it, and it is saved once the store accepts it.
+    func testARotatedPairTheStoreRefusesIsKeptAndSavedLater() async throws {
+        let transport = StubTransport()
+        transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
+            (200, Self.refreshBody),
+            (400, #"{"error": "invalid_grant"}"#),
+        ])
+        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
+            (200, Self.usageBody),
+        ])
+        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        source.failsSavesAfter = 0
+        let refresher = TokenRefresher(saveAttempts: 3, saveRetryDelay: .zero)
+        let provider = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
+
+        _ = try await provider.fetchUsage()
+        XCTAssertEqual(source.saveAttempts, 3, "retried before giving up")
+        XCTAssertTrue(source.saved.isEmpty)
+
+        _ = try await provider.fetchUsage()
+        XCTAssertEqual(transport.requests.filter { $0.url == ClaudeOAuthClient.tokenEndpoint }.count, 1)
+        let usage = transport.requests.filter { $0.url == ClaudeProvider.usageEndpoint }
+        XCTAssertEqual(usage.last?.value(forHTTPHeaderField: "Authorization"), "Bearer new-token")
+
+        source.failsSavesAfter = nil
+        _ = try await provider.fetchUsage()
+        XCTAssertEqual(source.saved.last?.refreshToken, "new-refresh")
+        XCTAssertEqual(transport.requests.filter { $0.url == ClaudeOAuthClient.tokenEndpoint }.count, 1)
     }
 
     func test429ThrowsRateLimitedWithRetryAfter() async {
@@ -578,6 +644,10 @@ private extension ClaudeCredentials {
 
 private final class StubCredentialSource: ClaudeCredentialSource, @unchecked Sendable {
     let allowsRefresh: Bool
+    let refreshKey = UUID().uuidString
+    /// Saves past this many throw, like a Keychain that refuses the write.
+    var failsSavesAfter: Int?
+    private(set) var saveAttempts = 0
     private(set) var saved: [ClaudeCredentials] = []
     private(set) var invalidations = 0
     private var credentials: ClaudeCredentials
@@ -596,22 +666,33 @@ private final class StubCredentialSource: ClaudeCredentialSource, @unchecked Sen
         self.allowsRefresh = allowsRefresh
     }
 
+    /// Two fetches may load and save at once (the concurrency tests).
+    private let lock = NSLock()
+
     func load() async throws -> ClaudeCredentials {
-        loads += 1
-        if let failsLoadsAfter, loads > failsLoadsAfter {
-            throw UsageError.credentialsNotFound("stub")
-        }
-        defer {
-            if loads == rotatesAfterLoad, let rotated = rotatesTo {
-                credentials = rotated
+        try lock.withLock {
+            loads += 1
+            if let failsLoadsAfter, loads > failsLoadsAfter {
+                throw UsageError.credentialsNotFound("stub")
             }
+            defer {
+                if loads == rotatesAfterLoad, let rotated = rotatesTo {
+                    credentials = rotated
+                }
+            }
+            return credentials
         }
-        return credentials
     }
 
     func save(_ credentials: ClaudeCredentials) async throws {
-        saved.append(credentials)
-        self.credentials = credentials
+        try lock.withLock {
+            saveAttempts += 1
+            if let failsSavesAfter, saveAttempts > failsSavesAfter {
+                throw UsageError.invalidResponse("stub save")
+            }
+            saved.append(credentials)
+            self.credentials = credentials
+        }
     }
 
     func invalidateCache() {
@@ -637,20 +718,29 @@ private final class StubTransport: HTTPTransport, @unchecked Sendable {
         routes[url] = responses
     }
 
+    /// Two fetches may send at once (the concurrency tests).
+    private let lock = NSLock()
+
     func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
-        requests.append(request)
+        let delay = lock.withLock {
+            requests.append(request)
+            return request.url.flatMap { delays[$0] }
+        }
         onSend?(request)
-        if let url = request.url, let delay = delays[url] {
+        if let delay {
             try await Task.sleep(for: delay)
         }
-        guard let url = request.url, let queue = routes[url], !queue.isEmpty else {
-            throw UsageError.invalidResponse("no stubbed response for \(request.url?.absoluteString ?? "nil")")
+        let next = try lock.withLock {
+            guard let url = request.url, let queue = routes[url], !queue.isEmpty else {
+                throw UsageError.invalidResponse("no stubbed response for \(request.url?.absoluteString ?? "nil")")
+            }
+            // Consume responses in order; the last one repeats.
+            if queue.count > 1 {
+                routes[url] = Array(queue.dropFirst())
+            }
+            return queue[0]
         }
-        // Consume responses in order; the last one repeats.
-        let next = queue[0]
-        if queue.count > 1 {
-            routes[url] = Array(queue.dropFirst())
-        }
+        guard let url = request.url else { throw UsageError.invalidResponse("no url") }
         let response = HTTPURLResponse(
             url: url,
             statusCode: next.status,
