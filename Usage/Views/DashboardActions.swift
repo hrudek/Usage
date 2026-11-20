@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 @MainActor @Observable
 final class DashboardActions {
@@ -22,15 +23,14 @@ final class DashboardActions {
     func addAccount() {
         showingConnect = true
     }
-}
 
-struct AccountSelection {
-    let selectedID: String?
-    let select: (String) -> Void
+    func shownAccountID(in model: UsageModel) -> String? {
+        DashboardLayout.shownAccount(selected: selectedAccountID, in: model.accounts.map(\.account.accountID))
+    }
 }
 
 extension EnvironmentValues {
-    @Entry var accountSelection: AccountSelection? = nil
+    @Entry var selectsAccounts = false
 }
 
 struct DashboardPresentations: ViewModifier {

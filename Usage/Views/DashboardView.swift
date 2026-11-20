@@ -4,7 +4,7 @@ import UsageKit
 struct DashboardView: View {
     @Environment(UsageModel.self) var model
     @Environment(DashboardActions.self) private var actions
-    @Environment(\.accountSelection) private var selection
+    @Environment(\.selectsAccounts) private var selectsAccounts
     /// The section being dragged, how far it has moved, and which section
     /// it would drop onto — see `accountSection(_:)` in
     /// `DashboardView+Reorder.swift` for why the reorder carries this state
@@ -39,7 +39,7 @@ struct DashboardView: View {
     /// An iPad's width: two or more accounts sit in two columns of the same
     /// cards, and a dragged card moves both ways (`accountSection`).
     var isGrid: Bool {
-        sizeClass == .regular && model.accounts.count > 1 && selection == nil
+        sizeClass == .regular && model.accounts.count > 1 && !selectsAccounts
     }
 
     /// An iPad's width with one account: its card, centred, at a width a
