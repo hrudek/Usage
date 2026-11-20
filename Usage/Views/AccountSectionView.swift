@@ -3,7 +3,7 @@ import UsageKit
 
 /// One connected account's card (4.0): its identity inside the card at the
 /// top (icon + nickname + plan pill, tappable to push Provider Detail),
-/// then its most urgent window as the protagonist and the rest as compact
+/// then its session as the protagonist and the rest as compact
 /// rows (`AccountCardLayout`), and the status tail only when there is
 /// something to say. Shared by the Dashboard (one card per account) and
 /// iPhone landscape.

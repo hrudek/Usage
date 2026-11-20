@@ -7,7 +7,7 @@ import UsageKit
 /// line each with the account's protagonist (the window
 /// `AccountCardLayout` puts first, as the cards do: its thick bar and its
 /// figure), and under the name every window with its figure in small
-/// text, the protagonist first ("Week 61% · Session 42% · Top model
+/// text, the protagonist first ("Session 42% · Week 61% · Top model
 /// 18%"). Then the soonest session reset of them all as a live
 /// countdown. What a line gives up for the room is each window's reset
 /// and the iOS refresh button.

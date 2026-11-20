@@ -3,13 +3,11 @@ import UsageKit
 
 /// How an account card is composed (4.0): one window as its protagonist,
 /// drawn large, and the rest of `WindowSlots` as compact one-line rows
-/// under it, in their own order. The protagonist is the window closest to
-/// its limit, by the same measure the urgency order uses for whole
-/// accounts (`AccountOrder.urgency`): its used percentage, a window the
-/// provider flags critical or exceeded counting as full. Ties keep the
-/// slots' order, so on a quiet day the session leads, as it always has.
-/// Before the first fetch (or with no window at all) the first slot leads,
-/// as a placeholder.
+/// under it, in their own order. The session slot always leads, whatever
+/// its usage, also as the placeholder before the first fetch. Without a
+/// session slot (Codex Free's single monthly window) the window closest
+/// to its limit leads: its used percentage, a window the provider flags
+/// critical or exceeded counting as full, ties keeping the slots' order.
 struct AccountCardLayout {
     typealias Slot = (kind: UsageWindow.Kind, window: UsageWindow?)
 
@@ -38,6 +36,9 @@ struct AccountCardLayout {
     }
 
     static func heroIndex(in slots: [Slot]) -> Int {
+        if let session = slots.firstIndex(where: { $0.kind == .session }) {
+            return session
+        }
         var best: (index: Int, urgency: Double)?
         for (index, slot) in slots.enumerated() {
             guard let window = slot.window else { continue }

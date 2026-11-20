@@ -61,7 +61,7 @@ struct AllAccountsWidgetView: View {
 
 /// One account's header (name + always-visible manual refresh, iOS only —
 /// see `RefreshAccountIntent`) followed by the app's card composition
-/// (4.0): its most urgent window as the protagonist and the others as
+/// (4.0): its session as the protagonist and the others as
 /// compact lines, `WidgetHero` and `WidgetCompactRows`, the small
 /// widget's own pieces, decided by the same `AccountCardLayout`.
 private struct AccountRow: View {

@@ -31,8 +31,9 @@ environment; every sheet gets both again from its presenter
 - **Dashboard** (`DashboardView`): one card per account
   (`AccountSectionView`): identity header (icon, name, plan pill, opens
   Provider Detail; context menu with rename, icon, move up/down), the
-  window closest to its limit large (`HeroWindowView`, with a 24 h
-  sparkline), the others as compact rows, then an error, "Sign in again",
+  session large (`HeroWindowView`, with a 24 h sparkline; without a
+  session, the window closest to its limit; `AccountCardLayout`), the
+  others as compact rows, then an error, "Sign in again",
   or a stale hint. Header buttons: Settings and Refresh. Hold and drag to
   reorder (`DashboardView+Reorder`), withheld while "Order by urgency" is
   on. Two columns on iPad. With no account, a prompt to connect.

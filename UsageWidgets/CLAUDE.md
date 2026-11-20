@@ -12,7 +12,9 @@ the display preferences. `UsageWidgetsBundle` lists, in gallery order:
   unset, the first connected account (`WidgetAccountFallback`). The
   circular gauge and the control show the `glanceMetric` window. A small
   widget without its container background (StandBy) draws
-  `StandByUsageView`, one large figure.
+  `StandByUsageView`, one large figure. The small family and each
+  account of `AllAccountsWidget` lead with the session, as the
+  Dashboard card does (`AccountCardLayout`).
 - `SingleUsageWidget`, kind `UsageSingleLimit` ("Single Limit"):
   `.systemSmall`, one window the user picks (`SingleUsageConfigurationIntent`:
   the limit, and a bar or a ring).

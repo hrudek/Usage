@@ -106,7 +106,7 @@ struct WidgetHeader: View {
 }
 
 /// Small: the app's account card in a small square (4.0) — the header,
-/// the most urgent window as the protagonist (its name, the figure large,
+/// the session as the protagonist (its name, the figure large,
 /// a thicker bar, and the reset beside the figure as a bare live
 /// countdown), then up to two other windows as compact lines (name, a thin
 /// bar, the figure). The same `AccountCardLayout` decides which leads, so
