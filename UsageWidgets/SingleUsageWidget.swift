@@ -102,6 +102,7 @@ struct SingleUsageWidget: Widget {
         }
         .configurationDisplayName("Single Limit")
         .description("Shows one limit you choose. Edit the widget to pick which one.")
+        .contentMarginsDisabled()
         .supportedFamilies([.systemSmall])
     }
 }

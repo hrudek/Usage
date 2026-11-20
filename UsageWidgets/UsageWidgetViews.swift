@@ -20,12 +20,15 @@ struct UsageWidgetView: View {
                 switch family {
                 case .accessoryCircular:
                     CircularUsageView(snapshot: snapshot, prefs: entry.prefs)
+                        .widgetMargins()
                 case .accessoryRectangular:
                     RectangularUsageView(snapshot: snapshot, prefs: entry.prefs)
+                        .widgetMargins()
                 case .accessoryInline:
                     InlineUsageView(snapshot: snapshot, prefs: entry.prefs)
+                        .widgetMargins()
                 case .systemMedium:
-                    MediumUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountID: entry.accountID, accountName: entry.accountName, accountIcon: entry.accountIcon)
+                    MediumUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountName: entry.accountName, accountIcon: entry.accountIcon)
                         .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
                 case .systemSmall where !showsBackground:
                     let hero = AccountCardLayout(snapshot: snapshot, modelSlotFallback: entry.prefs.modelSlotFallback).hero
@@ -37,8 +40,9 @@ struct UsageWidgetView: View {
                         now: entry.date,
                         moneySubtitle: entry.prefs.creditsAmountSubtitle(for: hero.kind, snapshot: snapshot)
                     )
+                    .widgetMargins()
                 default:
-                    SystemUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountID: entry.accountID, accountName: entry.accountName, accountIcon: entry.accountIcon)
+                    SystemUsageView(snapshot: snapshot, prefs: entry.prefs, date: entry.date, accountName: entry.accountName, accountIcon: entry.accountIcon)
                         .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
                 }
             } else {
@@ -46,6 +50,7 @@ struct UsageWidgetView: View {
                     .font(.caption)
                     .foregroundStyle(Theme.inkSecondary)
                     .multilineTextAlignment(.center)
+                    .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
             }
         }
         .containerBackground(for: .widget) {
@@ -68,7 +73,6 @@ struct WidgetHeader: View {
     /// displaying, including a future entry dated at the next peak
     /// transition (see `UsageTimelineProvider.peakTransitionEntry`).
     let date: Date
-    let accountID: String
     let accountName: String
     /// The plan pill; the small family leaves it out for room.
     var planName: String? = nil
@@ -111,14 +115,13 @@ struct SystemUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences
     let date: Date
-    let accountID: String
     let accountName: String
     var accountIcon: AccountIcon? = nil
 
     var body: some View {
         let layout = AccountCardLayout(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback)
         VStack(alignment: .leading, spacing: 0) {
-            WidgetHeader(snapshot: snapshot, date: date, accountID: accountID, accountName: accountName, accountIcon: accountIcon)
+            WidgetHeader(snapshot: snapshot, date: date, accountName: accountName, accountIcon: accountIcon)
             Spacer(minLength: 8)
             WidgetHero(
                 kind: layout.hero.kind,

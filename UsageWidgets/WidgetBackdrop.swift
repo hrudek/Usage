@@ -5,12 +5,8 @@ import WidgetKit
 /// gradient in full color. In the accented and vibrant modes the system
 /// draws its own background, so nothing is drawn there.
 ///
-/// The gradient is built from plain sRGB colors for the widget's own color
-/// scheme, with explicit stops at 0 and 1, instead of `Theme.backdrop`'s
-/// trait-resolved `UIColor` closures. The same two colors rendered
-/// lighter and flatter than Scriptable's on device (needs a device check:
-/// the cause is not provable without one), so the fixed colors remove the
-/// one thing in the widget path that depends on trait resolution.
+/// The gradient uses plain sRGB colors for the widget's color scheme
+/// rather than `Theme.backdrop`'s trait-resolved ones.
 struct WidgetBackdrop: View {
     @Environment(\.widgetRenderingMode) private var renderingMode
     @Environment(\.colorScheme) private var scheme

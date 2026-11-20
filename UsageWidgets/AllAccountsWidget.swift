@@ -100,6 +100,7 @@ struct AllAccountsWidget: Widget {
         }
         .configurationDisplayName("All Accounts")
         .description("Every connected account's usage at a glance.")
+        .contentMarginsDisabled()
         .supportedFamilies([.systemLarge])
     }
 }
