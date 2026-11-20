@@ -6,7 +6,7 @@ struct ProviderMark: View {
     let cornerRadius: CGFloat
     /// The account's chosen glyph; nil draws the default.
     var icon: AccountIcon? = nil
-    /// Filled tile with a white glyph for a sheet-sized header; every inline
+    /// Filled tile with an on-accent glyph for a sheet-sized header; every inline
     /// header uses the quieter wash + accent glyph the rest of the app's
     /// icon tiles already use (Settings rows, Privacy rows).
     var prominent: Bool = false
