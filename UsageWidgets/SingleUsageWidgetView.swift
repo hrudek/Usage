@@ -28,9 +28,7 @@ struct SingleUsageWidgetView: View {
                     .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
             }
         }
-        .containerBackground(for: .widget) {
-            WidgetBackdrop()
-        }
+        .widgetBackdrop()
     }
 
     private var bars: some View {

@@ -68,10 +68,13 @@ window shows it empty, and the gauge and control fall back from it as
 `glanceMetric` does. Display only: the stored snapshot, the stale check
 and the reload schedule keep every window.
 
-Every home screen widget's container background is `WidgetBackdrop`:
-a gradient of its own, darker than the app's `Theme.backdrop` (fixed sRGB colors, #292A3C to #0F1015 in
-dark, top-leading to bottom-trailing) in full color, nothing in the
-accented and vibrant rendering modes, where the system draws its own.
+Every home screen widget's background is `WidgetBackdrop`, applied by
+`widgetBackdrop()`: the app's backdrop gradient (fixed sRGB colors,
+#2B2D42 to #0D0E14 in dark, top-leading to bottom-trailing) in full
+color, nothing in the accented and vibrant rendering modes, where the
+system draws its own. It is the container background and is drawn again
+behind the content (not in StandBy), because the container background
+alone rendered lighter on device than the same gradient in Scriptable.
 
 ## Timeline and fetching
 

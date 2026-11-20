@@ -53,9 +53,7 @@ struct UsageWidgetView: View {
                     .refreshesOnTap(RefreshAccountIntent(accountID: entry.accountID))
             }
         }
-        .containerBackground(for: .widget) {
-            WidgetBackdrop()
-        }
+        .widgetBackdrop()
     }
 }
 
