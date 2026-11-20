@@ -401,7 +401,7 @@ below and `AIMeterWatch/CLAUDE.md`.
   hidden: a quit app doesn't break the widget visibly, it just quietly
   freezes it.
 - OAuth tokens live in the Keychain only (shared access group on iOS,
-  `kSecAttrAccessibleAfterFirstUnlock`). Never UserDefaults, never in git,
+  `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`). Never UserDefaults, never in git,
   and never on the Watch.
 - **Apple Watch** (3.2): the Watch app and its complications show what
   the iPhone last fetched and nothing else. The iPhone sends a

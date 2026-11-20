@@ -6,9 +6,7 @@ import Foundation
 /// access token is a JWT whose `exp` claim is the only expiry there is;
 /// `auth.json` carries none. The `id_token` (it carries the email) is
 /// never kept: its one claim the app needs, the account id, is copied
-/// into `accountID` when the token arrives. An item stored before this
-/// still decodes; its `idToken` key is ignored and dropped on the next
-/// save.
+/// into `accountID` when the token arrives.
 public struct CodexCredentials: Codable, Equatable, Sendable {
     public var accessToken: String
     public var refreshToken: String?

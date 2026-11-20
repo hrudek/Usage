@@ -203,15 +203,11 @@ public struct AccountRegistryStore: @unchecked Sendable {
         save(Self.uniqued(accounts))
     }
 
-    /// The accounts in order, each accountID kept once (its first entry).
     static func uniqued(_ accounts: [ConnectedAccount]) -> [ConnectedAccount] {
         var seen = Set<String>()
         return accounts.filter { seen.insert($0.accountID).inserted }
     }
 
-    /// One stored entry, decoded on its own so an entry this build can't
-    /// read (an unknown icon, a damaged field) drops only itself and not
-    /// every account with it.
     private struct Entry: Decodable {
         let account: ConnectedAccount?
 
