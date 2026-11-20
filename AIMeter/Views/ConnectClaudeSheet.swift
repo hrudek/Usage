@@ -136,16 +136,6 @@ struct ConnectClaudeSheet: View {
                     .foregroundStyle(Theme.inkSecondary)
                     .multilineTextAlignment(.center)
 
-                if reconnecting != nil {
-                    // Worth saying here specifically: signing in through this
-                    // flow is also what *prevents* a repeat, and pasting the
-                    // CLI's own JSON above is what invites one.
-                    Text("Signing in here gives AIMeter its own token, separate from Claude Code's, so neither can invalidate the other's.")
-                        .font(Theme.caption)
-                        .foregroundStyle(Theme.inkSecondary)
-                        .multilineTextAlignment(.center)
-                }
-
                 if let errorText {
                     Text(errorText)
                         .font(Theme.caption)

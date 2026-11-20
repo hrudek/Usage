@@ -1239,52 +1239,6 @@
         }
       }
     },
-    "AIMeter also reads each provider's public status page when it refreshes, to tell a service outage apart from a problem with your account. That request is anonymous (nothing about you or your account is sent), and you can turn it off in Settings." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AIMeter liest beim Aktualisieren auch die öffentliche Statusseite jedes Anbieters, um einen Ausfall des Dienstes von einem Problem mit deinem Account zu unterscheiden. Diese Anfrage ist anonym (nichts über dich oder deinen Account wird gesendet), und du kannst sie in den Einstellungen abschalten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AIMeter también lee la página pública de estado de cada proveedor al actualizar, para distinguir una caída del servicio de un problema con tu cuenta. Esa petición es anónima (no se envía nada sobre ti ni sobre tu cuenta) y puedes desactivarla en Ajustes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AIMeter lit aussi la page d'état publique de chaque fournisseur lors de l'actualisation, pour distinguer une panne du service d'un problème avec votre compte. Cette requête est anonyme (rien sur vous ni sur votre compte n'est envoyé), et vous pouvez la désactiver dans les Réglages."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AIMeter は更新時に各プロバイダの公開ステータスページも読み取り、サービス障害とアカウントの問題を区別します。このリクエストは匿名で（あなたやアカウントに関する情報は送信されません）、設定でオフにできます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AIMeter는 새로 고침할 때 각 제공업체의 공개 상태 페이지도 읽어 서비스 장애와 계정 문제를 구분합니다. 이 요청은 익명이며(사용자나 계정에 관한 어떤 정보도 보내지 않음), 설정에서 끌 수 있습니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O AIMeter também lê a página pública de status de cada provedor ao atualizar, para distinguir uma queda do serviço de um problema com sua conta. Essa solicitação é anônima (nada sobre você ou sua conta é enviado), e você pode desativá-la nos Ajustes."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刷新时 AIMeter 还会读取各提供方的公开状态页面，以区分服务故障和你账户的问题。该请求是匿名的（不会发送任何关于你或你账户的信息），你可以在设置中关闭。"
-          }
-        }
-      }
-    },
     "AIMeter can't see your billing, so the day is the one you set. The reminder comes that many days before, every month." : {
       "localizations" : {
         "de" : {
@@ -1331,48 +1285,48 @@
         }
       }
     },
-    "AIMeter is an independent app, not affiliated with Anthropic, OpenAI or GitHub. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in tokens stay on this device." : {
+    "AIMeter is an independent app, not affiliated with Anthropic or OpenAI. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in tokens stay on this device." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ist eine unabhängige App und steht in keiner Verbindung zu Anthropic, OpenAI oder GitHub. Sie liest nur deine eigenen Nutzungslimits, sendet nie Prompts, verbraucht nie die Nutzung deines Plans, und deine Anmelde-Tokens bleiben auf diesem Gerät."
+            "value" : "AIMeter ist eine unabhängige App und steht in keiner Verbindung zu Anthropic oder OpenAI. Sie liest nur deine eigenen Nutzungslimits, sendet nie Prompts, verbraucht nie die Nutzung deines Plans, und deine Anmelde-Tokens bleiben auf diesem Gerät."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter es una app independiente, sin relación con Anthropic, OpenAI ni GitHub. Solo lee tus propios límites de uso, nunca envía prompts ni gasta el uso de tu plan, y tus tokens de inicio de sesión se quedan en este dispositivo."
+            "value" : "AIMeter es una app independiente, sin relación con Anthropic ni OpenAI. Solo lee tus propios límites de uso, nunca envía prompts ni gasta el uso de tu plan, y tus tokens de inicio de sesión se quedan en este dispositivo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter est une app indépendante, sans lien avec Anthropic, OpenAI ni GitHub. Elle ne lit que vos propres limites d'utilisation, n'envoie jamais de prompts ni ne consomme l'usage de votre forfait, et vos jetons de connexion restent sur cet appareil."
+            "value" : "AIMeter est une app indépendante, sans lien avec Anthropic ni OpenAI. Elle ne lit que vos propres limites d'utilisation, n'envoie jamais de prompts ni ne consomme l'usage de votre forfait, et vos jetons de connexion restent sur cet appareil."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter は Anthropic、OpenAI、GitHub とは無関係の独立したアプリです。読み取るのはあなた自身の使用量の上限だけで、プロンプトを送ったりプランの使用量を消費したりすることはなく、サインイン用のトークンはこのデバイスに留まります。"
+            "value" : "AIMeter は Anthropic、OpenAI とは無関係の独立したアプリです。読み取るのはあなた自身の使用量の上限だけで、プロンプトを送ったりプランの使用量を消費したりすることはなく、サインイン用のトークンはこのデバイスに留まります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter는 Anthropic, OpenAI, GitHub와 무관한 독립 앱입니다. 본인의 사용량 한도만 읽고, 프롬프트를 보내거나 플랜의 사용량을 소비하지 않으며, 로그인 토큰은 이 기기에만 저장됩니다."
+            "value" : "AIMeter는 Anthropic, OpenAI와 무관한 독립 앱입니다. 본인의 사용량 한도만 읽고, 프롬프트를 보내거나 플랜의 사용량을 소비하지 않으며, 로그인 토큰은 이 기기에만 저장됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter é um app independente, sem vínculo com a Anthropic, a OpenAI ou o GitHub. Ele só lê seus próprios limites de uso, nunca envia prompts nem gasta o uso do seu plano, e seus tokens de login ficam neste dispositivo."
+            "value" : "O AIMeter é um app independente, sem vínculo com a Anthropic ou a OpenAI. Ele só lê seus próprios limites de uso, nunca envia prompts nem gasta o uso do seu plano, e seus tokens de login ficam neste dispositivo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 是独立应用，与 Anthropic、OpenAI 或 GitHub 均无关联。它只读取你自己的用量限额，绝不发送提示词或消耗你的套餐用量，登录令牌只保存在本设备上。"
+            "value" : "AIMeter 是独立应用，与 Anthropic 或 OpenAI 均无关联。它只读取你自己的用量限额，绝不发送提示词或消耗你的套餐用量，登录令牌只保存在本设备上。"
           }
         }
       }
@@ -1469,48 +1423,48 @@
         }
       }
     },
-    "AIMeter is an independent open source project (MIT). It is not affiliated with, endorsed by, or sponsored by Anthropic, OpenAI or GitHub. \"Claude\" and \"Anthropic\" are trademarks of Anthropic, PBC; \"ChatGPT\", \"Codex\" and \"OpenAI\" of OpenAI; \"GitHub\" and \"Copilot\" of GitHub, Inc. They are used only to identify the services whose usage this app displays." : {
+    "AIMeter is an independent open source project (MIT). It is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI. \"Claude\" and \"Anthropic\" are trademarks of Anthropic, PBC; \"ChatGPT\", \"Codex\" and \"OpenAI\" of OpenAI. They are used only to identify the services whose usage this app displays." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ist ein unabhängiges Open-Source-Projekt (MIT). Es steht in keiner Verbindung zu Anthropic, OpenAI oder GitHub und wird von ihnen weder unterstützt noch gesponsert. \"Claude\" und \"Anthropic\" sind Marken von Anthropic, PBC; \"ChatGPT\", \"Codex\" und \"OpenAI\" von OpenAI; \"GitHub\" und \"Copilot\" von GitHub, Inc. Sie werden nur verwendet, um die Dienste zu benennen, deren Nutzung diese App anzeigt."
+            "value" : "AIMeter ist ein unabhängiges Open-Source-Projekt (MIT). Es steht in keiner Verbindung zu Anthropic oder OpenAI und wird von ihnen weder unterstützt noch gesponsert. \"Claude\" und \"Anthropic\" sind Marken von Anthropic, PBC; \"ChatGPT\", \"Codex\" und \"OpenAI\" von OpenAI. Sie werden nur verwendet, um die Dienste zu benennen, deren Nutzung diese App anzeigt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter es un proyecto independiente de código abierto (MIT). No está afiliado a Anthropic, OpenAI ni GitHub, ni cuenta con su respaldo o patrocinio. \"Claude\" y \"Anthropic\" son marcas de Anthropic, PBC; \"ChatGPT\", \"Codex\" y \"OpenAI\", de OpenAI; \"GitHub\" y \"Copilot\", de GitHub, Inc. Se usan solo para identificar los servicios cuyo uso muestra esta app."
+            "value" : "AIMeter es un proyecto independiente de código abierto (MIT). No está afiliado a Anthropic ni a OpenAI, ni cuenta con su respaldo o patrocinio. \"Claude\" y \"Anthropic\" son marcas de Anthropic, PBC; \"ChatGPT\", \"Codex\" y \"OpenAI\", de OpenAI. Se usan solo para identificar los servicios cuyo uso muestra esta app."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter est un projet open source indépendant (MIT). Il n'est ni affilié à, ni approuvé, ni sponsorisé par Anthropic, OpenAI ou GitHub. \"Claude\" et \"Anthropic\" sont des marques d'Anthropic, PBC ; \"ChatGPT\", \"Codex\" et \"OpenAI\", d'OpenAI ; \"GitHub\" et \"Copilot\", de GitHub, Inc. Elles ne servent qu'à identifier les services dont cette app affiche l'utilisation."
+            "value" : "AIMeter est un projet open source indépendant (MIT). Il n'est ni affilié à, ni approuvé, ni sponsorisé par Anthropic ou OpenAI. \"Claude\" et \"Anthropic\" sont des marques d'Anthropic, PBC ; \"ChatGPT\", \"Codex\" et \"OpenAI\", d'OpenAI. Elles ne servent qu'à identifier les services dont cette app affiche l'utilisation."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter は独立したオープンソースプロジェクト（MIT）です。Anthropic、OpenAI、GitHub とは提携、承認、後援の関係にありません。\"Claude\" と \"Anthropic\" は Anthropic, PBC の商標、\"ChatGPT\"、\"Codex\"、\"OpenAI\" は OpenAI の商標、\"GitHub\" と \"Copilot\" は GitHub, Inc. の商標で、このアプリが使用量を表示するサービスを識別するためだけに使っています。"
+            "value" : "AIMeter は独立したオープンソースプロジェクト（MIT）です。Anthropic、OpenAI とは提携、承認、後援の関係にありません。\"Claude\" と \"Anthropic\" は Anthropic, PBC の商標、\"ChatGPT\"、\"Codex\"、\"OpenAI\" は OpenAI の商標で、このアプリが使用量を表示するサービスを識別するためだけに使っています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter는 독립적인 오픈 소스 프로젝트(MIT)입니다. Anthropic, OpenAI, GitHub와 제휴, 보증, 후원 관계가 없습니다. \"Claude\"와 \"Anthropic\"은 Anthropic, PBC의 상표이고, \"ChatGPT\", \"Codex\", \"OpenAI\"는 OpenAI의 상표이며, \"GitHub\"와 \"Copilot\"은 GitHub, Inc.의 상표로, 이 앱이 사용량을 표시하는 서비스를 가리키기 위해서만 사용됩니다."
+            "value" : "AIMeter는 독립적인 오픈 소스 프로젝트(MIT)입니다. Anthropic, OpenAI와 제휴, 보증, 후원 관계가 없습니다. \"Claude\"와 \"Anthropic\"은 Anthropic, PBC의 상표이고, \"ChatGPT\", \"Codex\", \"OpenAI\"는 OpenAI의 상표로, 이 앱이 사용량을 표시하는 서비스를 가리키기 위해서만 사용됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter é um projeto independente de código aberto (MIT). Não é afiliado, endossado nem patrocinado pela Anthropic, pela OpenAI ou pelo GitHub. \"Claude\" e \"Anthropic\" são marcas da Anthropic, PBC; \"ChatGPT\", \"Codex\" e \"OpenAI\", da OpenAI; \"GitHub\" e \"Copilot\", da GitHub, Inc. São usadas apenas para identificar os serviços cujo uso este app mostra."
+            "value" : "O AIMeter é um projeto independente de código aberto (MIT). Não é afiliado, endossado nem patrocinado pela Anthropic ou pela OpenAI. \"Claude\" e \"Anthropic\" são marcas da Anthropic, PBC; \"ChatGPT\", \"Codex\" e \"OpenAI\", da OpenAI. São usadas apenas para identificar os serviços cujo uso este app mostra."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 是独立的开源项目（MIT）。它与 Anthropic、OpenAI 或 GitHub 均无关联，也未获其认可或赞助。\"Claude\" 和 \"Anthropic\" 是 Anthropic, PBC 的商标；\"ChatGPT\"、\"Codex\" 和 \"OpenAI\" 是 OpenAI 的商标；\"GitHub\" 和 \"Copilot\" 是 GitHub, Inc. 的商标，仅用于指明本应用所显示用量的服务。"
+            "value" : "AIMeter 是独立的开源项目（MIT）。它与 Anthropic 或 OpenAI 均无关联，也未获其认可或赞助。\"Claude\" 和 \"Anthropic\" 是 Anthropic, PBC 的商标；\"ChatGPT\"、\"Codex\" 和 \"OpenAI\" 是 OpenAI 的商标，仅用于指明本应用所显示用量的服务。"
           }
         }
       }
@@ -13381,49 +13335,49 @@
         }
       }
     },
-    "Shown wherever the account appears: dashboard, menu bar, widgets, Live Activity." : {
+    "Shown wherever the account appears: dashboard and widgets." : {
       "comment" : "Caption under the icon picker's preview.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird überall angezeigt, wo der Account erscheint: Dashboard, Menüleiste, Widgets, Live-Aktivität."
+            "value" : "Wird überall angezeigt, wo der Account erscheint: Dashboard und Widgets."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se muestra donde aparece la cuenta: panel, barra de menú, widgets y Live Activity."
+            "value" : "Se muestra donde aparece la cuenta: panel y widgets."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Affichée partout où le compte apparaît : tableau de bord, barre des menus, widgets, activité en direct."
+            "value" : "Affichée partout où le compte apparaît : tableau de bord et widgets."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ダッシュボード、メニューバー、ウィジェット、ライブアクティビティなど、アカウントが表示される場所すべてに反映されます。"
+            "value" : "ダッシュボードとウィジェットなど、アカウントが表示される場所すべてに反映されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대시보드, 메뉴 막대, 위젯, 실시간 현황 등 계정이 표시되는 모든 곳에 나타납니다."
+            "value" : "대시보드와 위젯 등 계정이 표시되는 모든 곳에 나타납니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aparece onde a conta aparece: painel, barra de menus, widgets, Atividade ao Vivo."
+            "value" : "Aparece onde a conta aparece: painel e widgets."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在账户出现的所有位置显示：仪表盘、菜单栏、小组件、实时活动。"
+            "value" : "在账户出现的所有位置显示：仪表盘和小组件。"
           }
         }
       }
@@ -23223,52 +23177,6 @@
         }
       }
     },
-    "Signing in here gives AIMeter its own token, separate from Claude Code's, so neither can invalidate the other's." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wer sich hier anmeldet, gibt AIMeter ein eigenes Token, getrennt von dem von Claude Code, sodass keines das andere ungültig machen kann."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al iniciar sesión aquí, AIMeter obtiene su propio token, independiente del de Claude Code, para que ninguno invalide el del otro."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se connecter ici donne à AIMeter son propre jeton, distinct de celui de Claude Code, ainsi aucun ne peut invalider l'autre."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ここでサインインするとAIMeterはClaude Codeとは別の独自トークンを持つため、互いのトークンを無効にすることがありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "여기서 로그인하면 AIMeter가 Claude Code와 별개의 자체 토큰을 갖게 되어 서로의 토큰을 무효화하지 않습니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrar aqui dá ao AIMeter um token próprio, separado do Claude Code, assim nenhum invalida o do outro."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在此登录会给 AIMeter 一个独立于 Claude Code 的令牌，两者互不影响。"
-          }
-        }
-      }
-    },
     "Single Limit" : {
       "comment" : "Name of the widget that shows one usage window you choose.",
       "isCommentAutoGenerated" : true,
@@ -28730,96 +28638,96 @@
         }
       }
     },
-    "AIMeter forgets its sign-in and deletes its usage history (in iCloud too, if sync is on) and its alerts. Your account with the service isn't touched." : {
+    "AIMeter forgets its sign-in and deletes its usage history and its alerts. Your account with the service isn't touched." : {
       "comment" : "The message of the confirmation before disconnecting an account.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter vergisst seine Anmeldung und löscht seinen Nutzungsverlauf (auch in iCloud, falls die Synchronisierung an ist) und seine Hinweise. Dein Account beim Dienst bleibt unberührt."
+            "value" : "AIMeter vergisst seine Anmeldung und löscht seinen Nutzungsverlauf und seine Hinweise. Dein Account beim Dienst bleibt unberührt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter olvida su inicio de sesión y borra su historial de uso (también en iCloud, si la sincronización está activada) y sus alertas. Tu cuenta en el servicio no se toca."
+            "value" : "AIMeter olvida su inicio de sesión y borra su historial de uso y sus alertas. Tu cuenta en el servicio no se toca."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter oublie sa connexion et supprime son historique d'utilisation (dans iCloud aussi, si la synchronisation est activée) et ses alertes. Votre compte auprès du service n'est pas touché."
+            "value" : "AIMeter oublie sa connexion et supprime son historique d'utilisation et ses alertes. Votre compte auprès du service n'est pas touché."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter はこのアカウントのサインイン情報を削除し、使用履歴（同期がオンなら iCloud 上のものも）と通知も削除します。サービス側のアカウントには影響しません。"
+            "value" : "AIMeter はこのアカウントのサインイン情報を削除し、使用履歴と通知も削除します。サービス側のアカウントには影響しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter가 이 계정의 로그인 정보를 지우고 사용 기록(동기화가 켜져 있으면 iCloud의 기록도)과 알림을 삭제합니다. 서비스의 계정 자체에는 영향이 없습니다."
+            "value" : "AIMeter가 이 계정의 로그인 정보를 지우고 사용 기록과 알림을 삭제합니다. 서비스의 계정 자체에는 영향이 없습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter esquece o login dela e apaga o histórico de uso (no iCloud também, se a sincronização estiver ligada) e os alertas. Sua conta no serviço não é afetada."
+            "value" : "O AIMeter esquece o login dela e apaga o histórico de uso e os alertas. Sua conta no serviço não é afetada."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 会忘记它的登录信息，并删除它的使用记录（如果开启了同步，iCloud 中的也会删除）和提醒。你在该服务上的账户不受影响。"
+            "value" : "AIMeter 会忘记它的登录信息，并删除它的使用记录和提醒。你在该服务上的账户不受影响。"
           }
         }
       }
     },
-    "Each account's notifications, Live Activity, name and icon, and disconnecting it." : {
+    "Each account's notifications, name and icon, and disconnecting it." : {
       "comment" : "iOS Settings: the footnote under the account list.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Mitteilungen, die Live-Aktivität, der Name und das Symbol jedes Accounts, und ihn trennen."
+            "value" : "Die Mitteilungen, der Name und das Symbol jedes Accounts, und ihn trennen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las notificaciones, la actividad en vivo, el nombre y el ícono de cada cuenta, y desconectarla."
+            "value" : "Las notificaciones, el nombre y el ícono de cada cuenta, y desconectarla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les notifications, l'activité en direct, le nom et l'icône de chaque compte, et sa déconnexion."
+            "value" : "Les notifications, le nom et l'icône de chaque compte, et sa déconnexion."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "各アカウントの通知、ライブアクティビティ、名前とアイコン、接続の解除。"
+            "value" : "各アカウントの通知、名前とアイコン、接続の解除。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 계정의 알림, 실시간 현황, 이름과 아이콘, 그리고 연결 해제."
+            "value" : "각 계정의 알림, 이름과 아이콘, 그리고 연결 해제."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As notificações, a Atividade ao Vivo, o nome e o ícone de cada conta, e desconectá-la."
+            "value" : "As notificações, o nome e o ícone de cada conta, e desconectá-la."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每个账户的通知、实时活动、名称和图标，以及断开连接。"
+            "value" : "每个账户的通知、名称和图标，以及断开连接。"
           }
         }
       }

@@ -110,7 +110,7 @@ struct AccountIconPicker: View {
             Text(model.usage(for: accountID)?.account.displayName ?? "")
                 .font(Theme.rowTitle)
                 .foregroundStyle(Theme.ink)
-            Text("Shown wherever the account appears: dashboard, menu bar, widgets, Live Activity.")
+            Text("Shown wherever the account appears: dashboard and widgets.")
                 .font(Theme.caption)
                 .foregroundStyle(Theme.inkSecondary)
                 .multilineTextAlignment(.center)

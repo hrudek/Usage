@@ -69,17 +69,16 @@ struct PrivacyView: View {
                     VStack(alignment: .leading, spacing: Theme.rowSpacing) {
                         ForEach(families, id: \.self) { family in
                             access(for: family)
-                            Divider().overlay(Theme.track)
+                            if family != families.last {
+                                Divider().overlay(Theme.track)
+                            }
                         }
-                        Text("AIMeter also reads each provider's public status page when it refreshes, to tell a service outage apart from a problem with your account. That request is anonymous (nothing about you or your account is sent), and you can turn it off in Settings.")
-                            .font(Theme.caption)
-                            .foregroundStyle(Theme.inkSecondary)
                     }
                 }
 
                 sectionGap
                 Card {
-                    Text("AIMeter is an independent open source project (MIT). It is not affiliated with, endorsed by, or sponsored by Anthropic, OpenAI or GitHub. \"Claude\" and \"Anthropic\" are trademarks of Anthropic, PBC; \"ChatGPT\", \"Codex\" and \"OpenAI\" of OpenAI; \"GitHub\" and \"Copilot\" of GitHub, Inc. They are used only to identify the services whose usage this app displays.")
+                    Text("AIMeter is an independent open source project (MIT). It is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI. \"Claude\" and \"Anthropic\" are trademarks of Anthropic, PBC; \"ChatGPT\", \"Codex\" and \"OpenAI\" of OpenAI. They are used only to identify the services whose usage this app displays.")
                         .font(Theme.caption)
                         .foregroundStyle(Theme.inkSecondary)
                 }

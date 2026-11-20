@@ -76,7 +76,7 @@ struct ConnectAccountSheet: View {
                     }
                 }
 
-                Text("AIMeter is an independent app, not affiliated with Anthropic, OpenAI or GitHub. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in tokens stay on this device.")
+                Text("AIMeter is an independent app, not affiliated with Anthropic or OpenAI. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in tokens stay on this device.")
                     .font(Theme.caption)
                     .foregroundStyle(Theme.inkSecondary)
                     .multilineTextAlignment(.center)

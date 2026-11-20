@@ -57,8 +57,8 @@ struct AccountListSettings: View {
                 .withAppModels(model, prefs)
         }
         SectionFootnote(text: AccountOrderToggle.isOffered(model)
-            ? String(localized: "Each account's notifications, Live Activity, name and icon, and disconnecting it.") + " " + AccountOrderToggle.footnote
-            : String(localized: "Each account's notifications, Live Activity, name and icon, and disconnecting it."))
+            ? String(localized: "Each account's notifications, name and icon, and disconnecting it.") + " " + AccountOrderToggle.footnote
+            : String(localized: "Each account's notifications, name and icon, and disconnecting it."))
     }
 }
 

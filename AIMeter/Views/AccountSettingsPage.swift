@@ -236,7 +236,7 @@ struct DisconnectConfirmation: ViewModifier {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("AIMeter forgets its sign-in and deletes its usage history (in iCloud too, if sync is on) and its alerts. Your account with the service isn't touched.")
+            Text("AIMeter forgets its sign-in and deletes its usage history and its alerts. Your account with the service isn't touched.")
         }
     }
 }
