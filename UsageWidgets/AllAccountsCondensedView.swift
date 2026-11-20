@@ -8,9 +8,9 @@ import UsageKit
 /// `AccountCardLayout` puts first, as the cards do: its thick bar and its
 /// figure), and under the name every window with its figure in small
 /// text, the protagonist first ("Session 42% · Week 61% · Top model
-/// 18%"). Then the soonest session reset of them all as a live
-/// countdown. What a line gives up for the room is each window's reset
-/// and the iOS refresh button.
+/// 18%"). The soonest session reset of them all, a live countdown, sits
+/// under the title beside the mark. What a line gives up for the room is
+/// each window's reset and the iOS refresh button.
 struct CondensedAccountsView: View {
     let entry: AllAccountsEntry
     static let maxRows = 6
@@ -43,20 +43,18 @@ struct CondensedAccountsView: View {
                         .foregroundStyle(Theme.inkSecondary)
                         .padding(.top, 6)
                 }
-                Spacer(minLength: 10)
-                footer
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     private var header: some View {
-        HStack(spacing: 5) {
+        WidgetMarkBand {
             Text("All Accounts")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(Theme.ink)
             Spacer(minLength: 0)
-            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius)
+            nextReset
         }
     }
 
@@ -105,7 +103,7 @@ struct CondensedAccountsView: View {
     }
 
     @ViewBuilder
-    private var footer: some View {
+    private var nextReset: some View {
         let soonest = entry.rows
             .compactMap { row in row.snapshot?.windows.first { $0.kind == .session }?.resetsAt }
             .filter { $0 > entry.date }

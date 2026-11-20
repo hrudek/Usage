@@ -29,8 +29,16 @@ the display preferences. `UsageWidgetsBundle` lists, in gallery order:
 Every home screen widget is one button (`refreshesOnTap`, plain style,
 labelled "Refresh"): a tap anywhere refreshes it instead of opening the
 app, so there is no refresh button and no `widgetURL`. The provider mark
-sits in the header's top-right corner (`WidgetMetrics.markSize`), and a
-reset countdown has no icon before it. The widget configurations turn
+(`WidgetMetrics.markSize`, 48 pt) sits in the top-right corner of a
+`WidgetMarkBand`: a band as tall as the mark whose left side stacks the
+account's name (a staleness hint under it) over the first window's name,
+so the mark adds no height (small, single limit, each account of the
+standard all-accounts layout; the condensed layout puts the next session
+reset under its title there). The medium family gives the mark a column
+of its own right of the header and the window columns. A reset
+countdown has no icon before it. A used percentage stands alone, with no
+"used" after it; in remaining mode "left" follows it
+(`DisplayMode.widgetSuffix`). The widget configurations turn
 the system content margins off (`contentMarginsDisabled`) so the button
 reaches the edges; `widgetMargins()` puts them back as padding inside it
 (and on the accessory and StandBy views), so the layout is unchanged.

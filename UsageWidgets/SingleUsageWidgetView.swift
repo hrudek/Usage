@@ -4,7 +4,7 @@ import UsageKit
 
 /// Single-limit widget body (4.0): the app card's protagonist alone in
 /// the square — the account, the picked window's name, its figure large
-/// with "%" and "used"/"left", a thick bar and its reset — so it reads like
+/// with "%" (and "left" in remaining mode), a thick bar and its reset — so it reads like
 /// the Dashboard's card and the small Usage Limits widget. Or, with the
 /// ring style picked in Edit Widget, the figure in a ring
 /// (`RingUsageView`).
@@ -42,37 +42,32 @@ struct SingleUsageWidgetView: View {
     private var bars: some View {
         let prefs = entry.prefs
         return VStack(alignment: .leading, spacing: 0) {
-            SingleUsageHeader(entry: entry)
-            Spacer(minLength: 8)
-            VStack(alignment: .leading, spacing: 0) {
-                Text(entry.windowName)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Theme.inkSecondary)
-                    .lineLimit(1)
-                HStack(alignment: .firstTextBaseline, spacing: 0) {
-                    if let window = entry.window {
-                        Text(verbatim: "\(Int(window.displayedPct(prefs.displayMode)))")
-                            .font(Theme.figure(size: 40))
-                            .foregroundStyle(Theme.ink)
-                        Text(verbatim: "%")
-                            .font(Theme.figure(size: 17))
-                            .foregroundStyle(Theme.inkSecondary)
-                        Text(prefs.displayMode.suffix)
+            SingleUsageHeader(entry: entry) {
+                WidgetWindowTitle(name: entry.windowName)
+            }
+            HStack(alignment: .firstTextBaseline, spacing: 0) {
+                if let window = entry.window {
+                    Text(verbatim: "\(Int(window.displayedPct(prefs.displayMode)))")
+                        .font(Theme.figure(size: 40))
+                        .foregroundStyle(Theme.ink)
+                    Text(verbatim: "%")
+                        .font(Theme.figure(size: 17))
+                        .foregroundStyle(Theme.inkSecondary)
+                    if let suffix = prefs.displayMode.widgetSuffix {
+                        Text(suffix)
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(Theme.inkSecondary)
                             .padding(.leading, 3)
-                    } else {
-                        Text(verbatim: "--")
-                            .font(Theme.figure(size: 40))
-                            .foregroundStyle(Theme.inkSecondary)
                     }
+                } else {
+                    Text(verbatim: "--")
+                        .font(Theme.figure(size: 40))
+                        .foregroundStyle(Theme.inkSecondary)
                 }
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
             }
-            // One VoiceOver element: "Session, 42, %, used".
-            .accessibilityElement(children: .combine)
-            Spacer(minLength: 6)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+            Spacer(minLength: 3)
             UsageBarView(
                 value: entry.window?.displayedPct(prefs.displayMode),
                 tint: entry.window?.tint(usageColors: prefs.usageColors) ?? Theme.accent,
@@ -111,24 +106,27 @@ extension SingleUsageEntry {
     var windowName: String { window?.shortTitle ?? kind.shortName }
 }
 
-/// The account's name, with its mark in the top-right corner.
-private struct SingleUsageHeader: View {
+/// The account's name over the window's name, with the mark beside them.
+private struct SingleUsageHeader<WindowTitle: View>: View {
     let entry: SingleUsageEntry
+    @ViewBuilder let windowTitle: WindowTitle
 
     var body: some View {
-        HStack(spacing: 5) {
-            ProviderIdentityView(
-                name: entry.accountName,
-                iconSize: 15,
-                iconCornerRadius: 3.5,
-                font: .system(size: 12, weight: .semibold),
-                nameColor: Theme.ink,
-                planName: nil,
-                icon: entry.accountIcon,
-                showsMark: false
-            )
-            Spacer(minLength: 4)
-            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: entry.accountIcon)
+        WidgetMarkBand(icon: entry.accountIcon) {
+            HStack(spacing: 5) {
+                ProviderIdentityView(
+                    name: entry.accountName,
+                    iconSize: 15,
+                    iconCornerRadius: 3.5,
+                    font: .system(size: 12, weight: .semibold),
+                    nameColor: Theme.ink,
+                    planName: nil,
+                    icon: entry.accountIcon,
+                    showsMark: false
+                )
+            }
+            Spacer(minLength: 0)
+            windowTitle
         }
     }
 }
@@ -136,9 +134,10 @@ private struct SingleUsageHeader: View {
 /// The ring style: the header, the window's name, then the window as a ring
 /// in its level's color with only its figure and its reset in the centre
 /// (the bare live countdown under a day, `ResetLineText(bare:)`), clear
-/// of the stroke by more than its width, and 8 pt of air under the
-/// header and window name (Mike's review, 2026-10-21: no "used", and room around the
-/// ring). The track is the bars' and the stroke 9 pt.
+/// of the stroke, and 4 pt of air under the header band (Mike's review,
+/// 2026-10-21: no "used", and room around the ring). The band's mark
+/// leaves the ring less height than a slim header did, so the figure is
+/// 24 pt. The track is the bars' and the stroke 9 pt.
 private struct RingUsageView: View {
     let entry: SingleUsageEntry
     private static let strokeWidth: CGFloat = 9
@@ -146,12 +145,13 @@ private struct RingUsageView: View {
     var body: some View {
         let prefs = entry.prefs
         VStack(alignment: .leading, spacing: 0) {
-            SingleUsageHeader(entry: entry)
-            Text(entry.windowName)
-                .font(.system(size: 11))
-                .foregroundStyle(Theme.inkSecondary)
-                .lineLimit(1)
-            Spacer(minLength: 8)
+            SingleUsageHeader(entry: entry) {
+                Text(entry.windowName)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Theme.inkSecondary)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 4)
             ZStack {
                 Circle()
                     .stroke(Theme.track, lineWidth: Self.strokeWidth)
@@ -167,11 +167,11 @@ private struct RingUsageView: View {
                 VStack(spacing: 3) {
                     HStack(alignment: .firstTextBaseline, spacing: 0) {
                         Text(verbatim: entry.window.map { "\(Int($0.displayedPct(prefs.displayMode)))" } ?? "--")
-                            .font(Theme.figure(size: 26))
+                            .font(Theme.figure(size: 24))
                             .foregroundStyle(entry.window == nil ? Theme.inkSecondary : Theme.ink)
                         if entry.window != nil {
                             Text(verbatim: "%")
-                                .font(Theme.figure(size: 12))
+                                .font(Theme.figure(size: 11))
                                 .foregroundStyle(Theme.inkSecondary)
                         }
                     }

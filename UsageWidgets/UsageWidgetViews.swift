@@ -61,11 +61,10 @@ struct UsageWidgetView: View {
 
 // MARK: - System families
 
-/// Account name with the mark; shows a staleness hint on the trailing
-/// edge so it never costs an extra row. Widget fonts are fixed sizes on
-/// purpose: text styles scale with the device's Dynamic Type and overflow
-/// the fixed widget height on real hardware. Internal: `MediumUsageView`
-/// (its own file) uses the same header over its columns.
+/// Account name, with a staleness hint under it. Widget fonts are fixed
+/// sizes on purpose: text styles scale with the device's Dynamic Type and
+/// overflow the fixed widget height on real hardware. Internal:
+/// `MediumUsageView` (its own file) uses the same header over its columns.
 struct WidgetHeader: View {
     let snapshot: UsageSnapshot
     /// The rendered timeline entry's own date — not `Date()` — so the
@@ -79,18 +78,19 @@ struct WidgetHeader: View {
     var accountIcon: AccountIcon? = nil
 
     var body: some View {
-        HStack(spacing: 5) {
-            ProviderIdentityView(
-                name: accountName,
-                iconSize: 15,
-                iconCornerRadius: 3.5,
-                font: .system(size: 12, weight: .semibold),
-                nameColor: Theme.ink,
-                planName: planName,
-                icon: accountIcon,
-                showsMark: false
-            )
-            Spacer(minLength: 0)
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 5) {
+                ProviderIdentityView(
+                    name: accountName,
+                    iconSize: 15,
+                    iconCornerRadius: 3.5,
+                    font: .system(size: 12, weight: .semibold),
+                    nameColor: Theme.ink,
+                    planName: planName,
+                    icon: accountIcon,
+                    showsMark: false
+                )
+            }
             if snapshot.isStale {
                 HStack(spacing: 2) {
                     Image(systemName: "clock.arrow.circlepath")
@@ -98,9 +98,47 @@ struct WidgetHeader: View {
                 }
                 .font(.system(size: 8))
                 .foregroundStyle(Theme.inkSecondary.opacity(0.8))
+                .lineLimit(1)
             }
-            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: accountIcon)
         }
+    }
+}
+
+/// The provider mark in the top-right corner beside a title block exactly
+/// as tall as the mark: `leading` stacks the header over the first
+/// window's name (a `Spacer` between them), so the large mark fills height
+/// those lines already take instead of adding a row.
+struct WidgetMarkBand<Leading: View>: View {
+    let icon: AccountIcon?
+    let leading: Leading
+
+    init(icon: AccountIcon? = nil, @ViewBuilder leading: () -> Leading) {
+        self.icon = icon
+        self.leading = leading()
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 6) {
+            VStack(alignment: .leading, spacing: 0) {
+                leading
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: icon)
+        }
+        .frame(height: WidgetMetrics.markSize)
+    }
+}
+
+/// A window's name over a widget's figure (`WidgetHero`, the single-limit
+/// widget), drawn at the bottom of a `WidgetMarkBand`.
+struct WidgetWindowTitle: View {
+    let name: String
+
+    var body: some View {
+        Text(name)
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundStyle(Theme.inkSecondary)
+            .lineLimit(1)
     }
 }
 
@@ -121,17 +159,20 @@ struct SystemUsageView: View {
     var body: some View {
         let layout = AccountCardLayout(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback)
         VStack(alignment: .leading, spacing: 0) {
-            WidgetHeader(snapshot: snapshot, date: date, accountName: accountName, accountIcon: accountIcon)
-            Spacer(minLength: 8)
+            WidgetMarkBand(icon: accountIcon) {
+                WidgetHeader(snapshot: snapshot, date: date, accountName: accountName)
+                Spacer(minLength: 0)
+                WidgetWindowTitle(name: layout.hero.window?.shortTitle ?? layout.hero.kind.shortName)
+            }
             WidgetHero(
-                kind: layout.hero.kind,
                 window: layout.hero.window,
                 prefs: prefs,
                 now: date,
                 moneySubtitle: prefs.creditsAmountSubtitle(for: layout.hero.kind, snapshot: snapshot),
                 figureSize: 28
             )
-            Spacer(minLength: 8)
+            .padding(.top, 4)
+            Spacer(minLength: 5)
             WidgetCompactRows(slots: Array(layout.others.prefix(2)), prefs: prefs)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -139,10 +180,9 @@ struct SystemUsageView: View {
 }
 
 /// A widget's protagonist (the small family, and each account of the
-/// all-accounts widget): the window's name, the figure with its reset on
-/// the same line, and a thicker bar.
+/// all-accounts widget): the figure with its reset on the same line, and a
+/// thicker bar. The window's name sits above it in the `WidgetMarkBand`.
 struct WidgetHero: View {
-    let kind: UsageWindow.Kind
     let window: UsageWindow?
     let prefs: Preferences
     let now: Date
@@ -153,10 +193,6 @@ struct WidgetHero: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(window?.shortTitle ?? kind.shortName)
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(Theme.inkSecondary)
-                .lineLimit(1)
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 if let window {
                     Text(verbatim: "\(Int(window.displayedPct(prefs.displayMode)))")

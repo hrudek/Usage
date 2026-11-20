@@ -60,47 +60,51 @@ struct AllAccountsWidgetView: View {
     }
 }
 
-/// One account's header (the name, the mark in the top-right corner) followed by the app's card composition
-/// (4.0): its session as the protagonist and the others as
-/// compact lines, `WidgetHero` and `WidgetCompactRows`, the small
-/// widget's own pieces, decided by the same `AccountCardLayout`.
+/// One account's header (the name over its protagonist's name, the mark
+/// beside them) followed by the app's card composition (4.0): its session
+/// as the protagonist and the others as compact lines, `WidgetHero` and
+/// `WidgetCompactRows`, the small widget's own pieces, decided by the same
+/// `AccountCardLayout`.
 private struct AccountRow: View {
     let row: AllAccountsEntry.Row
     let prefs: Preferences
     let now: Date
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 5) {
-                ProviderIdentityView(
-                    name: row.account.displayName,
-                    iconSize: 15,
-                    iconCornerRadius: 3.5,
-                    font: .system(size: 12, weight: .semibold),
-                    nameColor: Theme.ink,
-                    planName: row.snapshot?.planName,
-                    icon: row.account.icon,
-                    showsMark: false
-                )
+        let layout = row.snapshot.map { AccountCardLayout(snapshot: $0, modelSlotFallback: prefs.modelSlotFallback) }
+        VStack(alignment: .leading, spacing: 4) {
+            WidgetMarkBand(icon: row.account.icon) {
+                HStack(spacing: 5) {
+                    ProviderIdentityView(
+                        name: row.account.displayName,
+                        iconSize: 15,
+                        iconCornerRadius: 3.5,
+                        font: .system(size: 12, weight: .semibold),
+                        nameColor: Theme.ink,
+                        planName: row.snapshot?.planName,
+                        icon: row.account.icon,
+                        showsMark: false
+                    )
+                }
                 Spacer(minLength: 0)
-                ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: row.account.icon)
+                if let hero = layout?.hero {
+                    WidgetWindowTitle(name: hero.window?.shortTitle ?? hero.kind.shortName)
+                } else {
+                    Text("No usage data yet")
+                        .font(.system(size: 10))
+                        .foregroundStyle(Theme.inkSecondary)
+                }
             }
-            if let snapshot = row.snapshot {
-                let layout = AccountCardLayout(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback)
+            if let snapshot = row.snapshot, let layout {
                 WidgetHero(
-                    kind: layout.hero.kind,
                     window: layout.hero.window,
                     prefs: prefs,
                     now: now,
                     moneySubtitle: prefs.creditsAmountSubtitle(for: layout.hero.kind, snapshot: snapshot),
                     figureSize: 34
                 )
-                .padding(.bottom, 4)
+                .padding(.bottom, 10)
                 WidgetCompactRows(slots: layout.others, prefs: prefs)
-            } else {
-                Text("No usage data yet")
-                    .font(.system(size: 10))
-                    .foregroundStyle(Theme.inkSecondary)
             }
         }
     }

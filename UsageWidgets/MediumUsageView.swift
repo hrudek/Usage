@@ -7,7 +7,9 @@ import UsageKit
 /// instead of the small widget's rows stretched wide. Two columns when
 /// the account reports (or the third-row fallback yields) two slots,
 /// three when it has a per-model window or credits; the value font
-/// steps down for three so "100% left" still fits a column.
+/// steps down for three so "100% left" still fits a column. The mark
+/// takes a column of its own on the right: in a band over the columns it
+/// would cost the height the columns need.
 struct MediumUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences
@@ -18,31 +20,34 @@ struct MediumUsageView: View {
     var body: some View {
         let slots = WindowSlots(snapshot: snapshot, modelSlotFallback: prefs.modelSlotFallback).slots
         let wide = slots.count <= 2
-        VStack(alignment: .leading, spacing: 0) {
-            WidgetHeader(snapshot: snapshot, date: date, accountName: accountName, planName: snapshot.planName, accountIcon: accountIcon)
-            Spacer(minLength: 6)
-            HStack(alignment: .top, spacing: wide ? 16 : 10) {
-                ForEach(slots, id: \.kind) { slot in
-                    WindowColumn(
-                        kind: slot.kind,
-                        window: slot.window,
-                        prefs: prefs,
-                        now: date,
-                        valueSize: wide ? 28 : 22,
-                        moneySubtitle: prefs.creditsAmountSubtitle(for: slot.kind, snapshot: snapshot)
-                    )
-                    .frame(maxWidth: .infinity, alignment: .leading)
+        HStack(alignment: .top, spacing: 10) {
+            VStack(alignment: .leading, spacing: 0) {
+                WidgetHeader(snapshot: snapshot, date: date, accountName: accountName, planName: snapshot.planName, accountIcon: accountIcon)
+                Spacer(minLength: 6)
+                HStack(alignment: .top, spacing: wide ? 16 : 10) {
+                    ForEach(slots, id: \.kind) { slot in
+                        WindowColumn(
+                            kind: slot.kind,
+                            window: slot.window,
+                            prefs: prefs,
+                            now: date,
+                            valueSize: wide ? 28 : 22,
+                            moneySubtitle: prefs.creditsAmountSubtitle(for: slot.kind, snapshot: snapshot)
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
+            ProviderMark(size: WidgetMetrics.markSize, cornerRadius: WidgetMetrics.markRadius, icon: accountIcon)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
-/// One window as a column: name, the big figure with its "left"/"used"
-/// suffix, the bar, and a subtitle — the reset line, the optional credits
-/// amount, or "Not available" for a slot the account doesn't report.
+/// One window as a column: name, the big figure ("left" after it in
+/// remaining mode, `DisplayMode.widgetSuffix`), the bar, and a subtitle:
+/// the reset line, the optional credits amount, or "Not available" for a slot the account doesn't report.
 /// Every column shows its own reset line: the grouped-reset rule
 /// (`WindowSlots.showsReset`) is for stacked rows, where one line can sit
 /// under a group; side by side, a column with nothing under its bar
@@ -66,15 +71,19 @@ private struct WindowColumn: View {
                     Text("\(Int(window.displayedPct(prefs.displayMode)))%")
                         .font(Theme.figure(size: valueSize))
                         .foregroundStyle(Theme.ink)
-                    Text(prefs.displayMode.suffix)
-                        .font(.system(size: 11))
-                        .foregroundStyle(Theme.inkSecondary)
+                    if let suffix = prefs.displayMode.widgetSuffix {
+                        Text(suffix)
+                            .font(.system(size: 11))
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
                 } else {
                     Text("--")
                         .font(Theme.figure(size: valueSize))
                         .foregroundStyle(Theme.inkSecondary)
                 }
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
             // Fixed height, so the bars line up across columns whatever
             // the glyphs above them (a dash measures shorter than digits).
             .frame(height: ceil(valueSize * 1.2), alignment: .leading)
