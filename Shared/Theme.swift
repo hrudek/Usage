@@ -9,7 +9,7 @@ enum Theme {
     static let accentWash = accent.opacity(0.14)
     static let onAccent = Color(light: 0xFFFFFF, dark: 0x0D0E14)
     /// Warm yellow for usage above 70 % or provider-flagged warning —
-    /// clearly yellow, with enough warmth to sit with the terracotta on
+    /// clearly yellow, with enough warmth to sit with the accent on
     /// ivory and charcoal cards (a cold, pure yellow glared on a light
     /// widget).
     static let warning = Color(light: 0xDDA712, dark: 0xF0BF3A)
