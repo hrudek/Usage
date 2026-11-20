@@ -82,23 +82,29 @@ nonisolated enum ProviderCatalog {
     /// CLI's own login (Claude Code's Keychain item, Codex's auth.json),
     /// read-only; every `.managed` account has the app's own copy in the
     /// Keychain (see each provider's CLAUDE.md).
+    ///
+    /// `allowsRefresh` is false in the widget extension: it reads the
+    /// stored login and never rotates it, so the app is the only process
+    /// that spends a refresh token. With an expired access token the
+    /// widget's fetch fails and it keeps its last snapshot.
     static func makeProvider(
         for account: ConnectedAccount,
         keychain: KeychainStore,
+        allowsRefresh: Bool,
         transport: (any HTTPTransport)? = nil
     ) -> (provider: any UsageProvider, credentials: any CredentialStore) {
         switch account.providerID {
         case ClaudeProvider.providerID:
             let key = ClaudeKeychainCredentialSource.storageKey(for: account.accountID)
             let source: any ClaudeCredentialSource
-            source = ClaudeKeychainCredentialSource(store: keychain, key: key)
+            source = ClaudeKeychainCredentialSource(store: keychain, key: key, allowsRefresh: allowsRefresh)
             let provider = transport.map { ClaudeProvider(credentialSource: source, transport: $0) }
                 ?? ClaudeProvider(credentialSource: source)
             return (provider, source)
         case CodexProvider.providerID:
             let key = CodexKeychainCredentialSource.storageKey(for: account.accountID)
             let source: any CodexCredentialSource
-            source = CodexKeychainCredentialSource(store: keychain, key: key)
+            source = CodexKeychainCredentialSource(store: keychain, key: key, allowsRefresh: allowsRefresh)
             let provider = transport.map { CodexProvider(credentialSource: source, transport: $0) }
                 ?? CodexProvider(credentialSource: source)
             return (provider, source)
@@ -113,7 +119,7 @@ nonisolated enum ProviderCatalog {
                 displayName: account.displayName, credentialStrategy: account.credentialStrategy,
                 connectedAt: account.connectedAt, icon: account.icon
             )
-            return makeProvider(for: claude, keychain: keychain, transport: transport)
+            return makeProvider(for: claude, keychain: keychain, allowsRefresh: allowsRefresh, transport: transport)
         }
     }
 

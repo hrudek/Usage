@@ -23,7 +23,9 @@ struct RefreshService {
 
     init(account: ConnectedAccount) {
         self.account = account
-        (provider, credentialSource) = ProviderCatalog.makeProvider(for: account, keychain: Self.keychainStore)
+        (provider, credentialSource) = ProviderCatalog.makeProvider(
+            for: account, keychain: Self.keychainStore, allowsRefresh: true
+        )
         store = SnapshotStore(suiteName: AppConfig.appGroupID)
         historyStore = UsageHistoryStore(suiteName: AppConfig.appGroupID)
     }

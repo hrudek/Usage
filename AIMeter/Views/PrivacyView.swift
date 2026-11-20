@@ -135,12 +135,11 @@ struct PrivacyView: View {
         Spacer().frame(height: Theme.sectionSpacing - 16)
     }
 
-    /// The widget's Keychain access differs by platform (App Group access
-    /// group on iOS; the menu bar app feeds it on macOS instead, since a
-    /// sandboxed widget there can't read Claude Code's own credential
-    /// file) — this row must say the true thing for whichever one is running.
+    /// The widget reads the login through the App Group's keychain access
+    /// group and never renews it (`ProviderCatalog.makeProvider`,
+    /// `allowsRefresh: false`); only the app rotates the token.
     private var keychainRowText: String {
-        String(localized: "Your sign-in token is stored encrypted in the system Keychain, shared only with the widget (through the App Group's keychain access group) so it can refresh usage by itself. It is used exclusively to read your usage.")
+        String(localized: "Your sign-in token is stored encrypted in the system Keychain and shared only with the widget, which just reads it to load your usage. Only the app renews the token. It is used exclusively to read your usage.")
     }
 }
 

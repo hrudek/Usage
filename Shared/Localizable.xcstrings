@@ -25807,48 +25807,48 @@
         }
       }
     },
-    "Your sign-in token is stored encrypted in the system Keychain, shared only with the widget (through the App Group's keychain access group) so it can refresh usage by itself. It is used exclusively to read your usage." : {
+    "Your sign-in token is stored encrypted in the system Keychain and shared only with the widget, which just reads it to load your usage. Only the app renews the token. It is used exclusively to read your usage." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Anmeldetoken wird verschlüsselt im System-Schlüsselbund gespeichert und nur mit dem Widget geteilt (über die Schlüsselbund-Zugriffsgruppe der App-Gruppe), damit es die Nutzung selbst aktualisieren kann. Es wird ausschließlich zum Lesen deiner Nutzung verwendet."
+            "value" : "Dein Anmeldetoken wird verschlüsselt im System-Schlüsselbund gespeichert und nur mit dem Widget geteilt, das es nur liest, um deine Nutzung zu laden. Erneuert wird das Token ausschließlich von der App. Es wird nur zum Lesen deiner Nutzung verwendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu token de inicio de sesión se guarda cifrado en el llavero del sistema y se comparte solo con el widget (a través del grupo de acceso al llavero de tu App Group) para que pueda actualizar el uso por sí mismo. Se usa exclusivamente para leer tu uso."
+            "value" : "Tu token de inicio de sesión se guarda cifrado en el llavero del sistema y se comparte solo con el widget, que solo lo lee para cargar tu uso. Solo la app renueva el token. Se usa exclusivamente para leer tu uso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre jeton de connexion est stocké chiffré dans le trousseau système et partagé uniquement avec le widget (via le groupe d'accès au trousseau de l'App Group) pour qu'il puisse actualiser l'usage lui-même. Il sert exclusivement à lire votre usage."
+            "value" : "Votre jeton de connexion est stocké chiffré dans le trousseau système et partagé uniquement avec le widget, qui se contente de le lire pour charger votre usage. Seule l'app renouvelle le jeton. Il sert exclusivement à lire votre usage."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "サインイントークンはシステムのキーチェーンに暗号化して保存され、ウィジェットが自分で使用量を更新できるようウィジェットとのみ共有されます（App Groupのキーチェーンアクセスグループ経由）。使用量の読み取り以外には使いません。"
+            "value" : "サインイントークンはシステムのキーチェーンに暗号化して保存され、ウィジェットとのみ共有されます。ウィジェットは使用量を読み込むためにトークンを読み取るだけで、更新するのはアプリだけです。使用量の読み取り以外には使いません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "로그인 토큰은 시스템 키체인에 암호화되어 저장되며, 위젯이 스스로 사용량을 새로 고칠 수 있도록 위젯과만 공유됩니다(App Group의 키체인 접근 그룹을 통해). 사용량을 읽는 용도로만 사용됩니다."
+            "value" : "로그인 토큰은 시스템 키체인에 암호화되어 저장되며 위젯과만 공유됩니다. 위젯은 사용량을 불러오기 위해 토큰을 읽기만 하고, 토큰 갱신은 앱만 합니다. 사용량을 읽는 용도로만 사용됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu token de login fica criptografado nas Chaves do sistema, compartilhado só com o widget (pelo grupo de acesso às chaves do App Group) para que ele possa atualizar o uso sozinho. É usado exclusivamente para ler seu uso."
+            "value" : "Seu token de login fica criptografado nas Chaves do sistema e é compartilhado só com o widget, que apenas o lê para carregar seu uso. Só o app renova o token. É usado exclusivamente para ler seu uso."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的登录令牌加密保存在系统钥匙串中，仅与小组件共享（通过 App Group 的钥匙串访问组），以便它自行刷新用量。它只用于读取你的用量。"
+            "value" : "你的登录令牌加密保存在系统钥匙串中，仅与小组件共享。小组件只读取它来加载用量，只有 App 会续期令牌。它只用于读取你的用量。"
           }
         }
       }
