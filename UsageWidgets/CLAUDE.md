@@ -35,7 +35,9 @@ account's name (a staleness hint under it) over the first window's name,
 so the mark adds no height (small, single limit, each account of the
 standard all-accounts layout; the condensed layout puts the next session
 reset under its title there). The medium family gives the mark a column
-of its own right of the header and the window columns. A reset
+of its own right of the header and the window columns: a band over the
+columns would cost height they need. The ring style's figure is 24 pt,
+since the band leaves the ring less height. A reset
 countdown has no icon before it. A used percentage stands alone, with no
 "used" after it; in remaining mode "left" follows it
 (`DisplayMode.widgetSuffix`). The widget configurations turn

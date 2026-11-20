@@ -105,9 +105,7 @@ struct WidgetHeader: View {
 }
 
 /// The provider mark in the top-right corner beside a title block exactly
-/// as tall as the mark: `leading` stacks the header over the first
-/// window's name (a `Spacer` between them), so the large mark fills height
-/// those lines already take instead of adding a row.
+/// as tall as the mark.
 struct WidgetMarkBand<Leading: View>: View {
     let icon: AccountIcon?
     let leading: Leading

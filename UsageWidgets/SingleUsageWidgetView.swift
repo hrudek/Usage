@@ -135,9 +135,8 @@ private struct SingleUsageHeader<WindowTitle: View>: View {
 /// in its level's color with only its figure and its reset in the centre
 /// (the bare live countdown under a day, `ResetLineText(bare:)`), clear
 /// of the stroke, and 4 pt of air under the header band (Mike's review,
-/// 2026-10-21: no "used", and room around the ring). The band's mark
-/// leaves the ring less height than a slim header did, so the figure is
-/// 24 pt. The track is the bars' and the stroke 9 pt.
+/// 2026-10-21: no "used", and room around the ring). The track is the
+/// bars' and the stroke 9 pt.
 private struct RingUsageView: View {
     let entry: SingleUsageEntry
     private static let strokeWidth: CGFloat = 9

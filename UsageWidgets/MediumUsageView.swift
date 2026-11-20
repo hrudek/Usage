@@ -8,8 +8,7 @@ import UsageKit
 /// the account reports (or the third-row fallback yields) two slots,
 /// three when it has a per-model window or credits; the value font
 /// steps down for three so "100% left" still fits a column. The mark
-/// takes a column of its own on the right: in a band over the columns it
-/// would cost the height the columns need.
+/// takes a column of its own on the right.
 struct MediumUsageView: View {
     let snapshot: UsageSnapshot
     let prefs: Preferences
