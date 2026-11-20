@@ -1,11 +1,21 @@
 name: TestFlight
 
-# Every push to main: signed archive of the app and its widget extension,
+# Push to main touching build-relevant paths, or manual run: signed archive of the app and its widget extension,
 # uploaded to App Store Connect for TestFlight. Build number = run number.
 
 on:
   push:
     branches: [main]
+    paths:
+      - Usage/**
+      - UsageWidgets/**
+      - WidgetsShared/**
+      - Shared/**
+      - Packages/**
+      - Usage.xcodeproj/**
+      - .github/ci/select-xcode.sh
+      - .github/testflight/**
+      - .github/workflows/testflight.yml
   workflow_dispatch:
 
 permissions:
