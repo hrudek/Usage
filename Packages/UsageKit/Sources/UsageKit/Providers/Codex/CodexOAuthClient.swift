@@ -24,10 +24,9 @@ struct CodexOAuthClient: Sendable {
         var updated = credentials
         updated.accessToken = token.accessToken
         updated.refreshToken = token.refreshToken ?? credentials.refreshToken
-        updated.idToken = token.idToken ?? credentials.idToken
         updated.expiresAt = Self.expiry(of: token)
         updated.lastRefresh = Date()
-        if let accountID = JWTClaims(token: token.accessToken)?.accountID {
+        if let accountID = Self.accountID(of: token) {
             updated.accountID = accountID
         }
         return updated
@@ -46,8 +45,7 @@ struct CodexOAuthClient: Sendable {
         return CodexCredentials(
             accessToken: token.accessToken,
             refreshToken: token.refreshToken,
-            idToken: token.idToken,
-            accountID: JWTClaims(token: token.accessToken)?.accountID,
+            accountID: Self.accountID(of: token),
             expiresAt: Self.expiry(of: token),
             lastRefresh: Date()
         )
@@ -82,6 +80,12 @@ struct CodexOAuthClient: Sendable {
         } catch {
             throw UsageError.invalidResponse("token endpoint: \(error.localizedDescription)")
         }
+    }
+
+    /// The ChatGPT account id from the access token's claims, else from
+    /// the `id_token`'s. The `id_token` itself is read here and dropped.
+    private static func accountID(of token: TokenResponse) -> String? {
+        JWTClaims(token: token.accessToken)?.accountID ?? token.idToken.flatMap { JWTClaims(token: $0)?.accountID }
     }
 
     /// The access token's own `exp` claim, else the endpoint's

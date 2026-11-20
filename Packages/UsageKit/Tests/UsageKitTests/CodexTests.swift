@@ -88,7 +88,6 @@ final class CodexCredentialsTests: XCTestCase {
         let credentials = try CodexCredentials.fromAuthJSON(Data(json.utf8))
         XCTAssertEqual(credentials.accessToken, token)
         XCTAssertEqual(credentials.refreshToken, "rt-1")
-        XCTAssertEqual(credentials.idToken, "id.x.y")
         XCTAssertEqual(credentials.accountID, "acct-1")
         XCTAssertEqual(credentials.expiresAt, Date(timeIntervalSince1970: 1_800_000_000))
         XCTAssertEqual(credentials.lastRefresh?.timeIntervalSince1970 ?? 0, 1_792_527_283.31, accuracy: 0.01)

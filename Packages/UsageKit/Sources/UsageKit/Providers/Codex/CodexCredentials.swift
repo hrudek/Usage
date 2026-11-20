@@ -2,13 +2,16 @@ import Foundation
 
 /// A Codex login: the ChatGPT OAuth tokens the Codex CLI keeps in
 /// `~/.codex/auth.json` (`tokens.access_token`, `refresh_token`,
-/// `id_token`, `account_id`) and that the in-app device-code sign-in
-/// mints. The access token is a JWT whose `exp` claim is the only expiry
-/// there is; `auth.json` carries none.
+/// `account_id`) and that the in-app device-code sign-in mints. The
+/// access token is a JWT whose `exp` claim is the only expiry there is;
+/// `auth.json` carries none. The `id_token` (it carries the email) is
+/// never kept: its one claim the app needs, the account id, is copied
+/// into `accountID` when the token arrives. An item stored before this
+/// still decodes; its `idToken` key is ignored and dropped on the next
+/// save.
 public struct CodexCredentials: Codable, Equatable, Sendable {
     public var accessToken: String
     public var refreshToken: String?
-    public var idToken: String?
     /// The ChatGPT account the usage belongs to (a workspace, or the
     /// personal account), sent as the `ChatGPT-Account-Id` header the
     /// way the CLI sends it; also the login's cross-device identity.
@@ -21,14 +24,12 @@ public struct CodexCredentials: Codable, Equatable, Sendable {
     public init(
         accessToken: String,
         refreshToken: String? = nil,
-        idToken: String? = nil,
         accountID: String? = nil,
         expiresAt: Date? = nil,
         lastRefresh: Date? = nil
     ) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
-        self.idToken = idToken
         self.accountID = accountID
         self.expiresAt = expiresAt
         self.lastRefresh = lastRefresh
@@ -57,7 +58,6 @@ public struct CodexCredentials: Codable, Equatable, Sendable {
         return CodexCredentials(
             accessToken: accessToken,
             refreshToken: tokens.refreshToken,
-            idToken: tokens.idToken,
             accountID: tokens.accountID ?? claims?.accountID,
             expiresAt: claims?.expiresAt,
             lastRefresh: file.lastRefresh.flatMap(Self.parseDate)
@@ -86,13 +86,11 @@ public struct CodexCredentials: Codable, Equatable, Sendable {
     private struct Tokens: Decodable {
         let accessToken: String?
         let refreshToken: String?
-        let idToken: String?
         let accountID: String?
 
         enum CodingKeys: String, CodingKey {
             case accessToken = "access_token"
             case refreshToken = "refresh_token"
-            case idToken = "id_token"
             case accountID = "account_id"
         }
     }
