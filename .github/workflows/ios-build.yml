@@ -5,7 +5,7 @@ name: iOS build check
 
 on:
   push:
-    branches: [ios-minimal]
+    branches: [main]
   pull_request:
 
 permissions:
@@ -29,8 +29,8 @@ jobs:
         run: |
           mkdir -p build
           xcodebuild build \
-            -project AIMeter.xcodeproj \
-            -scheme AIMeter \
+            -project Usage.xcodeproj \
+            -scheme Usage \
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build/dd \
             CODE_SIGNING_ALLOWED=NO \

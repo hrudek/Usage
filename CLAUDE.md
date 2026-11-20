@@ -1,4 +1,4 @@
-# AIMeter (iOS fork)
+# Usage
 
 An iOS app (iOS 17+, iPhone and iPad, pure SwiftUI, no third-party
 dependencies, no server) with a widget extension that shows how much of
@@ -6,30 +6,30 @@ an AI subscription is used and when each limit resets. Two provider
 families: Claude (Pro, Max, Ultra) and Codex (any ChatGPT plan). Several
 accounts, of one family or both, can be connected at once.
 
-This fork (branch `ios-minimal` of hrudek/AIMeter) is cut down from the
-original multi-platform AIMeter: no macOS app, Watch, notch island,
-iCloud sync, GitHub Copilot, status pages, Live Activity, demo mode,
-release scripts or website. The code is the source of truth; this file
-says only what the code does.
+The repository is hrudek/Usage, a standalone project (its origin is in
+README.md's Acknowledgments): iOS only, with no macOS app, Watch, notch
+island, iCloud sync, GitHub Copilot, status pages, Live Activity, demo
+mode, release scripts or website. The code is the source of truth; this
+file says only what the code does.
 
 ## Identifiers
 
-- App: `dev.rudek.aimeter`; widget extension: `dev.rudek.aimeter.widgets`.
-- App Group: `group.dev.rudek.aimeter`, in both targets' entitlements and
+- App: `dev.rudek.usage`; widget extension: `dev.rudek.usage.widgets`.
+- App Group: `group.dev.rudek.usage`, in both targets' entitlements and
   `Shared/AppConfig.swift`. It is also the keychain access group, so both
   targets carry `keychain-access-groups` (`$(AppIdentifierPrefix)` + the
   group) as well as `com.apple.security.application-groups`. The App
   Group alone shares `UserDefaults` and files, not Keychain items.
-- Keychain service: `dev.rudek.aimeter`.
-- Background task: `dev.rudek.aimeter.refresh` (`BGAppRefreshTask`).
-- Widget kinds: `AIMeterUsage`, `AIMeterSingleUsage`, `AIMeterAllAccounts`;
-  control kind (iOS 18+): `AIMeterControl`. See `AIMeterWidgets/CLAUDE.md`.
+- Keychain service: `dev.rudek.usage`.
+- Background task: `dev.rudek.usage.refresh` (`BGAppRefreshTask`).
+- Widget kinds: `UsageLimits`, `UsageSingleLimit`, `UsageAllAccounts`;
+  control kind (iOS 18+): `UsageControl`. See `UsageWidgets/CLAUDE.md`.
 
 ## Layout
 
-- `AIMeter/`: the app. `Services/` (model, refresh, notifications),
-  `Views/`, `Intents/` (App Intents). See `AIMeter/CLAUDE.md`.
-- `AIMeterWidgets/`: the widget extension. See `AIMeterWidgets/CLAUDE.md`.
+- `Usage/`: the app. `Services/` (model, refresh, notifications),
+  `Views/`, `Intents/` (App Intents). See `Usage/CLAUDE.md`.
+- `UsageWidgets/`: the widget extension. See `UsageWidgets/CLAUDE.md`.
 - `WidgetsShared/`: widget code shared by the widget kinds (account
   picker intent, fallback account, accessory views, placeholders).
 - `Shared/`: compiled into both targets: `AppConfig`, `ProviderCatalog`,
@@ -39,7 +39,7 @@ says only what the code does.
   `WidgetReload`, `Localizable.xcstrings`, `PrivacyInfo.xcprivacy`.
 - `Packages/UsageKit/`: the local Swift package (iOS 17) with the
   provider-agnostic core, the providers and the stores.
-- `AIMeterTests/`: the app's unit tests (hosted in the app).
+- `UsageTests/`: the app's unit tests (hosted in the app).
 
 ## Architecture rules
 
@@ -121,7 +121,7 @@ the model a `ProviderLogin` (`.claude` or `.codex`), which
   `UsageModel.refreshAllInBackground()`.
 - Widgets reload at most every 30 min (`AppConfig.widgetRefreshFloor`) and
   a minute after the next reset; a widget whose snapshot is stale fetches
-  for its own account, read-only (see `AIMeterWidgets/CLAUDE.md`).
+  for its own account, read-only (see `UsageWidgets/CLAUDE.md`).
 
 ## Stores (App Group)
 
@@ -161,27 +161,26 @@ English source plus de, es, fr, ja, ko, pt-BR, zh-Hans, in
 `Shared/Localizable.xcstrings` (app and widgets) and UsageKit's own
 `Resources/Localizable.xcstrings` (errors). A changed string changes its
 key: update every language. Brand names (Claude, Codex, ChatGPT,
-Anthropic, OpenAI, AIMeter) are not translated. No em dash or en dash in
+Anthropic, OpenAI, Usage) are not translated. No em dash or en dash in
 any user-facing text, in any language.
 
 ## Build and CI
 
 - No local Xcode is assumed. The gate is the GitHub Actions workflow
   "iOS build check" (`.github/workflows/ios-build.yml`): an unsigned iOS
-  Simulator build of the `AIMeter` scheme, on pull requests and on pushes
-  to `ios-minimal`. It runs no tests.
+  Simulator build of the `Usage` scheme, on pull requests and on pushes
+  to `main`. It runs no tests.
 - Signing: `Config.local.xcconfig` (gitignored, from
   `Config.local.xcconfig.example`) sets `DEVELOPMENT_TEAM`.
-- Unit tests: `AIMeterTests` (scheme `AIMeter`) and UsageKit's
+- Unit tests: `UsageTests` (scheme `Usage`) and UsageKit's
   `UsageKitTests`, run in Xcode on a simulator.
 
 ## Repo rules
 
 - Git history is linear: one feature or fix per branch from
-  `ios-minimal`, rebased and merged with rebase (never squash, never merge
+  `main`, rebased and merged with rebase (never squash, never merge
   commits), plain imperative commit subjects, no Co-Authored-By.
-- Pull requests go to hrudek/AIMeter (`gh ... -R hrudek/AIMeter`), never
-  to the upstream repository.
+- Pull requests go to hrudek/Usage (`gh ... -R hrudek/Usage`).
 - Never commit `xcuserdata`, `Config.local.xcconfig`, credentials or
   tokens.
 - Keep files under about 300 lines; async/await, no Combine.

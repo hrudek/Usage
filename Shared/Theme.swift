@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// AIMeter design tokens — single source of truth for app and widgets.
+/// Usage design tokens — single source of truth for app and widgets.
 ///
 /// Identity: warm, editorial, Claude-inspired. Terracotta accent over warm
 /// ivory/charcoal neutrals, a serif display face for headers (nod to

@@ -142,49 +142,49 @@
         }
       }
     },
-    "%@ rejected AIMeter's saved sign-in. Open AIMeter and sign in again to keep tracking your usage." : {
+    "%@ rejected Usage's saved sign-in. Open Usage and sign in again to keep tracking your usage." : {
       "comment" : "Body of the sign-in expired notification. The placeholder is the service's name (Claude, Codex, GitHub Copilot).",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hat die gespeicherte Anmeldung von AIMeter abgelehnt. Öffne AIMeter und melde dich erneut an, um deine Nutzung weiter zu verfolgen."
+            "value" : "%@ hat die gespeicherte Anmeldung von Usage abgelehnt. Öffne Usage und melde dich erneut an, um deine Nutzung weiter zu verfolgen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ rechazó el inicio de sesión guardado de AIMeter. Abre AIMeter y vuelve a iniciar sesión para seguir midiendo tu uso."
+            "value" : "%@ rechazó el inicio de sesión guardado de Usage. Abre Usage y vuelve a iniciar sesión para seguir midiendo tu uso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a refusé la connexion enregistrée d'AIMeter. Ouvrez AIMeter et reconnectez-vous pour continuer à suivre votre usage."
+            "value" : "%@ a refusé la connexion enregistrée d'Usage. Ouvrez Usage et reconnectez-vous pour continuer à suivre votre usage."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@がAIMeterの保存済みサインインを拒否しました。使用量の記録を続けるにはAIMeterを開いてもう一度サインインしてください。"
+            "value" : "%@がUsageの保存済みサインインを拒否しました。使用量の記録を続けるにはUsageを開いてもう一度サインインしてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@에서 AIMeter의 저장된 로그인을 거부했습니다. 사용량 추적을 계속하려면 AIMeter를 열고 다시 로그인하세요."
+            "value" : "%@에서 Usage의 저장된 로그인을 거부했습니다. 사용량 추적을 계속하려면 Usage를 열고 다시 로그인하세요."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ rejeitou o login salvo do AIMeter. Abra o AIMeter e entre de novo para continuar acompanhando seu uso."
+            "value" : "%@ rejeitou o login salvo do Usage. Abra o Usage e entre de novo para continuar acompanhando seu uso."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 拒绝了 AIMeter 保存的登录。打开 AIMeter 并重新登录以继续跟踪用量。"
+            "value" : "%@ 拒绝了 Usage 保存的登录。打开 Usage 并重新登录以继续跟踪用量。"
           }
         }
       }
@@ -1193,232 +1193,232 @@
         }
       }
     },
-    "AIMeter can't see your billing, so the day is the one you set. The reminder comes that many days before, every month." : {
+    "Usage can't see your billing, so the day is the one you set. The reminder comes that many days before, every month." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter sieht deine Abrechnung nicht, daher gilt der Tag, den du festlegst. Die Erinnerung kommt jeden Monat so viele Tage vorher."
+            "value" : "Usage sieht deine Abrechnung nicht, daher gilt der Tag, den du festlegst. Die Erinnerung kommt jeden Monat so viele Tage vorher."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter no ve tu facturación, así que el día es el que tú elijas. El aviso llega esos días antes, cada mes."
+            "value" : "Usage no ve tu facturación, así que el día es el que tú elijas. El aviso llega esos días antes, cada mes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ne voit pas votre facturation : le jour est celui que vous choisissez. Le rappel arrive autant de jours avant, chaque mois."
+            "value" : "Usage ne voit pas votre facturation : le jour est celui que vous choisissez. Le rappel arrive autant de jours avant, chaque mois."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterは請求情報を見られないため、日付はあなたが設定したものを使います。毎月その日数前に通知します。"
+            "value" : "Usageは請求情報を見られないため、日付はあなたが設定したものを使います。毎月その日数前に通知します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter는 결제 정보를 볼 수 없으므로 직접 설정한 날을 사용합니다. 매달 그만큼 앞서 알려 줍니다."
+            "value" : "Usage는 결제 정보를 볼 수 없으므로 직접 설정한 날을 사용합니다. 매달 그만큼 앞서 알려 줍니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter não vê sua cobrança, então o dia é o que você definir. O aviso chega esses dias antes, todo mês."
+            "value" : "O Usage não vê sua cobrança, então o dia é o que você definir. O aviso chega esses dias antes, todo mês."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 看不到你的账单，因此以你设定的日期为准。每月提前相应天数提醒。"
+            "value" : "Usage 看不到你的账单，因此以你设定的日期为准。每月提前相应天数提醒。"
           }
         }
       }
     },
-    "AIMeter is an independent app, not affiliated with Anthropic or OpenAI. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in tokens stay on this device." : {
+    "Usage is an independent app, not affiliated with Anthropic or OpenAI. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in tokens stay on this device." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ist eine unabhängige App und steht in keiner Verbindung zu Anthropic oder OpenAI. Sie liest nur deine eigenen Nutzungslimits, sendet nie Prompts, verbraucht nie die Nutzung deines Plans, und deine Anmelde-Tokens bleiben auf diesem Gerät."
+            "value" : "Usage ist eine unabhängige App und steht in keiner Verbindung zu Anthropic oder OpenAI. Sie liest nur deine eigenen Nutzungslimits, sendet nie Prompts, verbraucht nie die Nutzung deines Plans, und deine Anmelde-Tokens bleiben auf diesem Gerät."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter es una app independiente, sin relación con Anthropic ni OpenAI. Solo lee tus propios límites de uso, nunca envía prompts ni gasta el uso de tu plan, y tus tokens de inicio de sesión se quedan en este dispositivo."
+            "value" : "Usage es una app independiente, sin relación con Anthropic ni OpenAI. Solo lee tus propios límites de uso, nunca envía prompts ni gasta el uso de tu plan, y tus tokens de inicio de sesión se quedan en este dispositivo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter est une app indépendante, sans lien avec Anthropic ni OpenAI. Elle ne lit que vos propres limites d'utilisation, n'envoie jamais de prompts ni ne consomme l'usage de votre forfait, et vos jetons de connexion restent sur cet appareil."
+            "value" : "Usage est une app indépendante, sans lien avec Anthropic ni OpenAI. Elle ne lit que vos propres limites d'utilisation, n'envoie jamais de prompts ni ne consomme l'usage de votre forfait, et vos jetons de connexion restent sur cet appareil."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter は Anthropic、OpenAI とは無関係の独立したアプリです。読み取るのはあなた自身の使用量の上限だけで、プロンプトを送ったりプランの使用量を消費したりすることはなく、サインイン用のトークンはこのデバイスに留まります。"
+            "value" : "Usage は Anthropic、OpenAI とは無関係の独立したアプリです。読み取るのはあなた自身の使用量の上限だけで、プロンプトを送ったりプランの使用量を消費したりすることはなく、サインイン用のトークンはこのデバイスに留まります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter는 Anthropic, OpenAI와 무관한 독립 앱입니다. 본인의 사용량 한도만 읽고, 프롬프트를 보내거나 플랜의 사용량을 소비하지 않으며, 로그인 토큰은 이 기기에만 저장됩니다."
+            "value" : "Usage는 Anthropic, OpenAI와 무관한 독립 앱입니다. 본인의 사용량 한도만 읽고, 프롬프트를 보내거나 플랜의 사용량을 소비하지 않으며, 로그인 토큰은 이 기기에만 저장됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter é um app independente, sem vínculo com a Anthropic ou a OpenAI. Ele só lê seus próprios limites de uso, nunca envia prompts nem gasta o uso do seu plano, e seus tokens de login ficam neste dispositivo."
+            "value" : "O Usage é um app independente, sem vínculo com a Anthropic ou a OpenAI. Ele só lê seus próprios limites de uso, nunca envia prompts nem gasta o uso do seu plano, e seus tokens de login ficam neste dispositivo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 是独立应用，与 Anthropic 或 OpenAI 均无关联。它只读取你自己的用量限额，绝不发送提示词或消耗你的套餐用量，登录令牌只保存在本设备上。"
+            "value" : "Usage 是独立应用，与 Anthropic 或 OpenAI 均无关联。它只读取你自己的用量限额，绝不发送提示词或消耗你的套餐用量，登录令牌只保存在本设备上。"
           }
         }
       }
     },
-    "AIMeter is an independent app, not affiliated with OpenAI. It only reads your Codex limits, the same figures the CLI's /status shows, never sends prompts, and your sign-in token stays on this device." : {
+    "Usage is an independent app, not affiliated with OpenAI. It only reads your Codex limits, the same figures the CLI's /status shows, never sends prompts, and your sign-in token stays on this device." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ist eine unabhängige App und steht in keiner Verbindung zu OpenAI. Sie liest nur deine Codex-Limits, dieselben Zahlen, die /status im CLI zeigt, sendet nie Prompts, und dein Anmelde-Token bleibt auf diesem Gerät."
+            "value" : "Usage ist eine unabhängige App und steht in keiner Verbindung zu OpenAI. Sie liest nur deine Codex-Limits, dieselben Zahlen, die /status im CLI zeigt, sendet nie Prompts, und dein Anmelde-Token bleibt auf diesem Gerät."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter es una app independiente, sin relación con OpenAI. Solo lee tus límites de Codex, las mismas cifras que muestra /status en el CLI, nunca envía prompts, y tu token de inicio de sesión se queda en este dispositivo."
+            "value" : "Usage es una app independiente, sin relación con OpenAI. Solo lee tus límites de Codex, las mismas cifras que muestra /status en el CLI, nunca envía prompts, y tu token de inicio de sesión se queda en este dispositivo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter est une app indépendante, sans lien avec OpenAI. Elle ne lit que vos limites Codex, les mêmes chiffres que /status affiche dans le CLI, n'envoie jamais de prompts, et votre jeton de connexion reste sur cet appareil."
+            "value" : "Usage est une app indépendante, sans lien avec OpenAI. Elle ne lit que vos limites Codex, les mêmes chiffres que /status affiche dans le CLI, n'envoie jamais de prompts, et votre jeton de connexion reste sur cet appareil."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter は OpenAI とは無関係の独立したアプリです。読み取るのは Codex の上限、つまり CLI の /status が示すのと同じ数値だけで、プロンプトを送ることはなく、サインイン用のトークンはこのデバイスに留まります。"
+            "value" : "Usage は OpenAI とは無関係の独立したアプリです。読み取るのは Codex の上限、つまり CLI の /status が示すのと同じ数値だけで、プロンプトを送ることはなく、サインイン用のトークンはこのデバイスに留まります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter는 OpenAI와 무관한 독립 앱입니다. CLI의 /status가 보여주는 것과 같은 Codex 한도만 읽고, 프롬프트를 보내지 않으며, 로그인 토큰은 이 기기에만 저장됩니다."
+            "value" : "Usage는 OpenAI와 무관한 독립 앱입니다. CLI의 /status가 보여주는 것과 같은 Codex 한도만 읽고, 프롬프트를 보내지 않으며, 로그인 토큰은 이 기기에만 저장됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter é um app independente, sem vínculo com a OpenAI. Ele só lê seus limites do Codex, os mesmos números que o /status do CLI mostra, nunca envia prompts, e seu token de login fica neste dispositivo."
+            "value" : "O Usage é um app independente, sem vínculo com a OpenAI. Ele só lê seus limites do Codex, os mesmos números que o /status do CLI mostra, nunca envia prompts, e seu token de login fica neste dispositivo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 是独立应用，与 OpenAI 无关联。它只读取你的 Codex 限额，也就是 CLI 的 /status 显示的数字，绝不发送提示词，登录令牌只保存在本设备上。"
+            "value" : "Usage 是独立应用，与 OpenAI 无关联。它只读取你的 Codex 限额，也就是 CLI 的 /status 显示的数字，绝不发送提示词，登录令牌只保存在本设备上。"
           }
         }
       }
     },
-    "AIMeter is an independent open source project (MIT). It is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI. \"Claude\" and \"Anthropic\" are trademarks of Anthropic, PBC; \"ChatGPT\", \"Codex\" and \"OpenAI\" of OpenAI. They are used only to identify the services whose usage this app displays." : {
+    "Usage is an independent open source project (MIT). It is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI. \"Claude\" and \"Anthropic\" are trademarks of Anthropic, PBC; \"ChatGPT\", \"Codex\" and \"OpenAI\" of OpenAI. They are used only to identify the services whose usage this app displays." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ist ein unabhängiges Open-Source-Projekt (MIT). Es steht in keiner Verbindung zu Anthropic oder OpenAI und wird von ihnen weder unterstützt noch gesponsert. \"Claude\" und \"Anthropic\" sind Marken von Anthropic, PBC; \"ChatGPT\", \"Codex\" und \"OpenAI\" von OpenAI. Sie werden nur verwendet, um die Dienste zu benennen, deren Nutzung diese App anzeigt."
+            "value" : "Usage ist ein unabhängiges Open-Source-Projekt (MIT). Es steht in keiner Verbindung zu Anthropic oder OpenAI und wird von ihnen weder unterstützt noch gesponsert. \"Claude\" und \"Anthropic\" sind Marken von Anthropic, PBC; \"ChatGPT\", \"Codex\" und \"OpenAI\" von OpenAI. Sie werden nur verwendet, um die Dienste zu benennen, deren Nutzung diese App anzeigt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter es un proyecto independiente de código abierto (MIT). No está afiliado a Anthropic ni a OpenAI, ni cuenta con su respaldo o patrocinio. \"Claude\" y \"Anthropic\" son marcas de Anthropic, PBC; \"ChatGPT\", \"Codex\" y \"OpenAI\", de OpenAI. Se usan solo para identificar los servicios cuyo uso muestra esta app."
+            "value" : "Usage es un proyecto independiente de código abierto (MIT). No está afiliado a Anthropic ni a OpenAI, ni cuenta con su respaldo o patrocinio. \"Claude\" y \"Anthropic\" son marcas de Anthropic, PBC; \"ChatGPT\", \"Codex\" y \"OpenAI\", de OpenAI. Se usan solo para identificar los servicios cuyo uso muestra esta app."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter est un projet open source indépendant (MIT). Il n'est ni affilié à, ni approuvé, ni sponsorisé par Anthropic ou OpenAI. \"Claude\" et \"Anthropic\" sont des marques d'Anthropic, PBC ; \"ChatGPT\", \"Codex\" et \"OpenAI\", d'OpenAI. Elles ne servent qu'à identifier les services dont cette app affiche l'utilisation."
+            "value" : "Usage est un projet open source indépendant (MIT). Il n'est ni affilié à, ni approuvé, ni sponsorisé par Anthropic ou OpenAI. \"Claude\" et \"Anthropic\" sont des marques d'Anthropic, PBC ; \"ChatGPT\", \"Codex\" et \"OpenAI\", d'OpenAI. Elles ne servent qu'à identifier les services dont cette app affiche l'utilisation."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter は独立したオープンソースプロジェクト（MIT）です。Anthropic、OpenAI とは提携、承認、後援の関係にありません。\"Claude\" と \"Anthropic\" は Anthropic, PBC の商標、\"ChatGPT\"、\"Codex\"、\"OpenAI\" は OpenAI の商標で、このアプリが使用量を表示するサービスを識別するためだけに使っています。"
+            "value" : "Usage は独立したオープンソースプロジェクト（MIT）です。Anthropic、OpenAI とは提携、承認、後援の関係にありません。\"Claude\" と \"Anthropic\" は Anthropic, PBC の商標、\"ChatGPT\"、\"Codex\"、\"OpenAI\" は OpenAI の商標で、このアプリが使用量を表示するサービスを識別するためだけに使っています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter는 독립적인 오픈 소스 프로젝트(MIT)입니다. Anthropic, OpenAI와 제휴, 보증, 후원 관계가 없습니다. \"Claude\"와 \"Anthropic\"은 Anthropic, PBC의 상표이고, \"ChatGPT\", \"Codex\", \"OpenAI\"는 OpenAI의 상표로, 이 앱이 사용량을 표시하는 서비스를 가리키기 위해서만 사용됩니다."
+            "value" : "Usage는 독립적인 오픈 소스 프로젝트(MIT)입니다. Anthropic, OpenAI와 제휴, 보증, 후원 관계가 없습니다. \"Claude\"와 \"Anthropic\"은 Anthropic, PBC의 상표이고, \"ChatGPT\", \"Codex\", \"OpenAI\"는 OpenAI의 상표로, 이 앱이 사용량을 표시하는 서비스를 가리키기 위해서만 사용됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter é um projeto independente de código aberto (MIT). Não é afiliado, endossado nem patrocinado pela Anthropic ou pela OpenAI. \"Claude\" e \"Anthropic\" são marcas da Anthropic, PBC; \"ChatGPT\", \"Codex\" e \"OpenAI\", da OpenAI. São usadas apenas para identificar os serviços cujo uso este app mostra."
+            "value" : "O Usage é um projeto independente de código aberto (MIT). Não é afiliado, endossado nem patrocinado pela Anthropic ou pela OpenAI. \"Claude\" e \"Anthropic\" são marcas da Anthropic, PBC; \"ChatGPT\", \"Codex\" e \"OpenAI\", da OpenAI. São usadas apenas para identificar os serviços cujo uso este app mostra."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 是独立的开源项目（MIT）。它与 Anthropic 或 OpenAI 均无关联，也未获其认可或赞助。\"Claude\" 和 \"Anthropic\" 是 Anthropic, PBC 的商标；\"ChatGPT\"、\"Codex\" 和 \"OpenAI\" 是 OpenAI 的商标，仅用于指明本应用所显示用量的服务。"
+            "value" : "Usage 是独立的开源项目（MIT）。它与 Anthropic 或 OpenAI 均无关联，也未获其认可或赞助。\"Claude\" 和 \"Anthropic\" 是 Anthropic, PBC 的商标；\"ChatGPT\"、\"Codex\" 和 \"OpenAI\" 是 OpenAI 的商标，仅用于指明本应用所显示用量的服务。"
           }
         }
       }
     },
-    "AIMeter shows you a one-time code. Open ChatGPT's device page, sign in and enter the code; the account connects as soon as you approve. Any ChatGPT plan works, Free included." : {
+    "Usage shows you a one-time code. Open ChatGPT's device page, sign in and enter the code; the account connects as soon as you approve. Any ChatGPT plan works, Free included." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter zeigt dir einen Einmalcode. Öffne die Geräteseite von ChatGPT, melde dich an und gib den Code ein; der Account wird verbunden, sobald du bestätigst. Jeder ChatGPT-Plan funktioniert, auch der kostenlose."
+            "value" : "Usage zeigt dir einen Einmalcode. Öffne die Geräteseite von ChatGPT, melde dich an und gib den Code ein; der Account wird verbunden, sobald du bestätigst. Jeder ChatGPT-Plan funktioniert, auch der kostenlose."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter te muestra un código de un solo uso. Abre la página de dispositivos de ChatGPT, inicia sesión e introduce el código; la cuenta se conecta en cuanto apruebes. Sirve cualquier plan de ChatGPT, incluido el gratuito."
+            "value" : "Usage te muestra un código de un solo uso. Abre la página de dispositivos de ChatGPT, inicia sesión e introduce el código; la cuenta se conecta en cuanto apruebes. Sirve cualquier plan de ChatGPT, incluido el gratuito."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter vous montre un code à usage unique. Ouvrez la page des appareils de ChatGPT, connectez-vous et saisissez le code ; le compte se connecte dès que vous approuvez. Tout forfait ChatGPT convient, y compris le gratuit."
+            "value" : "Usage vous montre un code à usage unique. Ouvrez la page des appareils de ChatGPT, connectez-vous et saisissez le code ; le compte se connecte dès que vous approuvez. Tout forfait ChatGPT convient, y compris le gratuit."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter がワンタイムコードを表示します。ChatGPT のデバイスページを開いてサインインし、コードを入力してください。承認するとすぐにアカウントが接続されます。無料プランを含め、どの ChatGPT プランでも使えます。"
+            "value" : "Usage がワンタイムコードを表示します。ChatGPT のデバイスページを開いてサインインし、コードを入力してください。承認するとすぐにアカウントが接続されます。無料プランを含め、どの ChatGPT プランでも使えます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter가 일회용 코드를 표시합니다. ChatGPT의 기기 페이지를 열고 로그인한 뒤 코드를 입력하세요. 승인하면 바로 계정이 연결됩니다. 무료 플랜을 포함해 어떤 ChatGPT 플랜이든 됩니다."
+            "value" : "Usage가 일회용 코드를 표시합니다. ChatGPT의 기기 페이지를 열고 로그인한 뒤 코드를 입력하세요. 승인하면 바로 계정이 연결됩니다. 무료 플랜을 포함해 어떤 ChatGPT 플랜이든 됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter mostra um código de uso único. Abra a página de dispositivos do ChatGPT, faça login e digite o código; a conta é conectada assim que você aprovar. Qualquer plano do ChatGPT funciona, inclusive o gratuito."
+            "value" : "O Usage mostra um código de uso único. Abra a página de dispositivos do ChatGPT, faça login e digite o código; a conta é conectada assim que você aprovar. Qualquer plano do ChatGPT funciona, inclusive o gratuito."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 会显示一个一次性代码。打开 ChatGPT 的设备页面，登录并输入代码；你批准后账户立即连接。任何 ChatGPT 套餐都可以，包括免费版。"
+            "value" : "Usage 会显示一个一次性代码。打开 ChatGPT 的设备页面，登录并输入代码；你批准后账户立即连接。任何 ChatGPT 套餐都可以，包括免费版。"
           }
         }
       }
@@ -1609,48 +1609,48 @@
         }
       }
     },
-    "Claude: you sign in on Claude's own page in your browser, never in an embedded web view, so AIMeter can't see your password. You only paste back the code Claude shows after you approve." : {
+    "Claude: you sign in on Claude's own page in your browser, never in an embedded web view, so Usage can't see your password. You only paste back the code Claude shows after you approve." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude: Du meldest dich auf der Seite von Claude in deinem Browser an, nie in einer eingebetteten Webansicht, sodass AIMeter dein Passwort nicht sehen kann. Du fügst nur den Code ein, den Claude nach deiner Bestätigung anzeigt."
+            "value" : "Claude: Du meldest dich auf der Seite von Claude in deinem Browser an, nie in einer eingebetteten Webansicht, sodass Usage dein Passwort nicht sehen kann. Du fügst nur den Code ein, den Claude nach deiner Bestätigung anzeigt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude: inicias sesión en la propia página de Claude en tu navegador, nunca en una vista web incrustada, así que AIMeter no puede ver tu contraseña. Solo pegas el código que Claude muestra después de aprobar."
+            "value" : "Claude: inicias sesión en la propia página de Claude en tu navegador, nunca en una vista web incrustada, así que Usage no puede ver tu contraseña. Solo pegas el código que Claude muestra después de aprobar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude : vous vous connectez sur la page de Claude dans votre navigateur, jamais dans une vue web intégrée, donc AIMeter ne peut pas voir votre mot de passe. Vous ne collez que le code que Claude affiche après votre approbation."
+            "value" : "Claude : vous vous connectez sur la page de Claude dans votre navigateur, jamais dans une vue web intégrée, donc Usage ne peut pas voir votre mot de passe. Vous ne collez que le code que Claude affiche après votre approbation."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude：ブラウザで Claude のページにサインインします。埋め込みの Web ビューは使わないので、AIMeter にパスワードは見えません。承認後に Claude が表示するコードを貼り付けるだけです。"
+            "value" : "Claude：ブラウザで Claude のページにサインインします。埋め込みの Web ビューは使わないので、Usage にパスワードは見えません。承認後に Claude が表示するコードを貼り付けるだけです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude: 브라우저에서 Claude 페이지에 로그인하며, 내장 웹 보기는 쓰지 않으므로 AIMeter는 비밀번호를 볼 수 없습니다. 승인 후 Claude가 표시한 코드만 붙여넣으면 됩니다."
+            "value" : "Claude: 브라우저에서 Claude 페이지에 로그인하며, 내장 웹 보기는 쓰지 않으므로 Usage는 비밀번호를 볼 수 없습니다. 승인 후 Claude가 표시한 코드만 붙여넣으면 됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude: você faz login na página do Claude no navegador, nunca em uma web view embutida, então o AIMeter não pode ver sua senha. Você só cola o código que o Claude mostra depois de aprovar."
+            "value" : "Claude: você faz login na página do Claude no navegador, nunca em uma web view embutida, então o Usage não pode ver sua senha. Você só cola o código que o Claude mostra depois de aprovar."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude：你在浏览器中的 Claude 页面登录，绝不在内嵌网页视图中，所以 AIMeter 看不到你的密码。你只需在批准后粘贴 Claude 显示的代码。"
+            "value" : "Claude：你在浏览器中的 Claude 页面登录，绝不在内嵌网页视图中，所以 Usage 看不到你的密码。你只需在批准后粘贴 Claude 显示的代码。"
           }
         }
       }
@@ -1701,48 +1701,48 @@
         }
       }
     },
-    "Codex: AIMeter shows you a one-time code that you enter on ChatGPT's own device page in your browser, the same device code sign-in the Codex CLI offers." : {
+    "Codex: Usage shows you a one-time code that you enter on ChatGPT's own device page in your browser, the same device code sign-in the Codex CLI offers." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codex: AIMeter zeigt dir einen Einmalcode, den du auf der Geräteseite von ChatGPT in deinem Browser eingibst, dieselbe Anmeldung per Gerätecode, die das Codex-CLI anbietet."
+            "value" : "Codex: Usage zeigt dir einen Einmalcode, den du auf der Geräteseite von ChatGPT in deinem Browser eingibst, dieselbe Anmeldung per Gerätecode, die das Codex-CLI anbietet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codex: AIMeter te muestra un código de un solo uso que introduces en la propia página de dispositivos de ChatGPT en tu navegador, el mismo inicio de sesión por código de dispositivo que ofrece el CLI de Codex."
+            "value" : "Codex: Usage te muestra un código de un solo uso que introduces en la propia página de dispositivos de ChatGPT en tu navegador, el mismo inicio de sesión por código de dispositivo que ofrece el CLI de Codex."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codex : AIMeter vous montre un code à usage unique que vous saisissez sur la page des appareils de ChatGPT dans votre navigateur, la même connexion par code d'appareil que propose le CLI Codex."
+            "value" : "Codex : Usage vous montre un code à usage unique que vous saisissez sur la page des appareils de ChatGPT dans votre navigateur, la même connexion par code d'appareil que propose le CLI Codex."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codex：AIMeter が表示するワンタイムコードを、ブラウザで ChatGPT のデバイスページに入力します。Codex CLI が提供するのと同じデバイスコードによるサインインです。"
+            "value" : "Codex：Usage が表示するワンタイムコードを、ブラウザで ChatGPT のデバイスページに入力します。Codex CLI が提供するのと同じデバイスコードによるサインインです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codex: AIMeter가 표시하는 일회용 코드를 브라우저의 ChatGPT 기기 페이지에 입력합니다. Codex CLI가 제공하는 것과 같은 기기 코드 로그인입니다."
+            "value" : "Codex: Usage가 표시하는 일회용 코드를 브라우저의 ChatGPT 기기 페이지에 입력합니다. Codex CLI가 제공하는 것과 같은 기기 코드 로그인입니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codex: o AIMeter mostra um código de uso único que você digita na página de dispositivos do ChatGPT no navegador, o mesmo login por código de dispositivo que o CLI do Codex oferece."
+            "value" : "Codex: o Usage mostra um código de uso único que você digita na página de dispositivos do ChatGPT no navegador, o mesmo login por código de dispositivo que o CLI do Codex oferece."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codex：AIMeter 显示一个一次性代码，你在浏览器中的 ChatGPT 设备页面输入它，这与 Codex CLI 提供的设备代码登录相同。"
+            "value" : "Codex：Usage 显示一个一次性代码，你在浏览器中的 ChatGPT 设备页面输入它，这与 Codex CLI 提供的设备代码登录相同。"
           }
         }
       }
@@ -2071,48 +2071,48 @@
         }
       }
     },
-    "Each one is the sign-in flow the provider's own tools use; AIMeter only receives the token the provider hands back." : {
+    "Each one is the sign-in flow the provider's own tools use; Usage only receives the token the provider hands back." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeder davon ist der Anmeldeablauf, den die eigenen Werkzeuge des Anbieters verwenden; AIMeter erhält nur das Token, das der Anbieter zurückgibt."
+            "value" : "Jeder davon ist der Anmeldeablauf, den die eigenen Werkzeuge des Anbieters verwenden; Usage erhält nur das Token, das der Anbieter zurückgibt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada uno es el flujo de inicio de sesión que usan las propias herramientas del proveedor; AIMeter solo recibe el token que el proveedor devuelve."
+            "value" : "Cada uno es el flujo de inicio de sesión que usan las propias herramientas del proveedor; Usage solo recibe el token que el proveedor devuelve."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chacun est le parcours de connexion qu'utilisent les propres outils du fournisseur ; AIMeter ne reçoit que le jeton que le fournisseur renvoie."
+            "value" : "Chacun est le parcours de connexion qu'utilisent les propres outils du fournisseur ; Usage ne reçoit que le jeton que le fournisseur renvoie."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "いずれも各プロバイダ自身のツールが使うサインインの流れで、AIMeter が受け取るのはプロバイダが返すトークンだけです。"
+            "value" : "いずれも各プロバイダ自身のツールが使うサインインの流れで、Usage が受け取るのはプロバイダが返すトークンだけです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각각은 제공업체 자체 도구가 쓰는 로그인 절차이며, AIMeter는 제공업체가 돌려주는 토큰만 받습니다."
+            "value" : "각각은 제공업체 자체 도구가 쓰는 로그인 절차이며, Usage는 제공업체가 돌려주는 토큰만 받습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada um é o fluxo de login que as próprias ferramentas do provedor usam; o AIMeter só recebe o token que o provedor devolve."
+            "value" : "Cada um é o fluxo de login que as próprias ferramentas do provedor usam; o Usage só recebe o token que o provedor devolve."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每一种都是提供方自家工具所用的登录流程；AIMeter 只接收提供方返回的令牌。"
+            "value" : "每一种都是提供方自家工具所用的登录流程；Usage 只接收提供方返回的令牌。"
           }
         }
       }
@@ -2490,49 +2490,49 @@
         }
       }
     },
-    "Open %@ in AIMeter" : {
+    "Open %@ in Usage" : {
       "comment" : "Tooltip on an account in the macOS menu bar popover; a click opens that account's detail in the Dashboard window. %@ is the account's nickname.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ in AIMeter öffnen"
+            "value" : "%@ in Usage öffnen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir %@ en AIMeter"
+            "value" : "Abrir %@ en Usage"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrir %@ dans AIMeter"
+            "value" : "Ouvrir %@ dans Usage"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterで%@を開く"
+            "value" : "Usageで%@を開く"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter에서 %@ 열기"
+            "value" : "Usage에서 %@ 열기"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir %@ no AIMeter"
+            "value" : "Abrir %@ no Usage"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 AIMeter 中打开 %@"
+            "value" : "在 Usage 中打开 %@"
           }
         }
       }
@@ -2633,48 +2633,48 @@
         }
       }
     },
-    "Opens one account's details in AIMeter." : {
+    "Opens one account's details in Usage." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öffnet die Details eines Accounts in AIMeter."
+            "value" : "Öffnet die Details eines Accounts in Usage."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abre el detalle de una cuenta en AIMeter."
+            "value" : "Abre el detalle de una cuenta en Usage."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvre le détail d'un compte dans AIMeter."
+            "value" : "Ouvre le détail d'un compte dans Usage."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterで1つのアカウントの詳細を開きます。"
+            "value" : "Usageで1つのアカウントの詳細を開きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter에서 한 계정의 세부 정보를 엽니다."
+            "value" : "Usage에서 한 계정의 세부 정보를 엽니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abre os detalhes de uma conta no AIMeter."
+            "value" : "Abre os detalhes de uma conta no Usage."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 AIMeter 中打开一个账户的详情。"
+            "value" : "在 Usage 中打开一个账户的详情。"
           }
         }
       }
@@ -2818,94 +2818,94 @@
         }
       }
     },
-    "Percent of the limit used, sampled whenever AIMeter or a widget refreshes and kept on this device for 90 days. Dashed lines mark resets; the red line is the 85% mark." : {
+    "Percent of the limit used, sampled whenever Usage or a widget refreshes and kept on this device for 90 days. Dashed lines mark resets; the red line is the 85% mark." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prozent des verbrauchten Limits, erfasst bei jeder Aktualisierung durch AIMeter oder ein Widget und 90 Tage auf diesem Gerät gespeichert. Gestrichelte Linien markieren Resets; die rote Linie ist die 85-%-Marke."
+            "value" : "Prozent des verbrauchten Limits, erfasst bei jeder Aktualisierung durch Usage oder ein Widget und 90 Tage auf diesem Gerät gespeichert. Gestrichelte Linien markieren Resets; die rote Linie ist die 85-%-Marke."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Porcentaje del límite usado, muestreado cada vez que AIMeter o un widget actualiza y guardado en este dispositivo 90 días. Las líneas discontinuas marcan reinicios; la línea roja es el 85 %."
+            "value" : "Porcentaje del límite usado, muestreado cada vez que Usage o un widget actualiza y guardado en este dispositivo 90 días. Las líneas discontinuas marcan reinicios; la línea roja es el 85 %."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pourcentage de la limite utilisé, relevé à chaque actualisation par AIMeter ou un widget et conservé 90 jours sur cet appareil. Les pointillés marquent les réinitialisations ; la ligne rouge est le seuil de 85 %."
+            "value" : "Pourcentage de la limite utilisé, relevé à chaque actualisation par Usage ou un widget et conservé 90 jours sur cet appareil. Les pointillés marquent les réinitialisations ; la ligne rouge est le seuil de 85 %."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "上限に対する使用率です。AIMeterまたはウィジェットが更新するたびに記録し、このデバイスに90日間保持します。破線はリセット、赤い線は85%の目安です。"
+            "value" : "上限に対する使用率です。Usageまたはウィジェットが更新するたびに記録し、このデバイスに90日間保持します。破線はリセット、赤い線は85%の目安です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "한도 대비 사용 비율입니다. AIMeter나 위젯이 새로 고칠 때마다 기록하여 이 기기에 90일간 보관합니다. 점선은 초기화, 빨간 선은 85% 지점입니다."
+            "value" : "한도 대비 사용 비율입니다. Usage나 위젯이 새로 고칠 때마다 기록하여 이 기기에 90일간 보관합니다. 점선은 초기화, 빨간 선은 85% 지점입니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Porcentagem do limite usada, amostrada sempre que o AIMeter ou um widget atualiza e guardada neste dispositivo por 90 dias. As linhas tracejadas marcam reinícios; a linha vermelha é a marca de 85%."
+            "value" : "Porcentagem do limite usada, amostrada sempre que o Usage ou um widget atualiza e guardada neste dispositivo por 90 dias. As linhas tracejadas marcam reinícios; a linha vermelha é a marca de 85%."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已用额度的百分比，在 AIMeter 或小组件每次刷新时采样，并在本设备上保存 90 天。虚线标记重置；红线是 85% 刻度。"
+            "value" : "已用额度的百分比，在 Usage 或小组件每次刷新时采样，并在本设备上保存 90 天。虚线标记重置；红线是 85% 刻度。"
           }
         }
       }
     },
-    "Pick the service to connect. Each one signs in through its own page, and AIMeter only ever reads your usage limits." : {
+    "Pick the service to connect. Each one signs in through its own page, and Usage only ever reads your usage limits." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle den Dienst, den du verbinden möchtest. Jeder meldet sich über seine eigene Seite an, und AIMeter liest nur deine Nutzungslimits."
+            "value" : "Wähle den Dienst, den du verbinden möchtest. Jeder meldet sich über seine eigene Seite an, und Usage liest nur deine Nutzungslimits."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige el servicio que quieres conectar. Cada uno inicia sesión en su propia página, y AIMeter solo lee tus límites de uso."
+            "value" : "Elige el servicio que quieres conectar. Cada uno inicia sesión en su propia página, y Usage solo lee tus límites de uso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez le service à connecter. Chacun se connecte sur sa propre page, et AIMeter ne lit que vos limites d'utilisation."
+            "value" : "Choisissez le service à connecter. Chacun se connecte sur sa propre page, et Usage ne lit que vos limites d'utilisation."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "接続するサービスを選んでください。それぞれ自身のページでサインインし、AIMeter は使用量の上限を読み取るだけです。"
+            "value" : "接続するサービスを選んでください。それぞれ自身のページでサインインし、Usage は使用量の上限を読み取るだけです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연결할 서비스를 선택하세요. 각 서비스는 자체 페이지에서 로그인하며, AIMeter는 사용량 한도만 읽습니다."
+            "value" : "연결할 서비스를 선택하세요. 각 서비스는 자체 페이지에서 로그인하며, Usage는 사용량 한도만 읽습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha o serviço para conectar. Cada um faz login na própria página, e o AIMeter só lê seus limites de uso."
+            "value" : "Escolha o serviço para conectar. Cada um faz login na própria página, e o Usage só lê seus limites de uso."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择要连接的服务。每个服务都在自己的页面登录，AIMeter 只读取你的用量限额。"
+            "value" : "选择要连接的服务。每个服务都在自己的页面登录，Usage 只读取你的用量限额。"
           }
         }
       }
@@ -3695,48 +3695,48 @@
         }
       }
     },
-    "The sign-in is ChatGPT's own device code login, with the access the Codex CLI gets; AIMeter calls one read-only endpoint with it, your Codex limits (the same figures the CLI's /status shows), and nothing else." : {
+    "The sign-in is ChatGPT's own device code login, with the access the Codex CLI gets; Usage calls one read-only endpoint with it, your Codex limits (the same figures the CLI's /status shows), and nothing else." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Anmeldung ist die Anmeldung per Gerätecode von ChatGPT selbst, mit dem Zugriff, den das Codex-CLI erhält; AIMeter ruft damit einen einzigen Nur-Lese-Endpunkt auf, deine Codex-Limits (dieselben Zahlen, die /status im CLI zeigt), und sonst nichts."
+            "value" : "Die Anmeldung ist die Anmeldung per Gerätecode von ChatGPT selbst, mit dem Zugriff, den das Codex-CLI erhält; Usage ruft damit einen einzigen Nur-Lese-Endpunkt auf, deine Codex-Limits (dieselben Zahlen, die /status im CLI zeigt), und sonst nichts."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El inicio de sesión es el propio inicio por código de dispositivo de ChatGPT, con el acceso que recibe el CLI de Codex; AIMeter llama con él a un único endpoint de solo lectura, tus límites de Codex (las mismas cifras que muestra /status en el CLI), y nada más."
+            "value" : "El inicio de sesión es el propio inicio por código de dispositivo de ChatGPT, con el acceso que recibe el CLI de Codex; Usage llama con él a un único endpoint de solo lectura, tus límites de Codex (las mismas cifras que muestra /status en el CLI), y nada más."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La connexion est la connexion par code d'appareil de ChatGPT lui-même, avec l'accès qu'obtient le CLI Codex ; AIMeter n'appelle avec elle qu'un seul point de terminaison en lecture seule, vos limites Codex (les mêmes chiffres que /status affiche dans le CLI), et rien d'autre."
+            "value" : "La connexion est la connexion par code d'appareil de ChatGPT lui-même, avec l'accès qu'obtient le CLI Codex ; Usage n'appelle avec elle qu'un seul point de terminaison en lecture seule, vos limites Codex (les mêmes chiffres que /status affiche dans le CLI), et rien d'autre."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "サインインは ChatGPT 自身のデバイスコードログインで、Codex CLI が得るのと同じアクセス権です。AIMeter がそれで呼び出すのは読み取り専用のエンドポイント 1 つ、Codex の上限（CLI の /status が示すのと同じ数値）だけです。"
+            "value" : "サインインは ChatGPT 自身のデバイスコードログインで、Codex CLI が得るのと同じアクセス権です。Usage がそれで呼び出すのは読み取り専用のエンドポイント 1 つ、Codex の上限（CLI の /status が示すのと同じ数値）だけです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "로그인은 ChatGPT 자체의 기기 코드 로그인이며, Codex CLI가 받는 것과 같은 접근 권한입니다. AIMeter는 이것으로 읽기 전용 엔드포인트 하나, 즉 Codex 한도(CLI의 /status가 보여주는 것과 같은 수치)만 호출하고 그 밖에는 아무것도 하지 않습니다."
+            "value" : "로그인은 ChatGPT 자체의 기기 코드 로그인이며, Codex CLI가 받는 것과 같은 접근 권한입니다. Usage는 이것으로 읽기 전용 엔드포인트 하나, 즉 Codex 한도(CLI의 /status가 보여주는 것과 같은 수치)만 호출하고 그 밖에는 아무것도 하지 않습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O login é o próprio login por código de dispositivo do ChatGPT, com o acesso que o CLI do Codex recebe; o AIMeter chama com ele um único endpoint somente leitura, seus limites do Codex (os mesmos números que o /status do CLI mostra), e nada mais."
+            "value" : "O login é o próprio login por código de dispositivo do ChatGPT, com o acesso que o CLI do Codex recebe; o Usage chama com ele um único endpoint somente leitura, seus limites do Codex (os mesmos números que o /status do CLI mostra), e nada mais."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "登录采用 ChatGPT 自己的设备代码登录，权限与 Codex CLI 获得的相同；AIMeter 只用它调用一个只读端点，即你的 Codex 限额（与 CLI 的 /status 显示的数字相同），别无其他。"
+            "value" : "登录采用 ChatGPT 自己的设备代码登录，权限与 Codex CLI 获得的相同；Usage 只用它调用一个只读端点，即你的 Codex 限额（与 CLI 的 /status 显示的数字相同），别无其他。"
           }
         }
       }
@@ -3880,48 +3880,48 @@
         }
       }
     },
-    "To draw the history chart, AIMeter keeps the percentages it has already fetched (just the numbers and their dates, nothing about what you did) on this device for 90 days. Disconnecting an account deletes its history." : {
+    "To draw the history chart, Usage keeps the percentages it has already fetched (just the numbers and their dates, nothing about what you did) on this device for 90 days. Disconnecting an account deletes its history." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um das Verlaufsdiagramm zu zeichnen, behält AIMeter die bereits abgerufenen Prozentwerte (nur die Zahlen und ihre Daten, nichts darüber, was du getan hast) 90 Tage auf diesem Gerät. Das Trennen eines Accounts löscht seinen Verlauf."
+            "value" : "Um das Verlaufsdiagramm zu zeichnen, behält Usage die bereits abgerufenen Prozentwerte (nur die Zahlen und ihre Daten, nichts darüber, was du getan hast) 90 Tage auf diesem Gerät. Das Trennen eines Accounts löscht seinen Verlauf."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para dibujar la gráfica de historial, AIMeter guarda los porcentajes que ya obtuvo (solo los números y sus fechas, nada sobre lo que hiciste) en este dispositivo durante 90 días. Desconectar una cuenta borra su historial."
+            "value" : "Para dibujar la gráfica de historial, Usage guarda los porcentajes que ya obtuvo (solo los números y sus fechas, nada sobre lo que hiciste) en este dispositivo durante 90 días. Desconectar una cuenta borra su historial."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour tracer l'historique, AIMeter conserve les pourcentages déjà récupérés (seulement les chiffres et leurs dates, rien sur ce que vous avez fait) sur cet appareil pendant 90 jours. Déconnecter un compte supprime son historique."
+            "value" : "Pour tracer l'historique, Usage conserve les pourcentages déjà récupérés (seulement les chiffres et leurs dates, rien sur ce que vous avez fait) sur cet appareil pendant 90 jours. Déconnecter un compte supprime son historique."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "履歴グラフを描くため、AIMeterは取得済みのパーセント値（数値と日時のみで、あなたの行動に関する情報は含みません）をこのデバイスに90日間保持します。アカウントを切断するとその履歴は削除されます。"
+            "value" : "履歴グラフを描くため、Usageは取得済みのパーセント値（数値と日時のみで、あなたの行動に関する情報は含みません）をこのデバイスに90日間保持します。アカウントを切断するとその履歴は削除されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "기록 차트를 그리기 위해 AIMeter는 이미 가져온 백분율(숫자와 날짜뿐, 사용자가 한 일에 관한 내용은 없음)을 이 기기에 90일간 보관합니다. 계정 연결을 해제하면 기록이 삭제됩니다."
+            "value" : "기록 차트를 그리기 위해 Usage는 이미 가져온 백분율(숫자와 날짜뿐, 사용자가 한 일에 관한 내용은 없음)을 이 기기에 90일간 보관합니다. 계정 연결을 해제하면 기록이 삭제됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para desenhar o gráfico de histórico, o AIMeter guarda as porcentagens que já obteve (só os números e suas datas, nada sobre o que você fez) neste dispositivo por 90 dias. Desconectar uma conta apaga seu histórico."
+            "value" : "Para desenhar o gráfico de histórico, o Usage guarda as porcentagens que já obteve (só os números e suas datas, nada sobre o que você fez) neste dispositivo por 90 dias. Desconectar uma conta apaga seu histórico."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "为了绘制历史图表，AIMeter 会在本设备上保存已获取的百分比（仅数字和日期，不涉及你做了什么）90 天。断开账户会删除其历史记录。"
+            "value" : "为了绘制历史图表，Usage 会在本设备上保存已获取的百分比（仅数字和日期，不涉及你做了什么）90 天。断开账户会删除其历史记录。"
           }
         }
       }
@@ -7718,232 +7718,232 @@
         }
       }
     },
-    "AIMeter: no usage data yet" : {
+    "Usage: no data yet" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter: noch keine Nutzungsdaten"
+            "value" : "Usage: noch keine Nutzungsdaten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter: aún no hay datos de uso"
+            "value" : "Usage: aún no hay datos de uso"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter : pas encore de données d'usage"
+            "value" : "Usage : pas encore de données d'usage"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter：まだ使用データがありません"
+            "value" : "Usage：まだ使用データがありません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter: 아직 사용 데이터 없음"
+            "value" : "Usage: 아직 사용 데이터 없음"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter: ainda sem dados de uso"
+            "value" : "Usage: ainda sem dados de uso"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter：暂无用量数据"
+            "value" : "Usage：暂无用量数据"
           }
         }
       }
     },
-    "AIMeter is an independent app, not affiliated with Anthropic. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in token stays on this device." : {
+    "Usage is an independent app, not affiliated with Anthropic. It only reads your own usage limits, never sends prompts or spends your plan's usage, and your sign-in token stays on this device." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ist eine unabhängige App und nicht mit Anthropic verbunden. Sie liest nur deine eigenen Nutzungslimits, sendet nie Prompts und verbraucht keine Nutzung deines Plans, und dein Anmeldetoken bleibt auf diesem Gerät."
+            "value" : "Usage ist eine unabhängige App und nicht mit Anthropic verbunden. Sie liest nur deine eigenen Nutzungslimits, sendet nie Prompts und verbraucht keine Nutzung deines Plans, und dein Anmeldetoken bleibt auf diesem Gerät."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter es una app independiente, sin afiliación con Anthropic. Solo lee tus propios límites de uso, nunca envía prompts ni gasta el uso de tu plan, y tu token de inicio de sesión no sale de este dispositivo."
+            "value" : "Usage es una app independiente, sin afiliación con Anthropic. Solo lee tus propios límites de uso, nunca envía prompts ni gasta el uso de tu plan, y tu token de inicio de sesión no sale de este dispositivo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter est une app indépendante, sans lien avec Anthropic. Elle ne lit que vos propres limites d'usage, n'envoie jamais de prompts ni ne consomme l'usage de votre forfait, et votre jeton de connexion reste sur cet appareil."
+            "value" : "Usage est une app indépendante, sans lien avec Anthropic. Elle ne lit que vos propres limites d'usage, n'envoie jamais de prompts ni ne consomme l'usage de votre forfait, et votre jeton de connexion reste sur cet appareil."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterはAnthropicとは無関係の独立したアプリです。読み取るのはあなた自身の使用上限だけで、プロンプトを送ったりプランの使用量を消費したりすることはなく、サインイントークンはこのデバイスに留まります。"
+            "value" : "UsageはAnthropicとは無関係の独立したアプリです。読み取るのはあなた自身の使用上限だけで、プロンプトを送ったりプランの使用量を消費したりすることはなく、サインイントークンはこのデバイスに留まります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter는 Anthropic과 무관한 독립 앱입니다. 사용자 본인의 사용 한도만 읽으며 프롬프트를 보내거나 요금제 사용량을 소비하지 않고, 로그인 토큰은 이 기기에 남아 있습니다."
+            "value" : "Usage는 Anthropic과 무관한 독립 앱입니다. 사용자 본인의 사용 한도만 읽으며 프롬프트를 보내거나 요금제 사용량을 소비하지 않고, 로그인 토큰은 이 기기에 남아 있습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter é um app independente, sem vínculo com a Anthropic. Ele só lê seus próprios limites de uso, nunca envia prompts nem gasta o uso do seu plano, e seu token de login fica neste dispositivo."
+            "value" : "O Usage é um app independente, sem vínculo com a Anthropic. Ele só lê seus próprios limites de uso, nunca envia prompts nem gasta o uso do seu plano, e seu token de login fica neste dispositivo."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 是独立 App，与 Anthropic 无关。它只读取你自己的用量额度，绝不发送提示词或消耗你套餐的用量，你的登录令牌也只保存在本设备上。"
+            "value" : "Usage 是独立 App，与 Anthropic 无关。它只读取你自己的用量额度，绝不发送提示词或消耗你套餐的用量，你的登录令牌也只保存在本设备上。"
           }
         }
       }
     },
-    "AIMeter isn't running." : {
+    "Usage isn't running." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter läuft nicht."
+            "value" : "Usage läuft nicht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter no se está ejecutando."
+            "value" : "Usage no se está ejecutando."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter n'est pas ouvert."
+            "value" : "Usage n'est pas ouvert."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterが起動していません。"
+            "value" : "Usageが起動していません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter가 실행 중이 아닙니다."
+            "value" : "Usage가 실행 중이 아닙니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter não está aberto."
+            "value" : "O Usage não está aberto."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 未在运行。"
+            "value" : "Usage 未在运行。"
           }
         }
       }
     },
-    "AIMeter refreshes usage in the background when iOS permits it, then updates your widgets. Timing depends on battery, connectivity, and how often you use the app." : {
+    "Usage refreshes your limits in the background when iOS permits it, then updates your widgets. Timing depends on battery, connectivity, and how often you use the app." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter aktualisiert die Nutzung im Hintergrund, wenn iOS es erlaubt, und aktualisiert dann deine Widgets. Der Zeitpunkt hängt von Akku, Verbindung und davon ab, wie oft du die App verwendest."
+            "value" : "Usage aktualisiert die Nutzung im Hintergrund, wenn iOS es erlaubt, und aktualisiert dann deine Widgets. Der Zeitpunkt hängt von Akku, Verbindung und davon ab, wie oft du die App verwendest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter actualiza el uso en segundo plano cuando iOS lo permite y luego actualiza tus widgets. El momento exacto depende de la batería, la conectividad y qué tanto uses la app."
+            "value" : "Usage actualiza el uso en segundo plano cuando iOS lo permite y luego actualiza tus widgets. El momento exacto depende de la batería, la conectividad y qué tanto uses la app."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter actualise l'usage en arrière-plan quand iOS le permet, puis met à jour vos widgets. Le moment dépend de la batterie, de la connectivité et de la fréquence d'utilisation de l'app."
+            "value" : "Usage actualise l'usage en arrière-plan quand iOS le permet, puis met à jour vos widgets. Le moment dépend de la batterie, de la connectivité et de la fréquence d'utilisation de l'app."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iOSが許可するとAIMeterはバックグラウンドで使用量を更新し、ウィジェットを更新します。タイミングはバッテリー、通信状況、アプリの使用頻度によります。"
+            "value" : "iOSが許可するとUsageはバックグラウンドで使用量を更新し、ウィジェットを更新します。タイミングはバッテリー、通信状況、アプリの使用頻度によります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iOS가 허용할 때 AIMeter는 백그라운드에서 사용량을 새로 고치고 위젯을 업데이트합니다. 시점은 배터리, 연결 상태, 앱 사용 빈도에 따라 달라집니다."
+            "value" : "iOS가 허용할 때 Usage는 백그라운드에서 사용량을 새로 고치고 위젯을 업데이트합니다. 시점은 배터리, 연결 상태, 앱 사용 빈도에 따라 달라집니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter atualiza o uso em segundo plano quando o iOS permite e depois atualiza seus widgets. O momento depende da bateria, da conectividade e de quanto você usa o app."
+            "value" : "O Usage atualiza o uso em segundo plano quando o iOS permite e depois atualiza seus widgets. O momento depende da bateria, da conectividade e de quanto você usa o app."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 iOS 允许时，AIMeter 会在后台刷新用量并更新小组件。时机取决于电量、网络状况和你使用 App 的频率。"
+            "value" : "在 iOS 允许时，Usage 会在后台刷新用量并更新小组件。时机取决于电量、网络状况和你使用 App 的频率。"
           }
         }
       }
     },
-    "AIMeter will open Claude's sign-in page in your browser. After you approve, copy the code it shows and paste it back here to finish. Any sign-in method works." : {
+    "Usage will open Claude's sign-in page in your browser. After you approve, copy the code it shows and paste it back here to finish. Any sign-in method works." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter öffnet die Anmeldeseite von Claude in deinem Browser. Nach deiner Zustimmung kopierst du den angezeigten Code und fügst ihn hier ein, um abzuschließen. Jede Anmeldemethode funktioniert."
+            "value" : "Usage öffnet die Anmeldeseite von Claude in deinem Browser. Nach deiner Zustimmung kopierst du den angezeigten Code und fügst ihn hier ein, um abzuschließen. Jede Anmeldemethode funktioniert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter abrirá la página de inicio de sesión de Claude en tu navegador. Cuando apruebes, copia el código que aparece y pégalo aquí para terminar. Funciona cualquier método de inicio de sesión."
+            "value" : "Usage abrirá la página de inicio de sesión de Claude en tu navegador. Cuando apruebes, copia el código que aparece y pégalo aquí para terminar. Funciona cualquier método de inicio de sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter ouvrira la page de connexion de Claude dans votre navigateur. Après votre approbation, copiez le code affiché et collez-le ici pour terminer. Toute méthode de connexion fonctionne."
+            "value" : "Usage ouvrira la page de connexion de Claude dans votre navigateur. Après votre approbation, copiez le code affiché et collez-le ici pour terminer. Toute méthode de connexion fonctionne."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterがブラウザでClaudeのサインインページを開きます。承認後、表示されたコードをコピーしてここに貼り付けると完了です。どのサインイン方法でも使えます。"
+            "value" : "UsageがブラウザでClaudeのサインインページを開きます。承認後、表示されたコードをコピーしてここに貼り付けると完了です。どのサインイン方法でも使えます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter가 브라우저에서 Claude 로그인 페이지를 엽니다. 승인한 뒤 표시된 코드를 복사해 여기에 붙여 넣으면 완료됩니다. 어떤 로그인 방식이든 됩니다."
+            "value" : "Usage가 브라우저에서 Claude 로그인 페이지를 엽니다. 승인한 뒤 표시된 코드를 복사해 여기에 붙여 넣으면 완료됩니다. 어떤 로그인 방식이든 됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter abrirá a página de login do Claude no seu navegador. Depois de aprovar, copie o código exibido e cole aqui para concluir. Qualquer método de login funciona."
+            "value" : "O Usage abrirá a página de login do Claude no seu navegador. Depois de aprovar, copie o código exibido e cole aqui para concluir. Qualquer método de login funciona."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 会在浏览器中打开 Claude 的登录页面。确认后，复制页面显示的代码并粘贴回此处即可完成。任何登录方式都可以。"
+            "value" : "Usage 会在浏览器中打开 Claude 的登录页面。确认后，复制页面显示的代码并粘贴回此处即可完成。任何登录方式都可以。"
           }
         }
       }
@@ -10901,48 +10901,48 @@
         }
       }
     },
-    "Open AIMeter to load usage" : {
+    "Open Usage to load your limits" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öffne AIMeter, um die Nutzung zu laden"
+            "value" : "Öffne Usage, um die Nutzung zu laden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abre AIMeter para cargar el uso"
+            "value" : "Abre Usage para cargar el uso"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrez AIMeter pour charger l'usage"
+            "value" : "Ouvrez Usage pour charger l'usage"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterを開いて使用量を読み込む"
+            "value" : "Usageを開いて使用量を読み込む"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter를 열어 사용량 불러오기"
+            "value" : "Usage를 열어 사용량 불러오기"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abra o AIMeter para carregar o uso"
+            "value" : "Abra o Usage para carregar o uso"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开 AIMeter 以载入用量"
+            "value" : "打开 Usage 以载入用量"
           }
         }
       }
@@ -11039,48 +11039,48 @@
         }
       }
     },
-    "Opens AIMeter's dashboard." : {
+    "Opens Usage's dashboard." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öffnet die Übersicht von AIMeter."
+            "value" : "Öffnet die Übersicht von Usage."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abre la pantalla principal de AIMeter."
+            "value" : "Abre la pantalla principal de Usage."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvre le tableau de bord d'AIMeter."
+            "value" : "Ouvre le tableau de bord d'Usage."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterのダッシュボードを開きます。"
+            "value" : "Usageのダッシュボードを開きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 대시보드를 엽니다."
+            "value" : "Usage 대시보드를 엽니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abre o painel do AIMeter."
+            "value" : "Abre o painel do Usage."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开 AIMeter 的仪表板。"
+            "value" : "打开 Usage 的仪表板。"
           }
         }
       }
@@ -14599,48 +14599,48 @@
         }
       }
     },
-    "When you sign in through AIMeter it requests only the profile scope (what the usage and profile endpoints need) and never the inference scope, so a token issued to AIMeter can't send prompts or spend usage on your behalf even in theory. Either way it only ever calls two read-only endpoints: your usage windows and your profile (to show the plan). The source is open if you want to verify." : {
+    "When you sign in through Usage it requests only the profile scope (what the usage and profile endpoints need) and never the inference scope, so a token issued to Usage can't send prompts or spend usage on your behalf even in theory. Either way it only ever calls two read-only endpoints: your usage windows and your profile (to show the plan). The source is open if you want to verify." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du dich über AIMeter anmeldest, fordert es nur den Profil-Bereich an (was die Nutzungs- und Profil-Endpunkte brauchen) und nie den Inferenz-Bereich, sodass ein an AIMeter ausgestelltes Token nicht einmal theoretisch Prompts senden oder Nutzung in deinem Namen verbrauchen kann. So oder so ruft es nur zwei Nur-Lese-Endpunkte auf: deine Nutzungsfenster und dein Profil (um den Plan anzuzeigen). Der Quellcode ist offen, falls du es prüfen möchtest."
+            "value" : "Wenn du dich über Usage anmeldest, fordert es nur den Profil-Bereich an (was die Nutzungs- und Profil-Endpunkte brauchen) und nie den Inferenz-Bereich, sodass ein an Usage ausgestelltes Token nicht einmal theoretisch Prompts senden oder Nutzung in deinem Namen verbrauchen kann. So oder so ruft es nur zwei Nur-Lese-Endpunkte auf: deine Nutzungsfenster und dein Profil (um den Plan anzuzeigen). Der Quellcode ist offen, falls du es prüfen möchtest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al iniciar sesión desde AIMeter solo se solicita el permiso de perfil (el que necesitan los endpoints de uso y de perfil) y nunca el de inferencia, así que un token emitido a AIMeter no puede enviar prompts ni gastar uso en tu nombre, ni siquiera en teoría. En cualquier caso, solo llama a dos endpoints de solo lectura: tus ventanas de uso y tu perfil (para mostrar el plan). El código es abierto si quieres comprobarlo."
+            "value" : "Al iniciar sesión desde Usage solo se solicita el permiso de perfil (el que necesitan los endpoints de uso y de perfil) y nunca el de inferencia, así que un token emitido a Usage no puede enviar prompts ni gastar uso en tu nombre, ni siquiera en teoría. En cualquier caso, solo llama a dos endpoints de solo lectura: tus ventanas de uso y tu perfil (para mostrar el plan). El código es abierto si quieres comprobarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand vous vous connectez via AIMeter, il ne demande que la portée profil (ce dont les points d'accès d'usage et de profil ont besoin) et jamais la portée inférence, de sorte qu'un jeton délivré à AIMeter ne peut, même en théorie, envoyer des prompts ni consommer de l'usage en votre nom. Dans tous les cas, il n'appelle que deux points d'accès en lecture seule : vos fenêtres d'usage et votre profil (pour afficher le forfait). Le code est ouvert si vous voulez vérifier."
+            "value" : "Quand vous vous connectez via Usage, il ne demande que la portée profil (ce dont les points d'accès d'usage et de profil ont besoin) et jamais la portée inférence, de sorte qu'un jeton délivré à Usage ne peut, même en théorie, envoyer des prompts ni consommer de l'usage en votre nom. Dans tous les cas, il n'appelle que deux points d'accès en lecture seule : vos fenêtres d'usage et votre profil (pour afficher le forfait). Le code est ouvert si vous voulez vérifier."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeterからサインインすると、要求するのはプロファイルスコープ（使用量とプロファイルのエンドポイントに必要なもの）だけで、推論スコープは決して要求しません。そのためAIMeterに発行されたトークンは、理論上もプロンプトを送ったり使用量を消費したりできません。いずれの場合も呼び出すのは読み取り専用の2つのエンドポイント（使用ウインドウとプラン表示のためのプロファイル）だけです。確認したい方のためにソースは公開されています。"
+            "value" : "Usageからサインインすると、要求するのはプロファイルスコープ（使用量とプロファイルのエンドポイントに必要なもの）だけで、推論スコープは決して要求しません。そのためUsageに発行されたトークンは、理論上もプロンプトを送ったり使用量を消費したりできません。いずれの場合も呼び出すのは読み取り専用の2つのエンドポイント（使用ウインドウとプラン表示のためのプロファイル）だけです。確認したい方のためにソースは公開されています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter를 통해 로그인하면 사용량 및 프로필 엔드포인트에 필요한 프로필 범위만 요청하고 추론 범위는 절대 요청하지 않으므로, AIMeter에 발급된 토큰은 이론상으로도 프롬프트를 보내거나 사용량을 소비할 수 없습니다. 어느 경우든 읽기 전용 엔드포인트 두 개(사용 기간과 요금제 표시용 프로필)만 호출합니다. 확인하고 싶다면 소스가 공개되어 있습니다."
+            "value" : "Usage를 통해 로그인하면 사용량 및 프로필 엔드포인트에 필요한 프로필 범위만 요청하고 추론 범위는 절대 요청하지 않으므로, Usage에 발급된 토큰은 이론상으로도 프롬프트를 보내거나 사용량을 소비할 수 없습니다. 어느 경우든 읽기 전용 엔드포인트 두 개(사용 기간과 요금제 표시용 프로필)만 호출합니다. 확인하고 싶다면 소스가 공개되어 있습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ao entrar pelo AIMeter, ele pede só o escopo de perfil (o que os endpoints de uso e perfil precisam) e nunca o escopo de inferência, então um token emitido para o AIMeter não pode enviar prompts nem gastar uso em seu nome, nem em teoria. De qualquer forma, ele só chama dois endpoints somente leitura: suas janelas de uso e seu perfil (para mostrar o plano). O código é aberto se quiser conferir."
+            "value" : "Ao entrar pelo Usage, ele pede só o escopo de perfil (o que os endpoints de uso e perfil precisam) e nunca o escopo de inferência, então um token emitido para o Usage não pode enviar prompts nem gastar uso em seu nome, nem em teoria. De qualquer forma, ele só chama dois endpoints somente leitura: suas janelas de uso e seu perfil (para mostrar o plano). O código é aberto se quiser conferir."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过 AIMeter 登录时，它只请求用量和资料接口所需的资料范围，绝不请求推理范围，因此颁发给 AIMeter 的令牌即使在理论上也无法替你发送提示词或消耗用量。无论哪种方式，它只调用两个只读接口：你的用量周期和你的资料（用于显示套餐）。如需核实，源代码是公开的。"
+            "value" : "通过 Usage 登录时，它只请求用量和资料接口所需的资料范围，绝不请求推理范围，因此颁发给 Usage 的令牌即使在理论上也无法替你发送提示词或消耗用量。无论哪种方式，它只调用两个只读接口：你的用量周期和你的资料（用于显示套餐）。如需核实，源代码是公开的。"
           }
         }
       }
@@ -15154,94 +15154,94 @@
         }
       }
     },
-    "What's new in AIMeter %@" : {
+    "What's new in Usage %@" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neu in AIMeter %@"
+            "value" : "Neu in Usage %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novedades de AIMeter %@"
+            "value" : "Novedades de Usage %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouveautés d'AIMeter %@"
+            "value" : "Nouveautés d'Usage %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ の新機能"
+            "value" : "Usage %@ の新機能"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@의 새로운 기능"
+            "value" : "Usage %@의 새로운 기능"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novidades do AIMeter %@"
+            "value" : "Novidades do Usage %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ 新功能"
+            "value" : "Usage %@ 新功能"
           }
         }
       }
     },
-    "AIMeter %@ is ready" : {
+    "Usage %@ is ready" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ ist bereit zur Installation"
+            "value" : "Usage %@ ist bereit zur Installation"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ está lista para instalar"
+            "value" : "Usage %@ está lista para instalar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ est prête à installer"
+            "value" : "Usage %@ est prête à installer"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ をインストールできます"
+            "value" : "Usage %@ をインストールできます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ 설치 준비 완료"
+            "value" : "Usage %@ 설치 준비 완료"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter %@ está pronto para instalar"
+            "value" : "O Usage %@ está pronto para instalar"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ 已可安装"
+            "value" : "Usage %@ 已可安装"
           }
         }
       }
@@ -15292,48 +15292,48 @@
         }
       }
     },
-    "Downloading AIMeter %@…" : {
+    "Downloading Usage %@…" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ wird geladen…"
+            "value" : "Usage %@ wird geladen…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descargando AIMeter %@…"
+            "value" : "Descargando Usage %@…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Téléchargement d'AIMeter %@…"
+            "value" : "Téléchargement d'Usage %@…"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ をダウンロード中…"
+            "value" : "Usage %@ をダウンロード中…"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter %@ 다운로드 중…"
+            "value" : "Usage %@ 다운로드 중…"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Baixando o AIMeter %@…"
+            "value" : "Baixando o Usage %@…"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在下载 AIMeter %@…"
+            "value" : "正在下载 Usage %@…"
           }
         }
       }
@@ -15570,49 +15570,49 @@
         }
       }
     },
-    "AIMeter has no server and no account of its own. Usage is read directly from each provider and cached on this device so widgets can show it. Nothing is sent anywhere else." : {
+    "Usage has no server and no account of its own. Your limits are read directly from each provider and cached on this device so widgets can show it. Nothing is sent anywhere else." : {
       "comment" : "Privacy & data: the first row's text.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter hat keinen Server und keinen eigenen Account. Die Nutzung wird direkt von jedem Anbieter gelesen und auf diesem Gerät zwischengespeichert, damit Widgets sie anzeigen können. Nichts wird anderswohin gesendet."
+            "value" : "Usage hat keinen Server und keinen eigenen Account. Die Nutzung wird direkt von jedem Anbieter gelesen und auf diesem Gerät zwischengespeichert, damit Widgets sie anzeigen können. Nichts wird anderswohin gesendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter no tiene servidor ni cuenta propia. El uso se lee directamente de cada proveedor y se guarda en caché en este dispositivo para que los widgets puedan mostrarlo. No se envía nada a ningún otro sitio."
+            "value" : "Usage no tiene servidor ni cuenta propia. El uso se lee directamente de cada proveedor y se guarda en caché en este dispositivo para que los widgets puedan mostrarlo. No se envía nada a ningún otro sitio."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter n'a ni serveur ni compte propre. L'utilisation est lue directement auprès de chaque fournisseur et mise en cache sur cet appareil pour que les widgets puissent l'afficher. Rien n'est envoyé ailleurs."
+            "value" : "Usage n'a ni serveur ni compte propre. L'utilisation est lue directement auprès de chaque fournisseur et mise en cache sur cet appareil pour que les widgets puissent l'afficher. Rien n'est envoyé ailleurs."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter にはサーバーも独自のアカウントもありません。使用量は各プロバイダから直接読み取り、ウィジェットが表示できるようこのデバイスにキャッシュします。他の場所には何も送信しません。"
+            "value" : "Usage にはサーバーも独自のアカウントもありません。使用量は各プロバイダから直接読み取り、ウィジェットが表示できるようこのデバイスにキャッシュします。他の場所には何も送信しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter에는 서버도 자체 계정도 없습니다. 사용량은 각 제공업체에서 직접 읽어 위젯이 표시할 수 있도록 이 기기에 캐시됩니다. 다른 곳으로는 아무것도 보내지 않습니다."
+            "value" : "Usage에는 서버도 자체 계정도 없습니다. 사용량은 각 제공업체에서 직접 읽어 위젯이 표시할 수 있도록 이 기기에 캐시됩니다. 다른 곳으로는 아무것도 보내지 않습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter não tem servidor nem conta própria. O uso é lido diretamente de cada provedor e guardado em cache neste dispositivo para que os widgets possam mostrá-lo. Nada é enviado para outro lugar."
+            "value" : "O Usage não tem servidor nem conta própria. O uso é lido diretamente de cada provedor e guardado em cache neste dispositivo para que os widgets possam mostrá-lo. Nada é enviado para outro lugar."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 没有服务器，也没有自己的账户。用量直接从各个提供方读取并缓存在本设备上，供小组件显示。不会向其他任何地方发送。"
+            "value" : "Usage 没有服务器，也没有自己的账户。用量直接从各个提供方读取并缓存在本设备上，供小组件显示。不会向其他任何地方发送。"
           }
         }
       }
@@ -15664,49 +15664,49 @@
         }
       }
     },
-    "AIMeter forgets its sign-in and deletes its usage history and its alerts. Your account with the service isn't touched." : {
+    "Usage forgets its sign-in and deletes its usage history and its alerts. Your account with the service isn't touched." : {
       "comment" : "The message of the confirmation before disconnecting an account.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter vergisst seine Anmeldung und löscht seinen Nutzungsverlauf und seine Hinweise. Dein Account beim Dienst bleibt unberührt."
+            "value" : "Usage vergisst seine Anmeldung und löscht seinen Nutzungsverlauf und seine Hinweise. Dein Account beim Dienst bleibt unberührt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter olvida su inicio de sesión y borra su historial de uso y sus alertas. Tu cuenta en el servicio no se toca."
+            "value" : "Usage olvida su inicio de sesión y borra su historial de uso y sus alertas. Tu cuenta en el servicio no se toca."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter oublie sa connexion et supprime son historique d'utilisation et ses alertes. Votre compte auprès du service n'est pas touché."
+            "value" : "Usage oublie sa connexion et supprime son historique d'utilisation et ses alertes. Votre compte auprès du service n'est pas touché."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter はこのアカウントのサインイン情報を削除し、使用履歴と通知も削除します。サービス側のアカウントには影響しません。"
+            "value" : "Usage はこのアカウントのサインイン情報を削除し、使用履歴と通知も削除します。サービス側のアカウントには影響しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter가 이 계정의 로그인 정보를 지우고 사용 기록과 알림을 삭제합니다. 서비스의 계정 자체에는 영향이 없습니다."
+            "value" : "Usage가 이 계정의 로그인 정보를 지우고 사용 기록과 알림을 삭제합니다. 서비스의 계정 자체에는 영향이 없습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O AIMeter esquece o login dela e apaga o histórico de uso e os alertas. Sua conta no serviço não é afetada."
+            "value" : "O Usage esquece o login dela e apaga o histórico de uso e os alertas. Sua conta no serviço não é afetada."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AIMeter 会忘记它的登录信息，并删除它的使用记录和提醒。你在该服务上的账户不受影响。"
+            "value" : "Usage 会忘记它的登录信息，并删除它的使用记录和提醒。你在该服务上的账户不受影响。"
           }
         }
       }
@@ -15806,7 +15806,7 @@
       }
     },
     "Refresh & data" : {
-      "comment" : "iOS Settings: the group with how often AIMeter refreshes, the service status check, iCloud, export and Privacy & data.",
+      "comment" : "iOS Settings: the group with how often Usage refreshes, the service status check, iCloud, export and Privacy & data.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -15899,49 +15899,49 @@
         }
       }
     },
-    "Touch and hold your Home Screen or Lock Screen, tap Edit, then Add Widget, and search for AIMeter. Each widget can show any of your accounts: touch and hold it, then Edit Widget." : {
+    "Touch and hold your Home Screen or Lock Screen, tap Edit, then Add Widget, and search for Usage. Each widget can show any of your accounts: touch and hold it, then Edit Widget." : {
       "comment" : "iOS Settings, Widgets: how to add one.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lege den Finger auf den Home-Bildschirm oder den Sperrbildschirm, tippe auf Bearbeiten, dann auf Widget hinzufügen, und suche nach AIMeter. Jedes Widget kann jeden deiner Accounts zeigen: Lege den Finger darauf und tippe auf Widget bearbeiten."
+            "value" : "Lege den Finger auf den Home-Bildschirm oder den Sperrbildschirm, tippe auf Bearbeiten, dann auf Widget hinzufügen, und suche nach Usage. Jedes Widget kann jeden deiner Accounts zeigen: Lege den Finger darauf und tippe auf Widget bearbeiten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén presionada la pantalla de inicio o la pantalla bloqueada, toca Editar, luego Agregar widget, y busca AIMeter. Cada widget puede mostrar cualquiera de tus cuentas: mantenlo presionado y toca Editar widget."
+            "value" : "Mantén presionada la pantalla de inicio o la pantalla bloqueada, toca Editar, luego Agregar widget, y busca Usage. Cada widget puede mostrar cualquiera de tus cuentas: mantenlo presionado y toca Editar widget."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez longuement l'écran d'accueil ou l'écran verrouillé, touchez Modifier, puis Ajouter un widget, et cherchez AIMeter. Chaque widget peut afficher n'importe lequel de vos comptes : touchez-le longuement, puis Modifier le widget."
+            "value" : "Touchez longuement l'écran d'accueil ou l'écran verrouillé, touchez Modifier, puis Ajouter un widget, et cherchez Usage. Chaque widget peut afficher n'importe lequel de vos comptes : touchez-le longuement, puis Modifier le widget."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ホーム画面またはロック画面を長押しし、「編集」、「ウィジェットを追加」の順にタップして AIMeter を検索します。各ウィジェットにはどのアカウントでも表示できます。ウィジェットを長押しして「ウィジェットを編集」をタップしてください。"
+            "value" : "ホーム画面またはロック画面を長押しし、「編集」、「ウィジェットを追加」の順にタップして Usage を検索します。各ウィジェットにはどのアカウントでも表示できます。ウィジェットを長押しして「ウィジェットを編集」をタップしてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "홈 화면이나 잠금 화면을 길게 누르고 편집, 위젯 추가를 차례로 탭한 다음 AIMeter를 검색하세요. 각 위젯에는 어느 계정이든 표시할 수 있습니다. 위젯을 길게 누르고 위젯 편집을 탭하세요."
+            "value" : "홈 화면이나 잠금 화면을 길게 누르고 편집, 위젯 추가를 차례로 탭한 다음 Usage를 검색하세요. 각 위젯에는 어느 계정이든 표시할 수 있습니다. 위젯을 길게 누르고 위젯 편집을 탭하세요."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque e segure a Tela de Início ou a Tela Bloqueada, toque em Editar, depois em Adicionar Widget, e busque AIMeter. Cada widget pode mostrar qualquer uma das suas contas: toque e segure nele e toque em Editar Widget."
+            "value" : "Toque e segure a Tela de Início ou a Tela Bloqueada, toque em Editar, depois em Adicionar Widget, e busque Usage. Cada widget pode mostrar qualquer uma das suas contas: toque e segure nele e toque em Editar Widget."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按住主屏幕或锁定屏幕，轻点“编辑”，然后轻点“添加小组件”，再搜索 AIMeter。每个小组件都可以显示你的任意账户：按住它，然后轻点“编辑小组件”。"
+            "value" : "按住主屏幕或锁定屏幕，轻点“编辑”，然后轻点“添加小组件”，再搜索 Usage。每个小组件都可以显示你的任意账户：按住它，然后轻点“编辑小组件”。"
           }
         }
       }

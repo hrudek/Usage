@@ -28,7 +28,7 @@ public struct CodexProvider: UsageProvider {
     public init(
         credentialSource: any CodexCredentialSource,
         transport: any HTTPTransport = URLSessionTransport(),
-        userAgent: String = "AIMeter",
+        userAgent: String = "Usage",
         refresher: TokenRefresher = .shared
     ) {
         self.credentialSource = credentialSource

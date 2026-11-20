@@ -18,7 +18,7 @@ public struct ClaudeOAuth: Sendable {
     static let redirectURI = "https://console.anthropic.com/oauth/code/callback"
     /// `user:profile` is the one scope `/api/oauth/usage` and
     /// `/api/oauth/profile` gate on, and it is the *only* one requested.
-    /// `user:inference` is deliberately left out: a token AIMeter mints can
+    /// `user:inference` is deliberately left out: a token Usage mints can
     /// then never be used to send prompts or run a model — least privilege
     /// for a read-only meter, and it keeps the app clearly on the right side
     /// of Anthropic's rule against third-party tools routing inference
