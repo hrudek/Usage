@@ -1,0 +1,317 @@
+import Foundation
+import UserNotifications
+import UsageKit
+
+/// Schedules the local notifications, all rescheduled from scratch after
+/// every successful fetch so they track what the endpoint currently
+/// reports. Every identifier includes the triggering account's id (except
+/// `peak.`, which is account-independent) so two accounts with the same
+/// window kind never clobber each other's pending requests:
+/// - `reset.` — per-window, fires at the window's `resetsAt` ("back to full").
+/// - `runout.` — per-window run-out warnings, fired ahead of a projected
+///   early exhaustion (recent-rate projection supplied by the caller).
+/// - `earlyreset.` — immediate alerts when a window refilled early.
+/// - `reauth.` — an immediate alert when the account's stored sign-in
+///   stopped working, deduped so it fires once per breakage.
+/// The toggles themselves are `NotificationPreferences`
+/// (`NotificationPreferences.swift`).
+enum NotificationScheduler {
+    private static let identifierPrefix = "reset."
+    static let runOutPrefix = "runout."
+    private static let earlyResetPrefix = "earlyreset."
+    private static let nearLimitPrefix = "nearlimit."
+    private static let limitReachedPrefix = "limitreached."
+    private static let aheadOfPacePrefix = "ahead."
+    private static let reauthPrefix = "reauth."
+
+    static func requestAuthorization() async -> Bool {
+        let center = UNUserNotificationCenter.current()
+        return (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
+    }
+
+    static func authorizationStatus() async -> UNAuthorizationStatus {
+        await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+    }
+
+    /// True when notifications can actually be delivered, prompting the
+    /// first time. A previous denial returns false without re-prompting
+    /// (the system would ignore the request anyway).
+    static func ensureAuthorization() async -> Bool {
+        switch await authorizationStatus() {
+        case .notDetermined:
+            return await requestAuthorization()
+        case .denied:
+            return false
+        default:
+            return true
+        }
+    }
+
+    /// True when iOS will actually deliver requests we add now.
+    static func canDeliver() async -> Bool {
+        switch await authorizationStatus() {
+        case .authorized, .provisional, .ephemeral: return true
+        default: return false
+        }
+    }
+
+    /// A trigger's date as one instant: components with no time zone
+    /// float, firing at that clock time in whatever zone the device is in
+    /// by then, and a reset doesn't move when the user travels.
+    static func triggerComponents(at date: Date) -> DateComponents {
+        Calendar.current.dateComponents([.timeZone, .year, .month, .day, .hour, .minute, .second], from: date)
+    }
+
+    // MARK: - Reset notifications (per-window, at resetsAt)
+
+    static func rescheduleResets(
+        for snapshot: UsageSnapshot?,
+        accountID: String,
+        accountLabel: String? = nil,
+        preferences: NotificationPreferences
+    ) async {
+        let center = UNUserNotificationCenter.current()
+        await removePending(withPrefix: identifierPrefix + accountID + ".", from: center)
+
+        guard let snapshot, await canDeliver() else { return }
+
+        for window in snapshot.windows {
+            guard preferences.isEnabled(for: window.kind),
+                  let resetsAt = window.resetsAt,
+                  resetsAt > Date() else { continue }
+
+            let content = UNMutableNotificationContent()
+            content.title = labeled(String(localized: "\(window.title) limit reset"), accountLabel)
+            content.body = String(localized: "Your \(window.title) usage window has reset. Full capacity available.")
+            content.sound = .default
+
+            let components = triggerComponents(at: resetsAt)
+            let request = UNNotificationRequest(
+                identifier: identifierPrefix + accountID + "." + window.kind.storageKey,
+                content: content,
+                trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+            )
+            try? await center.add(request)
+        }
+    }
+
+    // MARK: - Early-reset alerts (immediate)
+
+    /// Posts an immediate alert for each window that refilled before its
+    /// scheduled reset. Not scheduled — the event already happened — so it
+    /// delivers right away (nil trigger).
+    static func notifyEarlyResets(
+        _ kinds: [UsageWindow.Kind],
+        in current: UsageSnapshot? = nil,
+        accountID: String,
+        accountLabel: String? = nil,
+        preferences: NotificationPreferences
+    ) async {
+        guard preferences.earlyResetAlertsEnabled, !kinds.isEmpty, await canDeliver() else { return }
+        let center = UNUserNotificationCenter.current()
+
+        for kind in kinds {
+            let title = current?.title(for: kind) ?? kind.displayName
+            let content = UNMutableNotificationContent()
+            content.title = labeled(String(localized: "\(title) refilled early"), accountLabel)
+            content.body = String(localized: "Your \(title) limit reset ahead of schedule. Full capacity available.")
+            content.sound = .default
+
+            // A unique id per event so repeated early resets each notify.
+            let request = UNNotificationRequest(
+                identifier: earlyResetPrefix + accountID + "." + kind.storageKey + "." + String(Int(Date().timeIntervalSince1970)),
+                content: content,
+                trigger: nil
+            )
+            try? await center.add(request)
+        }
+    }
+
+    // MARK: - Near-limit warnings (immediate, on threshold crossing)
+
+    /// Posts an immediate warning for each window that just crossed the
+    /// near-limit threshold. `current` supplies the real used% for the copy.
+    static func notifyNearLimit(
+        _ kinds: [UsageWindow.Kind],
+        in current: UsageSnapshot,
+        accountID: String,
+        accountLabel: String? = nil,
+        room: String? = nil,
+        preferences: NotificationPreferences
+    ) async {
+        guard preferences.nearLimitEnabled, !kinds.isEmpty, await canDeliver() else { return }
+        let center = UNUserNotificationCenter.current()
+
+        for kind in kinds {
+            let used = current.windows.first { $0.kind == kind }?.usedPct ?? 0
+            let content = UNMutableNotificationContent()
+            content.title = labeled(String(localized: "\(current.title(for: kind)) nearing its limit"), accountLabel)
+            content.body = withRoom(String(localized: "You're at \(Int(used))% of this window."), room)
+            content.sound = .default
+            await add(content, prefix: nearLimitPrefix, accountID: accountID, kind: kind, to: center)
+        }
+    }
+
+    // MARK: - Limit-reached alerts (immediate, on hitting ~100%)
+
+    /// Posts an immediate alert for each window that just hit its limit. The
+    /// body adapts: when the account has credits enabled, continuing draws
+    /// on them; otherwise the window is blocked until it resets.
+    static func notifyLimitReached(
+        _ kinds: [UsageWindow.Kind],
+        in current: UsageSnapshot,
+        accountID: String,
+        accountLabel: String? = nil,
+        room: String? = nil,
+        preferences: NotificationPreferences
+    ) async {
+        guard preferences.limitReachedEnabled, !kinds.isEmpty, await canDeliver() else { return }
+        let center = UNUserNotificationCenter.current()
+        let hasCredits = current.spend?.enabled ?? false
+
+        for kind in kinds {
+            let content = UNMutableNotificationContent()
+            content.title = labeled(String(localized: "\(current.title(for: kind)) limit reached"), accountLabel)
+            content.body = withRoom(hasCredits
+                ? String(localized: "Further usage now draws on your usage credits.")
+                : String(localized: "You're blocked on this limit until it resets."), room)
+            content.sound = .default
+            await add(content, prefix: limitReachedPrefix, accountID: accountID, kind: kind, to: center)
+        }
+    }
+
+    // MARK: - Ahead-of-pace warnings (immediate, once per window)
+
+    /// One warning per window that just pulled well ahead of a steady
+    /// pace (`PaceDetector`), the window's reset remembered so it says so
+    /// once however the figure moves around the line until then.
+    static func notifyAheadOfPace(
+        _ kinds: [UsageWindow.Kind],
+        in current: UsageSnapshot,
+        accountID: String,
+        accountLabel: String? = nil,
+        preferences: NotificationPreferences
+    ) async {
+        guard preferences.aheadOfPaceEnabled, !kinds.isEmpty, await canDeliver() else { return }
+        let center = UNUserNotificationCenter.current()
+        for kind in kinds {
+            guard let window = current.windows.first(where: { $0.kind == kind }), let reset = window.resetsAt,
+                  preferences.aheadOfPaceWarned(for: kind) != reset,
+                  let pace = PaceCalculator.pace(for: window, now: current.fetchedAt) else { continue }
+            let content = UNMutableNotificationContent()
+            content.title = labeled(String(localized: "\(current.title(for: kind)) ahead of pace"), accountLabel)
+            let ahead = Int(window.usedPct - pace.expectedPct)
+            content.body = String(localized: "At \(Int(window.usedPct))%, \(ahead) points ahead of a steady pace to its reset.")
+            content.sound = .default
+            await add(content, prefix: aheadOfPacePrefix, accountID: accountID, kind: kind, to: center)
+            preferences.setAheadOfPaceWarned(reset, for: kind)
+        }
+    }
+
+    /// A limit alert's body, ended with another account's room ("Work has
+    /// 70% free.") when there is one (`UsageInsights.room`).
+    private static func withRoom(_ body: String, _ room: String?) -> String {
+        guard let room else { return body }
+        return "\(body) \(room)"
+    }
+
+    /// Prefixes a notification title with the account's nickname — only
+    /// when the caller supplied one, which `RefreshService` only does once
+    /// more than one account is connected, so a single-account install's
+    /// notifications read exactly as they always have.
+    static func labeled(_ title: String, _ accountLabel: String?) -> String {
+        guard let accountLabel else { return title }
+        return "\(accountLabel): \(title)"
+    }
+
+    // MARK: - Sign-in alerts (immediate, once per breakage)
+
+    /// Posts an immediate alert when an account's stored credentials stop
+    /// working. Not scheduled — like the other detection-based families,
+    /// the event has already happened by the time we know about it.
+    ///
+    /// The dedupe is what makes this liveable: every refresh from here on
+    /// fails the same way (the credentials can't heal themselves), so
+    /// without `reauthAlertDelivered` the user would get one notification
+    /// per refresh cycle, forever. A fixed identifier per account also
+    /// means a second delivery would merely replace the first in
+    /// Notification Center rather than stack.
+    static func notifyReauthenticationNeeded(
+        accountID: String,
+        accountLabel: String? = nil,
+        providerName: String,
+        preferences: NotificationPreferences
+    ) async {
+        guard preferences.reauthAlertsEnabled,
+              !preferences.reauthAlertDelivered,
+              await canDeliver() else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = labeled(String(localized: "Sign-in expired"), accountLabel)
+        content.body = String(localized: "\(providerName) rejected Usage's saved sign-in. Open Usage and sign in again to keep tracking your usage.")
+        content.sound = .default
+
+        let request = UNNotificationRequest(
+            identifier: reauthPrefix + accountID,
+            content: content,
+            trigger: nil
+        )
+        do {
+            try await UNUserNotificationCenter.current().add(request)
+            // Only a delivery arms the dedupe: marking it after a failed
+            // `add` would silence the alert for good without it ever
+            // having been shown.
+            preferences.reauthAlertDelivered = true
+        } catch {}
+    }
+
+    /// Everything this account has pending or delivered, on disconnect.
+    /// Scheduled families are matched by their `<prefix><accountID>.` id
+    /// shape; the immediate ones append a kind and timestamp after the
+    /// same stem, and `reauth.` is the bare stem.
+    static func removeAll(accountID: String) async {
+        let center = UNUserNotificationCenter.current()
+        let stems = [identifierPrefix, runOutPrefix, earlyResetPrefix, nearLimitPrefix, limitReachedPrefix, aheadOfPacePrefix, renewalPrefix]
+            .map { $0 + accountID + "." } + [reauthPrefix + accountID]
+        let matches: (String) -> Bool = { id in stems.contains { id.hasPrefix($0) } }
+        let pending = await center.pendingNotificationRequests().map(\.identifier).filter(matches)
+        center.removePendingNotificationRequests(withIdentifiers: pending)
+        let delivered = await center.deliveredNotifications().map(\.request.identifier).filter(matches)
+        center.removeDeliveredNotifications(withIdentifiers: delivered)
+    }
+
+    /// Re-arms the alert after a successful refresh (or a reconnect) and
+    /// clears the delivered one from Notification Center — once the account
+    /// is working again, an alert telling the user to sign in is worse than
+    /// no alert at all.
+    static func clearReauthenticationAlert(accountID: String, preferences: NotificationPreferences) {
+        guard preferences.reauthAlertDelivered else { return }
+        preferences.reauthAlertDelivered = false
+        UNUserNotificationCenter.current()
+            .removeDeliveredNotifications(withIdentifiers: [reauthPrefix + accountID])
+    }
+
+    /// Adds an immediate (nil-trigger) notification with a unique per-event
+    /// id, so repeated crossings each deliver rather than replacing.
+    private static func add(
+        _ content: UNMutableNotificationContent,
+        prefix: String,
+        accountID: String,
+        kind: UsageWindow.Kind,
+        to center: UNUserNotificationCenter
+    ) async {
+        let request = UNNotificationRequest(
+            identifier: prefix + accountID + "." + kind.storageKey + "." + String(Int(Date().timeIntervalSince1970)),
+            content: content,
+            trigger: nil
+        )
+        try? await center.add(request)
+    }
+
+    static func removePending(withPrefix prefix: String, from center: UNUserNotificationCenter) async {
+        let stale = await center.pendingNotificationRequests()
+            .map(\.identifier)
+            .filter { $0.hasPrefix(prefix) }
+        center.removePendingNotificationRequests(withIdentifiers: stale)
+    }
+}

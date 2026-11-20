@@ -1,0 +1,249 @@
+import SwiftUI
+import UsageKit
+
+struct DashboardView: View {
+    @Environment(UsageModel.self) var model
+    @Environment(PreferencesModel.self) private var prefs
+    @State private var showingSettings = false
+    @State private var showingConnect = false
+    /// The account a "Sign in again" asked to repair.
+    @State private var reconnecting: ConnectedAccount?
+    /// Bumped per user-initiated refresh; drives the haptic only.
+    @State private var refreshRequests = 0
+    /// The section being dragged, how far it has moved, and which section
+    /// it would drop onto — see `accountSection(_:)` in
+    /// `DashboardView+Reorder.swift` for why the reorder carries this state
+    /// itself instead of using SwiftUI's drag and drop. Internal rather
+    /// than private only so that extension file can reach it.
+    @State var draggingID: String?
+    @State var dragTranslation: CGSize = .zero
+    /// Where the finger was when the card lifted (UIKit path only — the
+    /// SwiftUI drag reports a translation of its own).
+    @State var dragStart: CGPoint = .zero
+    @State var dropTargetID: String?
+    /// Each section's on-screen rect, so a drag can tell what it's over.
+    @State var sectionFrames: [String: CGRect] = [:]
+    /// When the scroll content last moved — see the type's own note for
+    /// why this exists and why it is a reference, not plain `@State`.
+    @State var scrollTracker = ScrollMovementTracker()
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// An iPhone on its side: the same Dashboard, its buttons and links
+    /// included, with no sparklines and no status bar. Until 4.3.1 a view
+    /// of its own replaced the Dashboard there, with no Settings, no
+    /// Refresh and no way to an account's detail, and rotating lost where
+    /// the user was.
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    /// iPhone Duo's side bar holds Settings and Refresh in place of the
+    /// header's buttons (`DashboardSideBar`).
+    @State private var barIsVertical = false
+
+    /// An iPhone held sideways (`verticalSizeClass` compact).
+    var isLandscapePhone: Bool {
+        verticalSizeClass == .compact
+    }
+
+    /// An iPad's width: two or more accounts sit in two columns of the same
+    /// cards, and a dragged card moves both ways (`accountSection`).
+    var isGrid: Bool {
+        sizeClass == .regular && model.accounts.count > 1
+    }
+
+    /// An iPad's width with one account: its card, centred, at a width a
+    /// card reads well at rather than the screen's.
+    private var isWideSingle: Bool {
+        sizeClass == .regular && model.accounts.count <= 1
+    }
+
+    /// The accounts two by two, the rows of the two columns.
+    private var accountPairs: [[UsageModel.AccountUsage]] {
+        stride(from: 0, to: model.accounts.count, by: 2).map {
+            Array(model.accounts[$0..<min($0 + 2, model.accounts.count)])
+        }
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: Theme.sectionSpacing) {
+                header
+                providerSection
+            }
+            .padding(20)
+            .background {
+                GeometryReader { proxy in
+                    Color.clear.preference(
+                        key: DashboardScrollOffsetKey.self,
+                        value: proxy.frame(in: .named(Self.scrollSpace)).minY
+                    )
+                }
+            }
+        }
+        .coordinateSpace(name: Self.scrollSpace)
+        .onPreferenceChange(DashboardScrollOffsetKey.self) { _ in
+            scrollTracker.lastMovement = Date()
+        }
+        // While a card is lifted, the list must not scroll under it. On
+        // iOS 18+ UIKit already guarantees that (a recognised press prevents
+        // the pan for that touch — see `ReorderPressRecognizer`); this makes
+        // the same promise explicitly for the iOS 17 SwiftUI path and
+        // costs nothing on the other. The finger has been still for the whole
+        // press when this flips, so there is never a pan in progress to cut.
+        .scrollDisabled(draggingID != nil)
+        .appBackground()
+        .statusBarHidden(isLandscapePhone)
+        // Soft tap when the *user* starts a refresh — pull gesture or
+        // button alike. Keyed on the request count, not `isRefreshing`:
+        // that also flips for the foreground auto-refresh, which would
+        // buzz the phone for something the user didn't do.
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: refreshRequests)
+        // And a firmer one the moment a card lifts, which is the only
+        // confirmation that the hold registered — the card hasn't moved yet.
+        .sensoryFeedback(.impact(weight: .medium), trigger: draggingID) { was, now in
+            was == nil && now != nil
+        }
+        .navigationDestination(for: String.self) { accountID in
+            ProviderDetailView(accountID: accountID)
+        }
+        .navigationDestination(for: AccountSettingsRoute.self) { route in
+            AccountSettingsPage(accountID: route.accountID, dismissesOnDisconnect: false)
+        }
+        .refreshable {
+            refreshRequests += 1
+            await model.refreshAll()
+        }
+        .modifier(DashboardSideBar(
+            isVertical: $barIsVertical,
+            isRefreshing: model.isRefreshing,
+            settings: { showingSettings = true },
+            refresh: {
+                refreshRequests += 1
+                Task { await model.refreshAll() }
+            }
+        ))
+        #if DEBUG
+        // `-UsageShowSettings YES` opens Settings at launch, to check or
+        // capture it without a tap.
+        .onAppear {
+            if UserDefaults.standard.bool(forKey: "UsageShowSettings") { showingSettings = true }
+        }
+        #endif
+        .sheet(isPresented: $showingSettings) {
+            SettingsSheet()
+                .withAppModels(model, prefs)
+        }
+        .sheet(isPresented: $showingConnect) {
+            ConnectAccountSheet()
+                .withAppModels(model, prefs)
+        }
+        .sheet(item: $reconnecting) { account in
+            ConnectAccountSheet(reconnecting: account)
+                .withAppModels(model, prefs)
+        }
+    }
+
+    /// "Updated 2 min ago" for the most recent refresh of any account: the
+    /// one freshness line on the Dashboard. A card whose own figures fall
+    /// behind says so itself (`UsageStatusFooter`, `.whenStale`).
+    var lastUpdatedLabel: String? {
+        model.accounts.compactMap(\.snapshot?.fetchedAt).max().map { UsageFormatting.updatedLabel($0) }
+    }
+
+    private var header: some View {
+        // One row, so a larger text size wraps the line between the
+        // buttons instead of running under them (a ZStack until 4.3.1).
+        HStack(spacing: 12) {
+            if !barIsVertical {
+                RoundIconButton(systemName: "gearshape") {
+                    showingSettings = true
+                }
+                .accessibilityLabel(Text("Settings"))
+            }
+            Spacer(minLength: 0)
+            // No app title (Mike, 2026-10-21: the cards are the screen);
+            // only when the accounts last refreshed, between the buttons.
+            if let lastUpdatedLabel {
+                Text(lastUpdatedLabel)
+                    .font(.footnote)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .multilineTextAlignment(.center)
+                    .contentTransition(.opacity)
+            }
+            Spacer(minLength: 0)
+            if !barIsVertical {
+                RoundIconButton(systemName: "arrow.clockwise", isBusy: model.isRefreshing) {
+                    refreshRequests += 1
+                    Task { await model.refreshAll() }
+                }
+                .accessibilityLabel(Text("Refresh"))
+            }
+        }
+    }
+
+    private var providerSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if model.needsConnection {
+                Card {
+                    VStack(spacing: 14) {
+                        DisconnectedPrompt(buttonLabel: "Connect", verticalPadding: 12) {
+                            showingConnect = true
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            } else {
+                if isGrid {
+                    // Rows of two equal halves, each row as tall as its
+                    // taller card (`AccountSectionView.inColumns` fills
+                    // it), so a pair ends level however many windows each
+                    // has. Not a `LazyVGrid`, whose cells keep their own
+                    // heights, nor a `Grid`, which sizes each column by its
+                    // content: the card with the longer line came out wider.
+                    VStack(spacing: 16) {
+                        ForEach(accountPairs, id: \.first?.id) { pair in
+                            HStack(alignment: .top, spacing: 16) {
+                                ForEach(pair) { usage in
+                                    accountSection(usage)
+                                }
+                                if pair.count == 1 {
+                                    Color.clear.frame(maxWidth: .infinity, maxHeight: 0)
+                                }
+                            }
+                            .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                } else {
+                    ForEach(model.accounts) { usage in
+                        accountSection(usage)
+                    }
+                }
+                // Not in demo mode: `completeConnection` would register a
+                // real account underneath the fabricated row, invisible
+                // until Exit Demo.
+                addAccountButton
+            }
+        }
+        .frame(maxWidth: isWideSingle ? 560 : (isGrid ? 1100 : .infinity))
+        .frame(maxWidth: .infinity)
+        .coordinateSpace(name: Self.reorderSpace)
+        .onPreferenceChange(AccountSectionFramesKey.self) { frames in
+            sectionFrames = frames
+        }
+    }
+
+    private var addAccountButton: some View {
+        Button {
+            showingConnect = true
+        } label: {
+            Label("Add account", systemImage: "plus")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.accent)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 11)
+                .contentShape(Capsule())
+                .glassControl(in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .padding(.top, 4)
+    }
+}

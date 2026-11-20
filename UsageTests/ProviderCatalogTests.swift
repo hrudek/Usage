@@ -1,0 +1,38 @@
+import XCTest
+import UsageKit
+@testable import Usage
+
+final class ProviderCatalogTests: XCTestCase {
+    func testKnownProviderName() {
+        XCTAssertEqual(ProviderCatalog.displayName(for: ClaudeProvider.providerID), ClaudeProvider.providerDisplayName)
+        XCTAssertEqual(ProviderCatalog.defaultProviderID, ClaudeProvider.providerID)
+    }
+
+    func testMakeProviderBuildsTheClaudeProvider() {
+        let keychain = KeychainStore(service: "usage.tests")
+        let bundle = ProviderCatalog.makeProvider(for: .managed("x", name: "X"), keychain: keychain, allowsRefresh: true)
+        XCTAssertTrue(bundle.provider is ClaudeProvider)
+        XCTAssertTrue(bundle.credentials is ClaudeKeychainCredentialSource)
+        XCTAssertEqual(bundle.provider.id, ClaudeProvider.providerID)
+    }
+
+    /// The widget extension builds its providers this way: they read the
+    /// stored login and never rotate it.
+    func testWidgetProvidersNeverRefresh() {
+        let keychain = KeychainStore(service: "usage.tests")
+        let claude = ProviderCatalog.makeProvider(for: .managed("x", name: "X"), keychain: keychain, allowsRefresh: false)
+        XCTAssertEqual((claude.credentials as? ClaudeKeychainCredentialSource)?.allowsRefresh, false)
+
+        let codexAccount = ConnectedAccount(
+            accountID: "y", providerID: CodexProvider.providerID, displayName: "Y"
+        )
+        let codex = ProviderCatalog.makeProvider(for: codexAccount, keychain: keychain, allowsRefresh: false)
+        XCTAssertTrue(codex.provider is CodexProvider)
+        XCTAssertEqual((codex.credentials as? CodexKeychainCredentialSource)?.allowsRefresh, false)
+
+        let app = ProviderCatalog.makeProvider(for: codexAccount, keychain: keychain, allowsRefresh: true)
+        XCTAssertEqual((app.credentials as? CodexKeychainCredentialSource)?.allowsRefresh, true)
+    }
+
+
+}
