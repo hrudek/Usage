@@ -34,7 +34,7 @@ struct UsageControl: ControlWidget {
                 }
             }
         }
-        .displayName("Usage")
+        .displayName(LocalizedStringResource("app.name", defaultValue: "Usage", comment: "The app's name, a brand word: never translated."))
         .description("One account's figure. A tap refreshes it.")
     }
 
