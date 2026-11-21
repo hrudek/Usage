@@ -112,32 +112,44 @@ final class TokenRefresherTests: XCTestCase {
         XCTAssertEqual(after.plan, "max")
     }
 
-    /// The app and the widget extension each have their own refresher;
-    /// the lock they share keeps their rotations of one login apart.
-    func testRefreshersSharingALockTakeTurns() async throws {
+    func testARotationWaitsWhileAnotherProcessHoldsTheLogin() async throws {
         let directory = temporaryDirectory()
         let app = TokenRefresher(lock: RefreshLock(directory: directory))
-        let widget = TokenRefresher(lock: RefreshLock(directory: directory))
-        let overlap = Overlap()
-        let rotation: @Sendable () async throws -> Pair = {
-            await overlap.enter()
-            try await Task.sleep(for: .milliseconds(200))
-            await overlap.leave()
-            return Pair(refreshToken: "new")
+        let widget = TokenRefresher(lock: RefreshLock(directory: directory, timeout: .milliseconds(100)))
+        let (started, startedContinuation) = AsyncStream<Void>.makeStream()
+        let (release, releaseContinuation) = AsyncStream<Void>.makeStream()
+        let rotation = Task {
+            try await app.refresh(key: "a") {
+                startedContinuation.yield()
+                for await _ in release { break }
+                return Pair(refreshToken: "new")
+            }
         }
-        async let a = app.refresh(key: "a", rotation)
-        async let b = widget.refresh(key: "a", rotation)
-        _ = try await (a, b)
-        let peak = await overlap.peak
-        XCTAssertEqual(peak, 1)
+        for await _ in started { break }
+
+        let counter = Counter()
+        do {
+            _ = try await widget.refresh(key: "a") {
+                _ = await counter.next()
+                return Pair(refreshToken: "other")
+            }
+            XCTFail("expected the widget to wait for the app's rotation")
+        } catch let error as UsageError {
+            guard case .storage = error else { return XCTFail("\(error)") }
+        }
+        let runs = await counter.value
+        XCTAssertEqual(runs, 0)
+
+        releaseContinuation.yield()
+        _ = try await rotation.value
+        let next = try await widget.refresh(key: "a") { Pair(refreshToken: "next") }
+        XCTAssertEqual(next.refreshToken, "next")
     }
 
-    /// A plan write in one process waits for a rotation in another and
-    /// lands on the rotated pair.
     func testAPlanWriteWaitsForAnotherProcesssRotation() async throws {
         let directory = temporaryDirectory()
         let app = TokenRefresher(lock: RefreshLock(directory: directory))
-        let widget = TokenRefresher(lock: RefreshLock(directory: directory))
+        let widget = TokenRefresher(lock: RefreshLock(directory: directory, timeout: .milliseconds(100)))
         let store = Store(Pair(refreshToken: "old"))
         let (started, startedContinuation) = AsyncStream<Void>.makeStream()
         let (release, releaseContinuation) = AsyncStream<Void>.makeStream()
@@ -152,18 +164,17 @@ final class TokenRefresherTests: XCTestCase {
         }
         for await _ in started { break }
 
-        let update = Task {
-            await widget.update(key: "a", load: { await store.pair }, save: { try await store.save($0) }) {
-                $0.plan = "max"
-            }
+        await widget.update(key: "a", load: { await store.pair }, save: { try await store.save($0) }) {
+            $0.plan = "max"
         }
-        try await Task.sleep(for: .milliseconds(200))
         let attempts = await store.attempts
-        XCTAssertEqual(attempts, 0, "nothing written while the other process rotates")
+        XCTAssertEqual(attempts, 0)
 
         releaseContinuation.yield()
         _ = try await rotation.value
-        await update.value
+        await widget.update(key: "a", load: { await store.pair }, save: { try await store.save($0) }) {
+            $0.plan = "max"
+        }
         let after = await store.pair
         XCTAssertEqual(after.refreshToken, "new")
         XCTAssertEqual(after.plan, "max")
@@ -192,6 +203,44 @@ final class TokenRefresherTests: XCTestCase {
         releaseContinuation.yield()
         try await holding.value
         try await waiter.withLock(key: "a") {}
+    }
+
+    func testNoBackgroundTimeMeansNoLockAndNoRefresh() async throws {
+        let directory = temporaryDirectory()
+        let refused = RefreshLock(directory: directory, timeout: .seconds(20)) { _, block in
+            DispatchQueue.global().async { block(true) }
+        }
+        let counter = Counter()
+        do {
+            try await refused.withLock(key: "a") { _ = await counter.next() }
+            XCTFail("expected a refusal")
+        } catch let error as UsageError {
+            guard case .storage = error else { return XCTFail("\(error)") }
+        }
+        let runs = await counter.value
+        XCTAssertEqual(runs, 0)
+        try await RefreshLock(directory: directory, timeout: .milliseconds(100)).withLock(key: "a") {}
+    }
+
+    func testExpiredBackgroundTimeCancelsTheWorkAndDropsTheLock() async throws {
+        let directory = temporaryDirectory()
+        let activity = Activity()
+        let lock = RefreshLock(directory: directory, timeout: .seconds(20), expiringActivity: { activity.start($0, $1) })
+        let (started, startedContinuation) = AsyncStream<Void>.makeStream()
+        let (never, _) = AsyncStream<Void>.makeStream()
+        let holding = Task {
+            try await lock.withLock(key: "a") {
+                startedContinuation.yield()
+                for await _ in never {}
+                try Task.checkCancellation()
+            }
+        }
+        for await _ in started { break }
+
+        await activity.expire()
+        try await RefreshLock(directory: directory, timeout: .zero).withLock(key: "a") {}
+        let result = await holding.result
+        XCTAssertThrowsError(try result.get()) { XCTAssertTrue($0 is CancellationError) }
     }
 
     private func temporaryDirectory() -> URL {
@@ -301,6 +350,26 @@ private actor Overlap {
     }
 
     func leave() { running -= 1 }
+}
+
+private final class Activity: @unchecked Sendable {
+    private let lock = NSLock()
+    private var block: (@Sendable (Bool) -> Void)?
+
+    func start(_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) {
+        lock.withLock { self.block = block }
+        DispatchQueue.global().async { block(false) }
+    }
+
+    func expire() async {
+        let block = lock.withLock { self.block }
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global().async {
+                block?(true)
+                continuation.resume()
+            }
+        }
+    }
 }
 
 private actor Store {

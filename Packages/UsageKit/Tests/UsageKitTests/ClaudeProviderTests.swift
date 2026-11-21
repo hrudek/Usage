@@ -212,8 +212,6 @@ final class ClaudeProviderTests: XCTestCase {
         XCTAssertEqual(source.saved.map(\.refreshToken), ["new-refresh"])
     }
 
-    /// The widget's path: its providers rotate through a refresher with
-    /// the App Group lock, renew an expired login and save the new pair.
     func testAnExpiredLoginIsRenewedUnderTheLock() async throws {
         let transport = StubTransport()
         transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
@@ -233,9 +231,6 @@ final class ClaudeProviderTests: XCTestCase {
         XCTAssertEqual(source.saved.map(\.refreshToken), ["new-refresh"])
     }
 
-    /// The app and the widget extension (one refresher each, one lock
-    /// between them) fetch one expired login at the same moment: one
-    /// refresh goes out, and the process that waited uses its pair.
     func testTwoProcessesRefreshAnExpiredLoginOnce() async throws {
         let transport = StubTransport()
         transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
