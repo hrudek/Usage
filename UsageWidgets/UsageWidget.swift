@@ -18,9 +18,9 @@ struct UsageEntry: TimelineEntry {
 /// user picked in Edit Widget (`UsageAccountConfigurationIntent`) — every
 /// placed instance, Home Screen or Lock Screen, has its own independent
 /// account selection. When that snapshot is older than the refresh
-/// cadence, the widget fetches fresh usage itself with the stored login
-/// (never renewing it), so it keeps updating without the app while the
-/// token is valid. Timeline policy re-runs this at the user-selected cadence,
+/// cadence, the widget fetches fresh usage itself with the stored login,
+/// renewing it when it expired, so it keeps updating without the app.
+/// Timeline policy re-runs this at the user-selected cadence,
 /// subject to WidgetKit's refresh budget.
 struct UsageTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> UsageEntry {

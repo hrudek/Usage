@@ -6,14 +6,15 @@ public protocol RotatingCredentials: Sendable {
     var isExpired: Bool { get }
 }
 
-/// Keeps a login's token refreshes in order within one process.
+/// Keeps a login's token refreshes in order.
 ///
 /// Both providers rotate the refresh token on every use, and OpenAI
 /// revokes the whole token family when a spent one comes back. So a
 /// login is refreshed once at a time: a caller that needs a refresh while
 /// one runs for the same key joins it instead of sending the same token
-/// again. Only the app refreshes; the widget extension builds its
-/// providers with `allowsRefresh == false`.
+/// again. With a `RefreshLock`, rotations and writes of a login also take
+/// turns with other processes (the app and its widget extension), and a
+/// rotation that waited finds the other process's pair in the store.
 ///
 /// It also keeps a rotated pair the store refused to save: the old
 /// refresh token is spent by then, so that pair is the only login left.
@@ -36,10 +37,18 @@ public actor TokenRefresher {
     private var unsaved: [String: Unsaved] = [:]
     private let saveAttempts: Int
     private let saveRetryDelay: Duration
+    private let lock: RefreshLock?
 
-    public init(saveAttempts: Int = 3, saveRetryDelay: Duration = .milliseconds(250)) {
+    /// - Parameter lock: shared with the other processes that rotate the
+    ///   same logins; nil keeps the turns within this process.
+    public init(
+        saveAttempts: Int = 3,
+        saveRetryDelay: Duration = .milliseconds(250),
+        lock: RefreshLock? = nil
+    ) {
         self.saveAttempts = max(1, saveAttempts)
         self.saveRetryDelay = saveRetryDelay
+        self.lock = lock
     }
 
     /// Runs `rotation` for `key`, or waits for the one already running for
@@ -58,7 +67,8 @@ public actor TokenRefresher {
             }
             guard await waitForWrite(of: key) else { break }
         }
-        let task = Task<any Sendable, any Error> { try await rotation() }
+        let lock = lock
+        let task = Task<any Sendable, any Error> { try await Self.holding(lock, key, rotation) }
         inFlight[key] = task
         defer { clear(task, of: key) }
         let value = try await task.value
@@ -159,7 +169,8 @@ public actor TokenRefresher {
     /// the caller checked that none is running. A rotation asked for
     /// meanwhile waits for it.
     private func exclusiveWrite(_ key: String, _ write: @escaping @Sendable () async -> Bool) async -> Bool {
-        let task = Task<Bool, Never> { await write() }
+        let lock = lock
+        let task = Task<Bool, Never> { (try? await Self.holding(lock, key, write)) ?? false }
         writes[key] = task
         let saved = await task.value
         if writes[key] == task { writes[key] = nil }
@@ -180,6 +191,15 @@ public actor TokenRefresher {
     /// task in the slot stays.
     private func clear(_ task: Task<any Sendable, any Error>, of key: String) {
         if inFlight[key] == task { inFlight[key] = nil }
+    }
+
+    private static func holding<T: Sendable>(
+        _ lock: RefreshLock?,
+        _ key: String,
+        _ body: @Sendable () async throws -> T
+    ) async throws -> T {
+        guard let lock else { return try await body() }
+        return try await lock.withLock(key: key, body)
     }
 
     private static func typed<C>(_ value: any Sendable) throws -> C {

@@ -135,10 +135,9 @@ struct PrivacyView: View {
     }
 
     /// The widget reads the login through the App Group's keychain access
-    /// group and never renews it (`ProviderCatalog.makeProvider`,
-    /// `allowsRefresh: false`); only the app rotates the token.
+    /// group and renews it like the app (`ProviderCatalog.refresher`).
     private var keychainRowText: String {
-        String(localized: "Your sign-in token is stored encrypted in the system Keychain and shared only with the widget, which just reads it to load your usage. Only the app renews the token. It is used exclusively to read your usage.")
+        String(localized: "Your sign-in token is stored encrypted in the system Keychain and shared only with the widget. The app and the widget use it to load your usage and renew it when it expires. It is used exclusively to read your usage.")
     }
 }
 

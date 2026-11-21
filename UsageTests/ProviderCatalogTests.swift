@@ -10,29 +10,17 @@ final class ProviderCatalogTests: XCTestCase {
 
     func testMakeProviderBuildsTheClaudeProvider() {
         let keychain = KeychainStore(service: "usage.tests")
-        let bundle = ProviderCatalog.makeProvider(for: .managed("x", name: "X"), keychain: keychain, allowsRefresh: true)
+        let bundle = ProviderCatalog.makeProvider(for: .managed("x", name: "X"), keychain: keychain)
         XCTAssertTrue(bundle.provider is ClaudeProvider)
         XCTAssertTrue(bundle.credentials is ClaudeKeychainCredentialSource)
         XCTAssertEqual(bundle.provider.id, ClaudeProvider.providerID)
     }
 
-    /// The widget extension builds its providers this way: they read the
-    /// stored login and never rotate it.
-    func testWidgetProvidersNeverRefresh() {
+    func testMakeProviderBuildsTheCodexProvider() {
         let keychain = KeychainStore(service: "usage.tests")
-        let claude = ProviderCatalog.makeProvider(for: .managed("x", name: "X"), keychain: keychain, allowsRefresh: false)
-        XCTAssertEqual((claude.credentials as? ClaudeKeychainCredentialSource)?.allowsRefresh, false)
-
-        let codexAccount = ConnectedAccount(
-            accountID: "y", providerID: CodexProvider.providerID, displayName: "Y"
-        )
-        let codex = ProviderCatalog.makeProvider(for: codexAccount, keychain: keychain, allowsRefresh: false)
-        XCTAssertTrue(codex.provider is CodexProvider)
-        XCTAssertEqual((codex.credentials as? CodexKeychainCredentialSource)?.allowsRefresh, false)
-
-        let app = ProviderCatalog.makeProvider(for: codexAccount, keychain: keychain, allowsRefresh: true)
-        XCTAssertEqual((app.credentials as? CodexKeychainCredentialSource)?.allowsRefresh, true)
+        let account = ConnectedAccount(accountID: "y", providerID: CodexProvider.providerID, displayName: "Y")
+        let bundle = ProviderCatalog.makeProvider(for: account, keychain: keychain)
+        XCTAssertTrue(bundle.provider is CodexProvider)
+        XCTAssertTrue(bundle.credentials is CodexKeychainCredentialSource)
     }
-
-
 }

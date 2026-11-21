@@ -44,11 +44,6 @@ extension ClaudeCredentials: RotatingCredentials {}
 
 /// Where `ClaudeProvider` obtains credentials and persists rotated tokens.
 public protocol ClaudeCredentialSource: CredentialStore {
-    /// Whether the provider may refresh the token and persist the rotated
-    /// credentials through this source. False in the widget extension:
-    /// only the app rotates a login, so two processes never spend the same
-    /// refresh token.
-    var allowsRefresh: Bool { get }
     /// Names the stored login. Refreshes of one key run one at a time
     /// (`TokenRefresher`).
     var refreshKey: String { get }

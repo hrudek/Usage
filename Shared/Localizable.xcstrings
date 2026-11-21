@@ -13686,48 +13686,48 @@
         }
       }
     },
-    "Your sign-in token is stored encrypted in the system Keychain and shared only with the widget, which just reads it to load your usage. Only the app renews the token. It is used exclusively to read your usage." : {
+    "Your sign-in token is stored encrypted in the system Keychain and shared only with the widget. The app and the widget use it to load your usage and renew it when it expires. It is used exclusively to read your usage." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Anmeldetoken wird verschlüsselt im System-Schlüsselbund gespeichert und nur mit dem Widget geteilt, das es nur liest, um deine Nutzung zu laden. Erneuert wird das Token ausschließlich von der App. Es wird nur zum Lesen deiner Nutzung verwendet."
+            "value" : "Dein Anmeldetoken wird verschlüsselt im System-Schlüsselbund gespeichert und nur mit dem Widget geteilt. App und Widget laden damit deine Nutzung und erneuern es, wenn es abläuft. Es wird nur zum Lesen deiner Nutzung verwendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu token de inicio de sesión se guarda cifrado en el llavero del sistema y se comparte solo con el widget, que solo lo lee para cargar tu uso. Solo la app renueva el token. Se usa exclusivamente para leer tu uso."
+            "value" : "Tu token de inicio de sesión se guarda cifrado en el llavero del sistema y se comparte solo con el widget. La app y el widget lo usan para cargar tu uso y lo renuevan cuando caduca. Se usa exclusivamente para leer tu uso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre jeton de connexion est stocké chiffré dans le trousseau système et partagé uniquement avec le widget, qui se contente de le lire pour charger votre usage. Seule l'app renouvelle le jeton. Il sert exclusivement à lire votre usage."
+            "value" : "Votre jeton de connexion est stocké chiffré dans le trousseau système et partagé uniquement avec le widget. L'app et le widget s'en servent pour charger votre usage et le renouvellent quand il expire. Il sert exclusivement à lire votre usage."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "サインイントークンはシステムのキーチェーンに暗号化して保存され、ウィジェットとのみ共有されます。ウィジェットは使用量を読み込むためにトークンを読み取るだけで、更新するのはアプリだけです。使用量の読み取り以外には使いません。"
+            "value" : "サインイントークンはシステムのキーチェーンに暗号化して保存され、ウィジェットとのみ共有されます。アプリとウィジェットはこれを使って使用量を読み込み、期限が切れると更新します。使用量の読み取り以外には使いません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "로그인 토큰은 시스템 키체인에 암호화되어 저장되며 위젯과만 공유됩니다. 위젯은 사용량을 불러오기 위해 토큰을 읽기만 하고, 토큰 갱신은 앱만 합니다. 사용량을 읽는 용도로만 사용됩니다."
+            "value" : "로그인 토큰은 시스템 키체인에 암호화되어 저장되며 위젯과만 공유됩니다. 앱과 위젯은 이 토큰으로 사용량을 불러오고, 만료되면 갱신합니다. 사용량을 읽는 용도로만 사용됩니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu token de login fica criptografado nas Chaves do sistema e é compartilhado só com o widget, que apenas o lê para carregar seu uso. Só o app renova o token. É usado exclusivamente para ler seu uso."
+            "value" : "Seu token de login fica criptografado nas Chaves do sistema e é compartilhado só com o widget. O app e o widget o usam para carregar seu uso e o renovam quando expira. É usado exclusivamente para ler seu uso."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的登录令牌加密保存在系统钥匙串中，仅与小组件共享。小组件只读取它来加载用量，只有 App 会续期令牌。它只用于读取你的用量。"
+            "value" : "你的登录令牌加密保存在系统钥匙串中，仅与小组件共享。App 和小组件用它加载用量，并在令牌过期时续期。它只用于读取你的用量。"
           }
         }
       }

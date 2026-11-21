@@ -46,7 +46,7 @@ public struct CodexProvider: UsageProvider {
 
         var (data, response) = try await send(with: credentials)
 
-        if response.statusCode == 401, credentialSource.allowsRefresh {
+        if response.statusCode == 401 {
             credentials = try await refreshed(credentials)
             (data, response) = try await send(with: credentials)
         }
@@ -104,7 +104,6 @@ public struct CodexProvider: UsageProvider {
     /// The login to fetch with; see `ClaudeProvider.loadCredentials`.
     private func loadCredentials() async throws -> CodexCredentials {
         let source = credentialSource
-        guard source.allowsRefresh else { return try await source.load() }
         return try await refresher.credentials(
             key: source.refreshKey,
             load: { try await source.load() },
@@ -113,11 +112,6 @@ public struct CodexProvider: UsageProvider {
     }
 
     private func refreshed(_ credentials: CodexCredentials) async throws -> CodexCredentials {
-        guard credentialSource.allowsRefresh else {
-            // A reader that may not rotate (the widget extension) leaves
-            // the refresh to the app and keeps its last snapshot.
-            throw UsageError.tokenExpired
-        }
         // OpenAI spends the refresh token the moment it accepts it and
         // revokes the whole family when a spent one comes back, so one
         // refresh per login at a time, in a task the caller's cancellation

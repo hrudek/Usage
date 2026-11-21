@@ -2,25 +2,22 @@ import Foundation
 
 /// The app's own copy of a Codex login, from the in-app device-code
 /// sign-in, in the app's Keychain (the shared access group on iOS, so
-/// the widget can fetch with it). Refreshed in place by the app only.
+/// the widget can fetch with it). Refreshed in place by the app and the
+/// widget extension.
 public struct CodexKeychainCredentialSource: CodexCredentialSource {
     /// The Keychain key for an account: every account gets its own.
     public static func storageKey(for accountID: String) -> String {
         "codex.credentials.\(accountID)"
     }
 
-    public let allowsRefresh: Bool
     public var refreshKey: String { key }
 
     private let store: KeychainStore
     private let key: String
 
-    /// - Parameter allowsRefresh: false for a reader that must never
-    ///   rotate the login (the widget extension).
-    public init(store: KeychainStore, key: String, allowsRefresh: Bool = true) {
+    public init(store: KeychainStore, key: String) {
         self.store = store
         self.key = key
-        self.allowsRefresh = allowsRefresh
     }
 
     public func load() async throws -> CodexCredentials {

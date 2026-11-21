@@ -112,6 +112,94 @@ final class TokenRefresherTests: XCTestCase {
         XCTAssertEqual(after.plan, "max")
     }
 
+    /// The app and the widget extension each have their own refresher;
+    /// the lock they share keeps their rotations of one login apart.
+    func testRefreshersSharingALockTakeTurns() async throws {
+        let directory = temporaryDirectory()
+        let app = TokenRefresher(lock: RefreshLock(directory: directory))
+        let widget = TokenRefresher(lock: RefreshLock(directory: directory))
+        let overlap = Overlap()
+        let rotation: @Sendable () async throws -> Pair = {
+            await overlap.enter()
+            try await Task.sleep(for: .milliseconds(200))
+            await overlap.leave()
+            return Pair(refreshToken: "new")
+        }
+        async let a = app.refresh(key: "a", rotation)
+        async let b = widget.refresh(key: "a", rotation)
+        _ = try await (a, b)
+        let peak = await overlap.peak
+        XCTAssertEqual(peak, 1)
+    }
+
+    /// A plan write in one process waits for a rotation in another and
+    /// lands on the rotated pair.
+    func testAPlanWriteWaitsForAnotherProcesssRotation() async throws {
+        let directory = temporaryDirectory()
+        let app = TokenRefresher(lock: RefreshLock(directory: directory))
+        let widget = TokenRefresher(lock: RefreshLock(directory: directory))
+        let store = Store(Pair(refreshToken: "old"))
+        let (started, startedContinuation) = AsyncStream<Void>.makeStream()
+        let (release, releaseContinuation) = AsyncStream<Void>.makeStream()
+        let rotation = Task {
+            try await app.refresh(key: "a") {
+                startedContinuation.yield()
+                for await _ in release { break }
+                let next = Pair(refreshToken: "new")
+                try await store.save(next)
+                return next
+            }
+        }
+        for await _ in started { break }
+
+        let update = Task {
+            await widget.update(key: "a", load: { await store.pair }, save: { try await store.save($0) }) {
+                $0.plan = "max"
+            }
+        }
+        try await Task.sleep(for: .milliseconds(200))
+        let attempts = await store.attempts
+        XCTAssertEqual(attempts, 0, "nothing written while the other process rotates")
+
+        releaseContinuation.yield()
+        _ = try await rotation.value
+        await update.value
+        let after = await store.pair
+        XCTAssertEqual(after.refreshToken, "new")
+        XCTAssertEqual(after.plan, "max")
+    }
+
+    func testALockHeldTooLongFailsTheWaiter() async throws {
+        let directory = temporaryDirectory()
+        let holder = RefreshLock(directory: directory)
+        let waiter = RefreshLock(directory: directory, timeout: .milliseconds(100))
+        let (held, heldContinuation) = AsyncStream<Void>.makeStream()
+        let (release, releaseContinuation) = AsyncStream<Void>.makeStream()
+        let holding = Task {
+            try await holder.withLock(key: "a") {
+                heldContinuation.yield()
+                for await _ in release { break }
+            }
+        }
+        for await _ in held { break }
+
+        do {
+            try await waiter.withLock(key: "a") {}
+            XCTFail("expected the waiter to give up")
+        } catch let error as UsageError {
+            guard case .storage = error else { return XCTFail("\(error)") }
+        }
+        releaseContinuation.yield()
+        try await holding.value
+        try await waiter.withLock(key: "a") {}
+    }
+
+    private func temporaryDirectory() -> URL {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        return directory
+    }
+
     func testAFinishedRefreshDoesNotAnswerTheNextOne() async throws {
         let refresher = TokenRefresher()
         let counter = Counter()

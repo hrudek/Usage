@@ -58,34 +58,30 @@ nonisolated enum ProviderCatalog {
         displayName: displayName(for: defaultProviderID)
     )
 
+    /// Where every provider of this process rotates its login. The lock
+    /// lives in the App Group container, so the app and the widget
+    /// extension never spend the same refresh token.
+    static let refresher = TokenRefresher(lock: RefreshLock(appGroupID: AppConfig.appGroupID))
+
     /// A working provider for one connected account, plus the credential
     /// store to clear on disconnect. Keyed by `account.providerID`; the
-    /// account's own Keychain key backs it.
-    ///
-    /// `allowsRefresh` is false in the widget extension: it reads the
-    /// stored login and never rotates it, so the app is the only process
-    /// that spends a refresh token. With an expired access token the
-    /// widget's fetch fails and it keeps its last snapshot.
+    /// account's own Keychain key backs it. The app and the widget
+    /// extension both renew an expired login through `refresher`.
     static func makeProvider(
         for account: ConnectedAccount,
         keychain: KeychainStore,
-        allowsRefresh: Bool,
-        transport: (any HTTPTransport)? = nil
+        transport: any HTTPTransport = URLSessionTransport()
     ) -> (provider: any UsageProvider, credentials: any CredentialStore) {
         switch account.providerID {
         case ClaudeProvider.providerID:
             let key = ClaudeKeychainCredentialSource.storageKey(for: account.accountID)
-            let source: any ClaudeCredentialSource
-            source = ClaudeKeychainCredentialSource(store: keychain, key: key, allowsRefresh: allowsRefresh)
-            let provider = transport.map { ClaudeProvider(credentialSource: source, transport: $0) }
-                ?? ClaudeProvider(credentialSource: source)
+            let source = ClaudeKeychainCredentialSource(store: keychain, key: key)
+            let provider = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
             return (provider, source)
         case CodexProvider.providerID:
             let key = CodexKeychainCredentialSource.storageKey(for: account.accountID)
-            let source: any CodexCredentialSource
-            source = CodexKeychainCredentialSource(store: keychain, key: key, allowsRefresh: allowsRefresh)
-            let provider = transport.map { CodexProvider(credentialSource: source, transport: $0) }
-                ?? CodexProvider(credentialSource: source)
+            let source = CodexKeychainCredentialSource(store: keychain, key: key)
+            let provider = CodexProvider(credentialSource: source, transport: transport, refresher: refresher)
             return (provider, source)
         default:
             // Only this app writes the registry, so an unknown family means
@@ -98,7 +94,7 @@ nonisolated enum ProviderCatalog {
                 displayName: account.displayName,
                 connectedAt: account.connectedAt, icon: account.icon
             )
-            return makeProvider(for: claude, keychain: keychain, allowsRefresh: allowsRefresh, transport: transport)
+            return makeProvider(for: claude, keychain: keychain, transport: transport)
         }
     }
 }

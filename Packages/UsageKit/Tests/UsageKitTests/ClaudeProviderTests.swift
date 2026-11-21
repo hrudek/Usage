@@ -7,7 +7,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (200, Self.usageBody),
         ])
-        let source = StubCredentialSource(credentials: .valid, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .valid)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -30,7 +30,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (200, Self.usageBody),
         ])
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         _ = try await provider.fetchUsage()
@@ -53,7 +53,7 @@ final class ClaudeProviderTests: XCTestCase {
             (401, "{}"),
             (200, Self.usageBody),
         ])
-        let source = StubCredentialSource(credentials: .valid, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .valid)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -74,7 +74,7 @@ final class ClaudeProviderTests: XCTestCase {
         ])
         // Another refresh of the same login finished while this fetch was
         // in flight: the store now holds a different, still-valid pair.
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         source.rotatesTo = .rotatedElsewhere
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
@@ -93,7 +93,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
             (400, "{}"),
         ])
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         var provider = ClaudeProvider(credentialSource: source, transport: transport)
         provider.rejectionRecheckDelay = .zero
 
@@ -113,7 +113,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (200, Self.usageBody),
         ])
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         // Still the rejected pair right after the rejection (the fetch's
         // own load, the look before refreshing, then the first re-read);
         // the winner's after that.
@@ -136,7 +136,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
             (403, "blocked"),
         ])
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         await assertThrows(UsageError.httpError(statusCode: 403, body: "blocked")) {
@@ -159,7 +159,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.onSend = { request in
             if request.url == ClaudeOAuthClient.tokenEndpoint { startedContinuation.yield() }
         }
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         let fetch = Task { try await provider.fetchUsage() }
@@ -175,40 +175,12 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
             (429, "", ["Retry-After": "30"]),
         ])
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         await assertThrows(UsageError.rateLimited(retryAfter: 30, body: nil)) {
             _ = try await provider.fetchUsage()
         }
-    }
-
-    /// The widget extension's path: an expired login is left to the app.
-    func testExpiredTokenWithoutRefreshThrowsTokenExpired() async {
-        let transport = StubTransport()
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: false)
-        let provider = ClaudeProvider(credentialSource: source, transport: transport)
-
-        await assertThrows(UsageError.tokenExpired) {
-            _ = try await provider.fetchUsage()
-        }
-        XCTAssertTrue(transport.requests.isEmpty)
-        XCTAssertTrue(source.saved.isEmpty)
-    }
-
-    func test401WithoutRefreshThrowsNotAuthenticated() async {
-        let transport = StubTransport()
-        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
-            (401, "{}"),
-        ])
-        let source = StubCredentialSource(credentials: .valid, allowsRefresh: false)
-        let provider = ClaudeProvider(credentialSource: source, transport: transport)
-
-        await assertThrows(UsageError.notAuthenticated) {
-            _ = try await provider.fetchUsage()
-        }
-        XCTAssertFalse(transport.requests.contains { $0.url == ClaudeOAuthClient.tokenEndpoint })
-        XCTAssertTrue(source.saved.isEmpty)
     }
 
     /// The app's sweep and its background task may fetch one expired
@@ -224,13 +196,69 @@ final class ClaudeProviderTests: XCTestCase {
             (200, Self.usageBody),
         ])
         transport.delays[ClaudeOAuthClient.tokenEndpoint] = .milliseconds(100)
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         let refresher = TokenRefresher()
         let first = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
         let second = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
 
         async let a = first.fetchUsage()
         async let b = second.fetchUsage()
+        _ = try await (a, b)
+
+        XCTAssertEqual(transport.requests.filter { $0.url == ClaudeOAuthClient.tokenEndpoint }.count, 1)
+        let usage = transport.requests.filter { $0.url == ClaudeProvider.usageEndpoint }
+        XCTAssertEqual(usage.count, 2)
+        XCTAssertTrue(usage.allSatisfy { $0.value(forHTTPHeaderField: "Authorization") == "Bearer new-token" })
+        XCTAssertEqual(source.saved.map(\.refreshToken), ["new-refresh"])
+    }
+
+    /// The widget's path: its providers rotate through a refresher with
+    /// the App Group lock, renew an expired login and save the new pair.
+    func testAnExpiredLoginIsRenewedUnderTheLock() async throws {
+        let transport = StubTransport()
+        transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
+            (200, Self.refreshBody),
+        ])
+        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
+            (200, Self.usageBody),
+        ])
+        let source = StubCredentialSource(credentials: .expired)
+        let refresher = TokenRefresher(lock: RefreshLock(directory: temporaryDirectory()))
+        let provider = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
+
+        _ = try await provider.fetchUsage()
+
+        let usage = transport.requests.filter { $0.url == ClaudeProvider.usageEndpoint }
+        XCTAssertEqual(usage.map { $0.value(forHTTPHeaderField: "Authorization") }, ["Bearer new-token"])
+        XCTAssertEqual(source.saved.map(\.refreshToken), ["new-refresh"])
+    }
+
+    /// The app and the widget extension (one refresher each, one lock
+    /// between them) fetch one expired login at the same moment: one
+    /// refresh goes out, and the process that waited uses its pair.
+    func testTwoProcessesRefreshAnExpiredLoginOnce() async throws {
+        let transport = StubTransport()
+        transport.route(url: ClaudeOAuthClient.tokenEndpoint, responses: [
+            (200, Self.refreshBody),
+            (400, #"{"error": "invalid_grant"}"#),
+        ])
+        transport.route(url: ClaudeProvider.usageEndpoint, responses: [
+            (200, Self.usageBody),
+        ])
+        transport.delays[ClaudeOAuthClient.tokenEndpoint] = .milliseconds(100)
+        let source = StubCredentialSource(credentials: .expired)
+        let directory = temporaryDirectory()
+        let app = ClaudeProvider(
+            credentialSource: source, transport: transport,
+            refresher: TokenRefresher(lock: RefreshLock(directory: directory))
+        )
+        let widget = ClaudeProvider(
+            credentialSource: source, transport: transport,
+            refresher: TokenRefresher(lock: RefreshLock(directory: directory))
+        )
+
+        async let a = app.fetchUsage()
+        async let b = widget.fetchUsage()
         _ = try await (a, b)
 
         XCTAssertEqual(transport.requests.filter { $0.url == ClaudeOAuthClient.tokenEndpoint }.count, 1)
@@ -252,7 +280,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (200, Self.usageBody),
         ])
-        let source = StubCredentialSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .expired)
         source.failsSavesAfter = 0
         let refresher = TokenRefresher(saveAttempts: 3, saveRetryDelay: .zero)
         let provider = ClaudeProvider(credentialSource: source, transport: transport, refresher: refresher)
@@ -277,7 +305,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (429, "{}", ["Retry-After": "30"]),
         ])
-        let source = StubCredentialSource(credentials: .valid, allowsRefresh: false)
+        let source = StubCredentialSource(credentials: .valid)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         await assertThrows(UsageError.rateLimited(retryAfter: 30, body: nil)) {
@@ -290,7 +318,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (200, "{}"),
         ])
-        let source = StubCredentialSource(credentials: .valid, allowsRefresh: false)
+        let source = StubCredentialSource(credentials: .valid)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         do {
@@ -303,6 +331,12 @@ final class ClaudeProviderTests: XCTestCase {
         } catch {
             XCTFail("expected UsageError, got \(error)")
         }
+    }
+
+    private func temporaryDirectory() -> URL {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        return directory
     }
 
     private func assertThrows(
@@ -329,7 +363,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.profileEndpoint, responses: [
             (200, #"{"account": {"has_claude_pro": false, "has_claude_max": true}}"#),
         ])
-        let source = StubCredentialSource(credentials: .withoutSubscription, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .withoutSubscription)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -374,7 +408,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.profileEndpoint, responses: [
             (200, #"{"account": {"has_claude_pro": false, "has_claude_max": true}}"#),
         ])
-        let source = StubCredentialSource(credentials: .withoutSubscription, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .withoutSubscription)
         // Another process (the iOS widget's own fetch) rotates the stored
         // token while this fetch is in flight.
         source.rotatesTo = ClaudeCredentials(
@@ -402,7 +436,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.profileEndpoint, responses: [
             (200, #"{"account": {"has_claude_pro": false, "has_claude_max": true}}"#),
         ])
-        let source = StubCredentialSource(credentials: .withoutSubscription, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .withoutSubscription)
         source.failsLoadsAfter = 1
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
@@ -417,7 +451,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.usageEndpoint, responses: [
             (200, Self.usageBody),
         ])
-        let source = StubCredentialSource(credentials: .valid, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .valid)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -437,7 +471,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.profileEndpoint, responses: [
             (200, #"{"account": {"has_claude_pro": false, "has_claude_max": true}}"#),
         ])
-        let source = StubCredentialSource(credentials: .stalePlan, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .stalePlan)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -456,7 +490,7 @@ final class ClaudeProviderTests: XCTestCase {
         transport.route(url: ClaudeProvider.profileEndpoint, responses: [
             (500, "boom"),
         ])
-        let source = StubCredentialSource(credentials: .stalePlan, allowsRefresh: true)
+        let source = StubCredentialSource(credentials: .stalePlan)
         let provider = ClaudeProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -529,7 +563,6 @@ private extension ClaudeCredentials {
 }
 
 private final class StubCredentialSource: ClaudeCredentialSource, @unchecked Sendable {
-    let allowsRefresh: Bool
     let refreshKey = UUID().uuidString
     /// Saves past this many throw, like a Keychain that refuses the write.
     var failsSavesAfter: Int?
@@ -546,9 +579,8 @@ private final class StubCredentialSource: ClaudeCredentialSource, @unchecked Sen
     var failsLoadsAfter: Int?
     private var loads = 0
 
-    init(credentials: ClaudeCredentials, allowsRefresh: Bool) {
+    init(credentials: ClaudeCredentials) {
         self.credentials = credentials
-        self.allowsRefresh = allowsRefresh
     }
 
     /// Two fetches may load and save at once (the concurrency tests).
