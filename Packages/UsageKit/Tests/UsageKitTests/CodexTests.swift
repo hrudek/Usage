@@ -96,7 +96,7 @@ final class CodexProviderTests: XCTestCase {
     func testFetchSendsTheCLIsHeadersAndMapsThePlanAndIdentity() async throws {
         let transport = RoutedTransport()
         transport.route(url: CodexProvider.usageEndpoint, responses: [(200, try fixtureBody("codex-usage-response-free"))])
-        let source = StubCodexSource(credentials: .valid, allowsRefresh: true)
+        let source = StubCodexSource(credentials: .valid)
         let provider = CodexProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -114,7 +114,7 @@ final class CodexProviderTests: XCTestCase {
         let transport = RoutedTransport()
         transport.route(url: CodexOAuthClient.tokenEndpoint, responses: [(200, Self.refreshBody)])
         transport.route(url: CodexProvider.usageEndpoint, responses: [(200, try fixtureBody("codex-usage-response-free"))])
-        let source = StubCodexSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCodexSource(credentials: .expired)
         let provider = CodexProvider(credentialSource: source, transport: transport)
 
         _ = try await provider.fetchUsage()
@@ -135,7 +135,7 @@ final class CodexProviderTests: XCTestCase {
         let transport = RoutedTransport()
         transport.route(url: CodexOAuthClient.tokenEndpoint, responses: [(200, Self.refreshBody)])
         transport.route(url: CodexProvider.usageEndpoint, responses: [(401, "{}"), (200, try fixtureBody("codex-usage-response-free"))])
-        let source = StubCodexSource(credentials: .valid, allowsRefresh: true)
+        let source = StubCodexSource(credentials: .valid)
         let provider = CodexProvider(credentialSource: source, transport: transport)
 
         let snapshot = try await provider.fetchUsage()
@@ -144,27 +144,11 @@ final class CodexProviderTests: XCTestCase {
         XCTAssertEqual(transport.requests(to: CodexProvider.usageEndpoint).count, 2)
     }
 
-    func testAReadOnlySourceNeverRefreshes() async throws {
-        let transport = RoutedTransport()
-        let expired = StubCodexSource(credentials: .expired, allowsRefresh: false)
-        await assertThrows(UsageError.tokenExpired) {
-            _ = try await CodexProvider(credentialSource: expired, transport: transport).fetchUsage()
-        }
-        XCTAssertTrue(transport.requests.isEmpty)
-
-        transport.route(url: CodexProvider.usageEndpoint, responses: [(401, "{}")])
-        let rejected = StubCodexSource(credentials: .valid, allowsRefresh: false)
-        await assertThrows(UsageError.notAuthenticated) {
-            _ = try await CodexProvider(credentialSource: rejected, transport: transport).fetchUsage()
-        }
-        XCTAssertTrue(transport.requests(to: CodexOAuthClient.tokenEndpoint).isEmpty)
-    }
-
     func testRejectedRefreshUsesAPairRotatedElsewhere() async throws {
         let transport = RoutedTransport()
         transport.route(url: CodexOAuthClient.tokenEndpoint, responses: [(400, #"{"error": "refresh_token_reused"}"#)])
         transport.route(url: CodexProvider.usageEndpoint, responses: [(200, try fixtureBody("codex-usage-response-free"))])
-        let source = StubCodexSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCodexSource(credentials: .expired)
         source.rotatesTo = .rotatedElsewhere
         var provider = CodexProvider(credentialSource: source, transport: transport)
         provider.rejectionRecheckDelay = .zero
@@ -180,7 +164,7 @@ final class CodexProviderTests: XCTestCase {
     func testRejectedRefreshWithUnchangedPairIsARejectedLogin() async {
         let transport = RoutedTransport()
         transport.route(url: CodexOAuthClient.tokenEndpoint, responses: [(400, "{}")])
-        let source = StubCodexSource(credentials: .expired, allowsRefresh: true)
+        let source = StubCodexSource(credentials: .expired)
         var provider = CodexProvider(credentialSource: source, transport: transport)
         provider.rejectionRecheckDelay = .zero
 
@@ -192,7 +176,7 @@ final class CodexProviderTests: XCTestCase {
     func test429AndOtherStatusesKeepTheirBodies() async throws {
         let transport = RoutedTransport()
         transport.route(url: CodexProvider.usageEndpoint, responses: [(429, "slow", ["Retry-After": "30"]), (503, "down", [:])])
-        let provider = CodexProvider(credentialSource: StubCodexSource(credentials: .valid, allowsRefresh: false), transport: transport)
+        let provider = CodexProvider(credentialSource: StubCodexSource(credentials: .valid), transport: transport)
         await assertThrows(UsageError.rateLimited(retryAfter: 30, body: "slow")) { _ = try await provider.fetchUsage() }
         await assertThrows(UsageError.httpError(statusCode: 503, body: "down")) { _ = try await provider.fetchUsage() }
     }
@@ -200,7 +184,7 @@ final class CodexProviderTests: XCTestCase {
     func testAResponseWithoutWindowsIsInvalid() async {
         let transport = RoutedTransport()
         transport.route(url: CodexProvider.usageEndpoint, responses: [(200, #"{"plan_type": "free", "rate_limit": null}"#)])
-        let provider = CodexProvider(credentialSource: StubCodexSource(credentials: .valid, allowsRefresh: false), transport: transport)
+        let provider = CodexProvider(credentialSource: StubCodexSource(credentials: .valid), transport: transport)
         do {
             _ = try await provider.fetchUsage()
             XCTFail("expected invalidResponse")
@@ -311,16 +295,14 @@ private extension CodexCredentials {
 }
 
 private final class StubCodexSource: CodexCredentialSource, @unchecked Sendable {
-    let allowsRefresh: Bool
     let refreshKey = UUID().uuidString
     private(set) var saved: [CodexCredentials] = []
     private var credentials: CodexCredentials
     var rotatesTo: CodexCredentials?
     private var loads = 0
 
-    init(credentials: CodexCredentials, allowsRefresh: Bool) {
+    init(credentials: CodexCredentials) {
         self.credentials = credentials
-        self.allowsRefresh = allowsRefresh
     }
 
     func load() async throws -> CodexCredentials {

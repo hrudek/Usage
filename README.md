@@ -6,8 +6,8 @@ and Ultra, and Codex on any ChatGPT plan. Several accounts side by side,
 history, alerts near a limit, Lock Screen and Home Screen widgets.
 
 No server, no account, no analytics. Sign-in tokens are stored only in the
-iOS Keychain on the device and shared with the widget extension; only the
-app renews them. The app talks only to Anthropic's and OpenAI's own
+iOS Keychain on the device and shared with the widget extension; the app
+and the widget renew them, one at a time. The app talks only to Anthropic's and OpenAI's own
 endpoints.
 
 ## Building

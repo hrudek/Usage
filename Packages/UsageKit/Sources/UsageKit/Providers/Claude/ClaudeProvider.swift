@@ -38,7 +38,8 @@ public struct ClaudeProvider: UsageProvider {
     ///   Code client (`claude-code/<version>`); other agents hit an
     ///   aggressively rate-limited bucket and get persistent 429s.
     /// - Parameter refresher: where refreshes of one login wait for each
-    ///   other; every provider in the app shares `.shared`.
+    ///   other; every provider of a process shares one, with a
+    ///   `RefreshLock` when other processes rotate the same logins.
     public init(
         credentialSource: any ClaudeCredentialSource,
         transport: any HTTPTransport = URLSessionTransport(),
@@ -60,7 +61,7 @@ public struct ClaudeProvider: UsageProvider {
 
         var (data, response) = try await send(with: credentials)
 
-        if response.statusCode == 401, credentialSource.allowsRefresh {
+        if response.statusCode == 401 {
             credentials = try await refreshed(credentials)
             (data, response) = try await send(with: credentials)
         }
@@ -128,17 +129,15 @@ public struct ClaudeProvider: UsageProvider {
             // the last plan we knew instead of dropping the pill over it.
             return credentials.subscriptionType
         }
-        if credentialSource.allowsRefresh {
-            let source = credentialSource
-            let checkedAt = Date()
-            await refresher.update(
-                key: source.refreshKey,
-                load: { try await source.load() },
-                save: { try await source.save($0) }
-            ) { latest in
-                latest.subscriptionType = plan
-                latest.planCheckedAt = checkedAt
-            }
+        let source = credentialSource
+        let checkedAt = Date()
+        await refresher.update(
+            key: source.refreshKey,
+            load: { try await source.load() },
+            save: { try await source.save($0) }
+        ) { latest in
+            latest.subscriptionType = plan
+            latest.planCheckedAt = checkedAt
         }
         return plan
     }
@@ -169,12 +168,10 @@ public struct ClaudeProvider: UsageProvider {
         return request
     }
 
-    /// The login to fetch with. Where this source may rotate, it goes
-    /// through the refresher, which still has a rotated pair the store
-    /// refused to save.
+    /// The login to fetch with, through the refresher, which still has a
+    /// rotated pair the store refused to save.
     private func loadCredentials() async throws -> ClaudeCredentials {
         let source = credentialSource
-        guard source.allowsRefresh else { return try await source.load() }
         return try await refresher.credentials(
             key: source.refreshKey,
             load: { try await source.load() },
@@ -183,11 +180,6 @@ public struct ClaudeProvider: UsageProvider {
     }
 
     private func refreshed(_ credentials: ClaudeCredentials) async throws -> ClaudeCredentials {
-        guard credentialSource.allowsRefresh else {
-            // A reader that may not rotate (the widget extension) leaves
-            // the refresh to the app and keeps its last snapshot.
-            throw UsageError.tokenExpired
-        }
         // Anthropic rotates the refresh token the moment it accepts it, so
         // two refreshes of one login must never overlap: a second caller
         // joins the one under way (`TokenRefresher`). The refresher runs
@@ -201,7 +193,8 @@ public struct ClaudeProvider: UsageProvider {
 
     private func rotate(_ credentials: ClaudeCredentials) async throws -> ClaudeCredentials {
         // A refresh of this login that finished after `credentials` was
-        // loaded already spent their refresh token. Its pair is the one to
+        // loaded, in this process or another, already spent their refresh
+        // token. Its pair is the one to
         // use; sending the spent token again would only be rejected.
         if let stored = try? await loadCredentials(),
            stored.refreshToken != credentials.refreshToken, !stored.isExpired {

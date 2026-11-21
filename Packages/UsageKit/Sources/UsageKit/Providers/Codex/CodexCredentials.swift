@@ -89,11 +89,6 @@ extension CodexCredentials: RotatingCredentials {}
 
 /// Where `CodexProvider` obtains credentials and persists rotated tokens.
 public protocol CodexCredentialSource: CredentialStore {
-    /// Whether the provider may refresh the token and persist the rotated
-    /// pair through this source. False in the widget extension: only the
-    /// app rotates a login, and OpenAI revokes the whole token family when
-    /// a spent refresh token comes back.
-    var allowsRefresh: Bool { get }
     /// Names the stored login. Refreshes of one key run one at a time
     /// (`TokenRefresher`).
     var refreshKey: String { get }

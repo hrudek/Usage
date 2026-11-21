@@ -4,8 +4,8 @@ import UsageKit
 
 /// Interactive widget button action: force a fetch for one account right
 /// now, then reload the widget's timeline so the tap shows fresh data
-/// within a couple seconds. Like every widget fetch it only reads the
-/// stored login (`WidgetRefresher`).
+/// within a couple seconds. Like every widget fetch it renews an expired
+/// login itself (`WidgetRefresher`).
 ///
 /// Internal to the widget's own button, not a standalone Shortcuts/Siri
 /// action.

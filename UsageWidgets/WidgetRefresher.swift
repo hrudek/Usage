@@ -4,11 +4,9 @@ import UsageKit
 /// Lets the widget process fetch usage itself when the stored snapshot is
 /// older than the refresh cadence — the case where the app hasn't been
 /// opened and iOS didn't grant its background task. Credentials come from
-/// the shared keychain access group, read only: the widget never refreshes
-/// a token, since the app may be rotating the same login at that moment
-/// and a spent refresh token can cost the login. Once the access token
-/// expires the fetch fails and the caller keeps rendering the stored
-/// snapshot until the app runs again.
+/// the shared keychain access group; an expired access token is renewed
+/// here and the rotated pair saved back there, taking turns with the app
+/// through `ProviderCatalog.refresher`'s lock.
 enum WidgetRefresher {
     /// Short-timeout session for widget fetches: a timeline is generated on
     /// a tight budget, so a slow request must fail fast rather than stall
@@ -86,7 +84,6 @@ enum WidgetRefresher {
         let provider = ProviderCatalog.makeProvider(
             for: account,
             keychain: keychain,
-            allowsRefresh: false,
             transport: URLSessionTransport(session: session)
         ).provider
         guard let fetched = try? await provider.fetchUsage() else { return nil }

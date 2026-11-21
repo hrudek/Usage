@@ -133,7 +133,7 @@ final class UsageModel {
 
     /// Standalone refresh path for the iOS `BGAppRefreshTask`, which runs
     /// in a context with no live `UsageModel` instance to reuse. Its
-    /// services are new, but their providers share `TokenRefresher.shared`
+    /// services are new, but their providers share `ProviderCatalog.refresher`
     /// with the model's, so a login is still refreshed once at a time.
     static func refreshAllInBackground() async {
         guard let registry = AccountRegistryStore(suiteName: AppConfig.appGroupID) else { return }
