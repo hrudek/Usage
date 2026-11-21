@@ -91,18 +91,9 @@ enum WidgetRefresher {
             keychain: keychain,
             transport: URLSessionTransport(session: session)
         ).provider
-        let deadline = fetchDeadline
-        let fetched = await withTaskGroup(of: UsageSnapshot?.self) { group in
-            group.addTask { try? await provider.fetchUsage() }
-            group.addTask {
-                try? await Task.sleep(for: deadline)
-                return nil
-            }
-            let first = await group.next() ?? nil
-            group.cancelAll()
-            return first
+        guard let fetched = await withDeadline(fetchDeadline, { try? await provider.fetchUsage() }) else {
+            return nil
         }
-        guard let fetched else { return nil }
         let snapshot = fetched.fillingMissingResets(from: previous)
         try? SnapshotStore(suiteName: AppConfig.appGroupID)?.save(snapshot, for: accountID)
         // Keep both histories continuous even when only the widget fetches
