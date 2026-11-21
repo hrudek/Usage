@@ -33,7 +33,7 @@ public actor TokenRefresher {
 
     private var inFlight: [String: Task<any Sendable, any Error>] = [:]
     /// Writes other than a rotation's own save, one per key at a time.
-    private var writes: [String: Task<Bool, Never>] = [:]
+    private var writes: [String: Task<Void, any Error>] = [:]
     private var unsaved: [String: Unsaved] = [:]
     private let saveAttempts: Int
     private let saveRetryDelay: Duration
@@ -135,7 +135,7 @@ public actor TokenRefresher {
         // A rotation under way saves this pair's successor, and a write
         // under way may be saving this very pair: neither needs another.
         guard inFlight[key] == nil, writes[key] == nil else { return newer }
-        if await exclusiveWrite(key, { (try? await save(newer)) != nil }) {
+        if (try? await exclusiveWrite(key) { try await save(newer) }) != nil {
             unsaved[key] = nil
         }
         return newer
@@ -150,6 +150,22 @@ public actor TokenRefresher {
         save: @escaping @Sendable (C) async throws -> Void,
         _ change: @escaping @Sendable (inout C) -> Void
     ) async {
+        await waitForTurn(of: key)
+        try? await exclusiveWrite(key) {
+            var latest = try await load()
+            change(&latest)
+            try await save(latest)
+        }
+    }
+
+    /// Stores a new sign-in for `key` once no rotation or write of it
+    /// runs, so a rotation can't put the replaced login back over it.
+    public func save(key: String, _ write: @escaping @Sendable () async throws -> Void) async throws {
+        await waitForTurn(of: key)
+        try await exclusiveWrite(key, write)
+    }
+
+    private func waitForTurn(of key: String) async {
         while true {
             if let running = inFlight[key] {
                 _ = try? await running.value
@@ -158,30 +174,23 @@ public actor TokenRefresher {
                 break
             }
         }
-        _ = await exclusiveWrite(key) {
-            guard var latest = try? await load() else { return false }
-            change(&latest)
-            return (try? await save(latest)) != nil
-        }
     }
 
-    /// Runs `write` as the key's one write and returns whether it saved;
-    /// the caller checked that none is running. A rotation asked for
-    /// meanwhile waits for it.
-    private func exclusiveWrite(_ key: String, _ write: @escaping @Sendable () async -> Bool) async -> Bool {
+    /// Runs `write` as the key's one write; the caller checked that none
+    /// is running. A rotation asked for meanwhile waits for it.
+    private func exclusiveWrite(_ key: String, _ write: @escaping @Sendable () async throws -> Void) async throws {
         let lock = lock
-        let task = Task<Bool, Never> { (try? await Self.holding(lock, key, write)) ?? false }
+        let task = Task<Void, any Error> { try await Self.holding(lock, key, write) }
         writes[key] = task
-        let saved = await task.value
-        if writes[key] == task { writes[key] = nil }
-        return saved
+        defer { if writes[key] == task { writes[key] = nil } }
+        try await task.value
     }
 
     /// Waits for the key's running write, if any, and says whether there
     /// was one.
     private func waitForWrite(of key: String) async -> Bool {
         guard let write = writes[key] else { return false }
-        _ = await write.value
+        _ = await write.result
         if writes[key] == write { writes[key] = nil }
         return true
     }

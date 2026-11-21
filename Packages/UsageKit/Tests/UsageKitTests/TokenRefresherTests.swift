@@ -213,14 +213,15 @@ final class TokenRefresherTests: XCTestCase {
         XCTAssertEqual(pair.refreshToken, "new")
     }
 
-    func testExpiredBackgroundTimeDropsTheLockAndTheRefreshFinishes() async throws {
+    func testTheLockOutlastsExpiredBackgroundTime() async throws {
         let directory = temporaryDirectory()
         let activity = Activity(grants: true)
-        let lock = RefreshLock(directory: directory, timeout: .seconds(20)) { activity.start($0, $1) }
+        let app = TokenRefresher(lock: RefreshLock(directory: directory, timeout: .seconds(20)) { activity.start($0, $1) })
+        let widget = TokenRefresher(lock: RefreshLock(directory: directory, timeout: .milliseconds(100)))
         let (started, startedContinuation) = AsyncStream<Void>.makeStream()
         let (release, releaseContinuation) = AsyncStream<Void>.makeStream()
-        let holding = Task {
-            try await lock.withLock(key: "a") {
+        let rotation = Task {
+            try await app.refresh(key: "a") {
                 startedContinuation.yield()
                 for await _ in release { break }
                 return Pair(refreshToken: "new")
@@ -229,11 +230,56 @@ final class TokenRefresherTests: XCTestCase {
         for await _ in started { break }
 
         activity.expire()
-        try await RefreshLock(directory: directory, timeout: .seconds(20)).withLock(key: "a") {}
+        let counter = Counter()
+        do {
+            _ = try await widget.refresh(key: "a") {
+                _ = await counter.next()
+                return Pair(refreshToken: "spent")
+            }
+            XCTFail("expected the widget to wait for the app's rotation")
+        } catch let error as UsageError {
+            guard case .storage = error else { return XCTFail("\(error)") }
+        }
+        let runs = await counter.value
+        XCTAssertEqual(runs, 0)
 
         releaseContinuation.yield()
-        let pair = try await holding.value
+        let pair = try await rotation.value
         XCTAssertEqual(pair.refreshToken, "new")
+    }
+
+    func testASignInWaitsForAnotherProcesssRotation() async throws {
+        let directory = temporaryDirectory()
+        let widget = TokenRefresher(lock: RefreshLock(directory: directory))
+        let app = TokenRefresher(lock: RefreshLock(directory: directory, timeout: .milliseconds(100)))
+        let store = Store(Pair(refreshToken: "old"))
+        let (started, startedContinuation) = AsyncStream<Void>.makeStream()
+        let (release, releaseContinuation) = AsyncStream<Void>.makeStream()
+        let rotation = Task {
+            try await widget.refresh(key: "a") {
+                startedContinuation.yield()
+                for await _ in release { break }
+                let next = Pair(refreshToken: "rotated")
+                try await store.save(next)
+                return next
+            }
+        }
+        for await _ in started { break }
+
+        do {
+            try await app.save(key: "a") { try await store.save(Pair(refreshToken: "signed-in")) }
+            XCTFail("expected the sign-in to wait for the widget's rotation")
+        } catch let error as UsageError {
+            guard case .storage = error else { return XCTFail("\(error)") }
+        }
+        let attempts = await store.attempts
+        XCTAssertEqual(attempts, 0)
+
+        releaseContinuation.yield()
+        _ = try await rotation.value
+        try await app.save(key: "a") { try await store.save(Pair(refreshToken: "signed-in")) }
+        let after = await store.pair
+        XCTAssertEqual(after.refreshToken, "signed-in")
     }
 
     private func temporaryDirectory() -> URL {
@@ -360,7 +406,7 @@ private final class Activity: @unchecked Sendable {
 
     func expire() {
         let block = lock.withLock { self.block }
-        DispatchQueue.global().async { block?(true) }
+        block?(true)
     }
 }
 

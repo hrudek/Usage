@@ -7,10 +7,10 @@ import Foundation
 /// locked.
 ///
 /// iOS terminates a process suspended while it holds a file lock in a
-/// shared container (exception 0xdead10cc). So the lock is only ever tried
-/// without blocking, and its holder asks for background time; if that
-/// time runs out, the lock is dropped at once. A refusal changes nothing:
-/// the refresh runs anyway.
+/// shared container (exception 0xdead10cc), so the lock is only ever tried
+/// without blocking and its holder asks for background time. The refresh
+/// runs whether or not that time is granted, and keeps the lock until it
+/// is over: if iOS kills the holder, the kernel frees the lock.
 public struct RefreshLock: Sendable {
     /// `ProcessInfo.performExpiringActivity(withReason:using:)`.
     typealias ExpiringActivity = @Sendable (String, @escaping @Sendable (Bool) -> Void) -> Void
@@ -42,82 +42,30 @@ public struct RefreshLock: Sendable {
         self.expiringActivity = expiringActivity
     }
 
-    /// Runs `body` while holding the lock for `key`.
     func withLock<T: Sendable>(key: String, _ body: @Sendable () async throws -> T) async throws -> T {
-        let file = try LockFile(path: directory.appendingPathComponent("\(key).lock"))
-        defer { file.release() }
-        file.holdBackgroundTime(using: expiringActivity)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let path = directory.appendingPathComponent("\(key).lock").path
+        let descriptor = open(path, O_RDWR | O_CREAT | O_CLOEXEC, 0o600)
+        guard descriptor >= 0 else {
+            throw UsageError.storage("refresh lock open failed (\(errno))")
+        }
+        defer { close(descriptor) }
+        let finished = DispatchSemaphore(value: 0)
+        defer { finished.signal() }
+        expiringActivity("Token refresh") { expired in
+            if !expired { finished.wait() }
+        }
         let deadline = ContinuousClock.now + timeout
-        while try !file.tryLock() {
+        while flock(descriptor, LOCK_EX | LOCK_NB) != 0 {
+            let error = errno
+            guard error == EWOULDBLOCK || error == EINTR else {
+                throw UsageError.storage("refresh lock failed (\(error))")
+            }
             guard ContinuousClock.now < deadline else {
                 throw UsageError.storage("another process is still refreshing \(key)")
             }
             try await Task.sleep(for: .milliseconds(50))
         }
         return try await body()
-    }
-}
-
-/// One open lock file. Closing it releases the lock, from whichever comes
-/// first: the end of the refresh or the end of its background time.
-private final class LockFile: @unchecked Sendable {
-    private let state = NSLock()
-    private var descriptor: Int32?
-    private var granted = false
-    private var expired = false
-    private let ended = DispatchSemaphore(value: 0)
-
-    init(path: URL) throws {
-        try FileManager.default.createDirectory(
-            at: path.deletingLastPathComponent(), withIntermediateDirectories: true
-        )
-        let descriptor = open(path.path, O_RDWR | O_CREAT | O_CLOEXEC, 0o600)
-        guard descriptor >= 0 else {
-            throw UsageError.storage("refresh lock open failed (\(errno))")
-        }
-        self.descriptor = descriptor
-    }
-
-    /// The system calls the block with `false` to grant time, which lasts
-    /// while that call blocks, or with `true` alone to refuse it; once
-    /// granted time runs out it calls the block again with `true`, on
-    /// another thread, so the two calls may arrive in either order.
-    func holdBackgroundTime(using expiringActivity: RefreshLock.ExpiringActivity) {
-        expiringActivity("Token refresh") { [self] expired in
-            let timeRanOut = state.withLock {
-                if expired { self.expired = true } else { granted = true }
-                return granted && self.expired
-            }
-            if timeRanOut {
-                release()
-            } else if !expired {
-                ended.wait()
-            }
-        }
-    }
-
-    /// Whether the lock was taken; false while another process holds it.
-    func tryLock() throws -> Bool {
-        try state.withLock {
-            guard let descriptor else {
-                throw UsageError.storage("background time ran out before the refresh lock was taken")
-            }
-            if flock(descriptor, LOCK_EX | LOCK_NB) == 0 { return true }
-            let error = errno
-            guard error == EWOULDBLOCK || error == EINTR else {
-                throw UsageError.storage("refresh lock failed (\(error))")
-            }
-            return false
-        }
-    }
-
-    func release() {
-        let wasOpen = state.withLock {
-            defer { descriptor = nil }
-            guard let descriptor else { return false }
-            close(descriptor)
-            return true
-        }
-        if wasOpen { ended.signal() }
     }
 }

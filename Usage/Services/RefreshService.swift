@@ -215,15 +215,16 @@ struct RefreshService {
     /// because the credentials themselves are (`ProviderLogin`: what each
     /// family's sign-in flow hands back). The login must be of the
     /// account's own family; the source built for the account is the only
-    /// one that can hold it.
+    /// one that can hold it. Saved through `ProviderCatalog.refresher`, so
+    /// a rotation in the widget can't write the replaced login back.
     func storeConnection(_ login: ProviderLogin) async throws {
         switch login {
         case .claude(let credentials):
             guard let source = credentialSource as? any ClaudeCredentialSource else { throw mismatch(login) }
-            try await source.save(credentials)
+            try await ProviderCatalog.refresher.save(key: source.refreshKey) { try await source.save(credentials) }
         case .codex(let credentials):
             guard let source = credentialSource as? any CodexCredentialSource else { throw mismatch(login) }
-            try await source.save(credentials)
+            try await ProviderCatalog.refresher.save(key: source.refreshKey) { try await source.save(credentials) }
         }
     }
 
