@@ -26,9 +26,14 @@ enum WidgetRefresher {
     /// staleness check.
     private static let minInterval: TimeInterval = 5
 
+    /// The most one fetch may take, a login renewal included, so a tap's
+    /// intent and a timeline return within WidgetKit's budget; past it the
+    /// caller keeps the stored snapshot.
+    private static let fetchDeadline: Duration = .seconds(25)
+
     /// How long an in-flight marker suppresses other instances' fetches
-    /// for the same account — comfortably longer than the 15 s request
-    /// timeout, short enough that a crashed extension can't block for long.
+    /// for the same account — comfortably longer than `fetchDeadline`,
+    /// short enough that a crashed extension can't block for long.
     private static let inFlightWindow: TimeInterval = 60
 
     static func fetchIfStale(
@@ -86,7 +91,18 @@ enum WidgetRefresher {
             keychain: keychain,
             transport: URLSessionTransport(session: session)
         ).provider
-        guard let fetched = try? await provider.fetchUsage() else { return nil }
+        let deadline = fetchDeadline
+        let fetched = await withTaskGroup(of: UsageSnapshot?.self) { group in
+            group.addTask { try? await provider.fetchUsage() }
+            group.addTask {
+                try? await Task.sleep(for: deadline)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first
+        }
+        guard let fetched else { return nil }
         let snapshot = fetched.fillingMissingResets(from: previous)
         try? SnapshotStore(suiteName: AppConfig.appGroupID)?.save(snapshot, for: accountID)
         // Keep both histories continuous even when only the widget fetches

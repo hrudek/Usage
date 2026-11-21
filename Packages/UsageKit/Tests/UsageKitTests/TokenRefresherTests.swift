@@ -205,42 +205,35 @@ final class TokenRefresherTests: XCTestCase {
         try await waiter.withLock(key: "a") {}
     }
 
-    func testNoBackgroundTimeMeansNoLockAndNoRefresh() async throws {
-        let directory = temporaryDirectory()
-        let refused = RefreshLock(directory: directory, timeout: .seconds(20)) { _, block in
-            DispatchQueue.global().async { block(true) }
-        }
-        let counter = Counter()
-        do {
-            try await refused.withLock(key: "a") { _ = await counter.next() }
-            XCTFail("expected a refusal")
-        } catch let error as UsageError {
-            guard case .storage = error else { return XCTFail("\(error)") }
-        }
-        let runs = await counter.value
-        XCTAssertEqual(runs, 0)
-        try await RefreshLock(directory: directory, timeout: .milliseconds(100)).withLock(key: "a") {}
+    func testRefusedBackgroundTimeStillRefreshes() async throws {
+        let activity = Activity(grants: false)
+        let lock = RefreshLock(directory: temporaryDirectory(), timeout: .seconds(20)) { activity.start($0, $1) }
+        let refresher = TokenRefresher(lock: lock)
+        let pair = try await refresher.refresh(key: "a") { Pair(refreshToken: "new") }
+        XCTAssertEqual(pair.refreshToken, "new")
     }
 
-    func testExpiredBackgroundTimeCancelsTheWorkAndDropsTheLock() async throws {
+    func testExpiredBackgroundTimeDropsTheLockAndTheRefreshFinishes() async throws {
         let directory = temporaryDirectory()
-        let activity = Activity()
-        let lock = RefreshLock(directory: directory, timeout: .seconds(20), expiringActivity: { activity.start($0, $1) })
+        let activity = Activity(grants: true)
+        let lock = RefreshLock(directory: directory, timeout: .seconds(20)) { activity.start($0, $1) }
         let (started, startedContinuation) = AsyncStream<Void>.makeStream()
-        let (never, _) = AsyncStream<Void>.makeStream()
+        let (release, releaseContinuation) = AsyncStream<Void>.makeStream()
         let holding = Task {
             try await lock.withLock(key: "a") {
                 startedContinuation.yield()
-                for await _ in never {}
-                try Task.checkCancellation()
+                for await _ in release { break }
+                return Pair(refreshToken: "new")
             }
         }
         for await _ in started { break }
 
-        await activity.expire()
-        try await RefreshLock(directory: directory, timeout: .zero).withLock(key: "a") {}
-        let result = await holding.result
-        XCTAssertThrowsError(try result.get()) { XCTAssertTrue($0 is CancellationError) }
+        activity.expire()
+        try await RefreshLock(directory: directory, timeout: .seconds(20)).withLock(key: "a") {}
+
+        releaseContinuation.yield()
+        let pair = try await holding.value
+        XCTAssertEqual(pair.refreshToken, "new")
     }
 
     private func temporaryDirectory() -> URL {
@@ -353,22 +346,21 @@ private actor Overlap {
 }
 
 private final class Activity: @unchecked Sendable {
+    private let grants: Bool
     private let lock = NSLock()
     private var block: (@Sendable (Bool) -> Void)?
 
+    init(grants: Bool) { self.grants = grants }
+
     func start(_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) {
         lock.withLock { self.block = block }
+        guard grants else { return block(true) }
         DispatchQueue.global().async { block(false) }
     }
 
-    func expire() async {
+    func expire() {
         let block = lock.withLock { self.block }
-        await withCheckedContinuation { continuation in
-            DispatchQueue.global().async {
-                block?(true)
-                continuation.resume()
-            }
-        }
+        DispatchQueue.global().async { block?(true) }
     }
 }
 
