@@ -196,7 +196,7 @@ public actor TokenRefresher {
     private static func holding<T: Sendable>(
         _ lock: RefreshLock?,
         _ key: String,
-        _ body: @Sendable () async throws -> T
+        _ body: @escaping @Sendable () async throws -> T
     ) async throws -> T {
         guard let lock else { return try await body() }
         return try await lock.withLock(key: key, body)
